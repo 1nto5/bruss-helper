@@ -1,4 +1,4 @@
-import '../../assets/global.css'
+
 import { API_URL } from '../../assets/config';
 import production from "../../data/production"
 import React, {useState, useEffect, useRef, useMemo} from 'react'
@@ -23,13 +23,29 @@ function DmcheckPro() {
   const toastTypeRef = useRef()
   const toastMessageRef = useRef()
   const [showToast, setShowToast] = useState(false)
-  useEffect(() => {
+  
+  // useEffect(() => {
+  //     setTimeout(() => {
+  //       setShowToast(false)
+  //     }, 5000);
+  // }, [showToast])
+
+  const toastShower = (type, text) => {
+    let timer = setTimeout(() => {
+      setShowToast(false)
+    }, 2000);
+
+    toastTypeRef.current = type
+    toastMessageRef.current = text
     if (showToast) {
-      setTimeout(() => {
-        setShowToast(false)
-      }, 2000);
+      setShowToast(false)
     }
-  }, [showToast])
+    setShowToast(true)
+    clearTimeout(timer)
+    // setTimeout(() => {
+    //   setShowToast(false)
+    // }, 2000);
+  }
 
 
  // WORKPLACE
@@ -46,9 +62,7 @@ function DmcheckPro() {
     setWorkplaceLogged(true)
     ReactSession.set("workplace", workplaceName)
     currentWorkplaceRef.current = workplaceName
-    toastTypeRef.current = "toastSuccess"
-    toastMessageRef.current = `Wybrano: ${workplaceName}!`
-    setShowToast(true)
+    toastShower('success', `Wybrano: ${workplaceName}!`)
   }
   const handleWorkplaceLogout = () => {
     setWorkplaceLogged(false)
@@ -57,9 +71,7 @@ function DmcheckPro() {
     setArticleLogged(false)
     ReactSession.set("article", "")
     currentArticleRef.current = "BRAK"
-    toastTypeRef.current = "toastNotify"
-    toastMessageRef.current = `Stanowisko wylogowane!`
-    setShowToast(true)
+    toastShower('notify', `Stanowisko wylogowane!`)
   }
 
 
@@ -85,9 +97,7 @@ function DmcheckPro() {
      setArticleLogged(false)
      ReactSession.set("article", "")
      currentArticleRef.current = "BRAK"
-     toastTypeRef.current = "toastNotify"
-     toastMessageRef.current = `Artykuł wylogowany!`
-     setShowToast(true)
+     toastShower('notify', `Artykuł wylogowany!`)
    }
   
 
@@ -191,27 +201,19 @@ function DmcheckPro() {
       const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
       // LENGTH VALIDATION (compare with data.js)
       if (!dmcInputRef.current || dmcInputRef.current.length !== article.dmc.length) {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Niepoprawny DMC!`
-        setShowToast(true)
+        toastShower('error', 'Niepoprawny DMC!')
         return
       }
       if (!article.dmcStartVal || dmcInputRef.current.substr(article.startVal[0], article.startVal[1]) !== article.dmc.substr(article.startVal[0], article.startVal[1])) {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Niepoprawny DMC!`
-        setShowToast(true)
+        toastShower('error', 'Niepoprawny DMC!')
         return
       }
       if (!article.dmcEndVal || dmcInputRef.current.substr(article.endVal[0], article.endVal[1]) !== article.dmc.substr(article.endVal[0], article.endVal[1])) {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Niepoprawny DMC!`
-        setShowToast(true)
+        toastShower('error', 'Niepoprawny DMC!')
         return
       }
       if (!article.fordDate || !fordDateValidation(dmcInputRef.current)) {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Zła data w kodzie DMC!`
-        setShowToast(true)
+        toastShower('error', 'Zła data w kodzie!')
         return
       }
       saveDmc(dmcInputRef.current)
@@ -513,7 +515,7 @@ function DmcheckPro() {
         </div>
       )}
 
-      {showToast && <Toast message={toastMessageRef.current} type={toastTypeRef.current} />}
+      {showToast && <Toast showToast={showToast} message={toastMessageRef.current} type={toastTypeRef.current} />}
 
       <Footer />
 

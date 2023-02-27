@@ -172,7 +172,7 @@ body {
     font-weight: bold;
   }
 
-  .toastNotify {
+  .toast-notify {
     position: fixed;
     bottom: 80px;
     left: 50%;
@@ -188,7 +188,7 @@ body {
     animation: fadein 0.5s, fadeout 0.5s 1.5s;
   }
 
-  .toastSuccess {
+  .toast-success {
     position: fixed;
     bottom: 80px;
     left: 50%;
@@ -204,7 +204,7 @@ body {
     animation: fadein 0.5s, fadeout 0.5s 1.5s;
   }
 
-  .toastError {
+  .toast-error {
     position: fixed;
     bottom: 80px;
     left: 50%;
