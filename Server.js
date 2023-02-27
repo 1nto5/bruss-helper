@@ -1,0 +1,177 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const serveStatic = require('serve-static');
+const app = express();
+app.use(bodyParser.json());
+
+// DEVELOPMENT
+const cors = require("cors");
+app.use(cors({
+  origin: "*"
+}));
+const PORT = "4000"
+
+// PRODUCTION
+// const PORT = "80"
+
+const mongoose = require('mongoose');
+mongoose.set('strictQuery', false)
+
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/dmcheck', { useNewUrlParser: true });
+// mongoose.connect('mongodb://10.27.10.160/dmcheck', { useNewUrlParser: true });
+
+const DmcSchema = new mongoose.Schema({
+  status: Number,
+  workplace: String,
+  article: String,
+  dmc: String,
+  dmc_operator: String,
+  dmc_time: Date,
+  hydra_batch: String,
+  hydra_operator: String,
+  hydra_time: Date,
+  pallet_batch: String,
+  pallet_operator: String,
+  pallet_time: Date,
+  delete_user: String,
+  delete_time: Date
+}, { versionKey: false });
+
+app.get('/find', async (req, res) => {
+  try {
+    const collection = req.query.workplace;
+    const workplace = req.query.workplace;
+    const article = req.query.article;
+    const hydra_batch = req.query.hydraBatchInput;
+    const pallet_batch = req.query.palletBatchInput;
+    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    let query = {};
+    if (workplace) {
+      query.workplace = workplace;
+    }
+    if (article) {
+      query.article = article;
+    }
+    if (hydra_batch) {
+      query.hydra_batch = { $regex: hydra_batch, $options: 'i' };
+    }
+    if (pallet_batch) {
+      query.pallet_batch = { $regex: pallet_batch, $options: 'i' };
+    }
+    if (req.query.start) {
+      const start = new Date(req.query.start);
+      query.dmc_time = { $gte: start };
+    }
+    if (req.query.end) {
+      const end = new Date(req.query.end);
+      if (query.dmc_time) {
+        query.dmc_time.$lte = end;
+      } else {
+        query.dmc_time = { $lte: end };
+      }
+    }
+    const documents = await Dmc
+      .find(query)
+      .sort({ dmc_time: -1 }) // sort by dmc_time in ascending order
+      .limit(100) // limit to 100 documents
+      .exec();
+    res.json(documents);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+app.post('/delete', async (req, res) => {
+  const { selectedDmcs, collection } = req.body;
+  try {
+    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    if (!Array.isArray(selectedDmcs)) {
+      return res.status(400).send('Invalid request body');
+    }
+    await Dmc.updateMany({ _id: { $in: selectedDmcs.map(dmc => dmc._id) } }, { $set: { status: 9 } });
+    res.status(200).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).send();
+  }
+});
+
+app.post('/dmc-save', async (req, res) => {
+  try {
+    const data = req.body;
+    const collection = data.collection; // workplace name
+    const dmc = data.dmc;
+    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const existingData = await Dmc.findOne({ dmc });
+    if (existingData) return res.json({ message: `DMC istnieje w bazie!` });
+    const newDmc = new Dmc(data);
+    await newDmc.save();
+    res.json({ message: 'DMC OK!' });
+  } catch (error) {
+    return res.json({ message: error });
+  }
+});
+
+app.post('/hydra-save', async (req, res) => {
+  try {
+    const data = req.body;
+    const collection = data.collection; // workplace name
+    const hydra_batch = data.hydra_batch;
+    const hydra_operator = data.hydra_operator;
+    const hydra_time = data.hydra_time;
+    const article = data.article;
+    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const result = await Dmc.findOne({ hydra_batch: hydra_batch, article: article });
+    if (result) return res.json({ message: "Batch istnieje w bazie!" });
+    await Dmc.updateMany({ status: 0, article: article }, { $set: { status: 1, hydra_batch, hydra_operator, hydra_time } });
+    res.json({ message: "Karta HYDRA zapisana!" });
+  } catch (error) {
+    return res.json({ message: error });
+  }
+});
+
+app.post('/pallet-save', async (req, res) => {
+  try {
+    const data = req.body;
+    const collection = data.collection; // workplace name
+    const pallet_batch = data.pallet_batch;
+    const pallet_operator = data.pallet_operator;
+    const pallet_time = data.pallet_time;
+    const article = data.article;
+    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const result = await Dmc.findOne({ pallet_batch: pallet_batch, article: article });
+    if (result) return res.json({ message: "Batch istnieje w bazie!" });
+    await Dmc.updateMany({ status: 1, article: article }, { $set: { status: 2, pallet_batch, pallet_operator, pallet_time } });
+    res.json({ message: "Karta PALETA zapisana!" });
+  } catch (error) {
+    return res.json({ message: error });
+  }
+});
+
+app.get('/count', async (req, res) => {
+  try {
+    const collection = req.query.collection; // workplace name
+    const article = req.query.article
+    const status = req.query.status; // 0 / 1 / 2
+    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const count = await Dmc.countDocuments({ status: status, article: article });
+    res.json({ message: count });
+  } catch (error) {
+    return res.json({ message: error });
+  }
+});
+
+// PRODUCTION
+// // Serve the static files from the React app
+// app.use(serveStatic(path.join(__dirname, 'react/build')));
+
+// // Handles any requests
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'react/build/index.html'));
+// });
+
+app.listen(PORT, () => {
+  console.log(`Express server listening on port ${PORT}`);
+});

@@ -1,0 +1,6 @@
+{
+  "short_name": "DMCheck",
+  "name": "DMCheck - validation dmc codes and so on",
+  "start_url": ".",
+  "display": "standalone"
+}
