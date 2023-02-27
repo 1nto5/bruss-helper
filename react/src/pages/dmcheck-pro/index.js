@@ -4,9 +4,9 @@ import production from "../../data/production"
 import React, {useState, useEffect, useRef, useMemo} from 'react'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
-import Header from '../../components/Header'
-import Footer from '../../components/Footer'
-import Toast from '../../components/Toast'
+import Header from './Header'
+import Footer from './Footer'
+import Toast from './Toast'
 import Status from './Status'
 import Login from './Login'
 import WorkplaceCard from './WorkplaceCard'
