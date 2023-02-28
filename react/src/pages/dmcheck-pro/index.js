@@ -89,6 +89,7 @@ function DmcheckPro() {
   }
   const handleErrorUserLogin = (persNumb) => {
     toast.error(`NOK numer!`)
+    playNotification('nok');
   }
   const handleUserLogout = () => {
     setUserLogged(false)
@@ -371,8 +372,10 @@ function DmcheckPro() {
       }
     }
     useEffect(() => {
-      countStatus(0)
-      countStatus(1)
+      if(currentWorkplaceRef !== "BRAK") {
+        countStatus(0)
+        countStatus(1)
+      }
     }, [articleLogged])
 
 

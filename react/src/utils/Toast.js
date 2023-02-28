@@ -10,17 +10,18 @@ const Toast = () => {
       gutter={8}
       containerClassName=""
       containerStyle={{
-        bottom: '25%',
+        bottom: '15%',
       }}
       toastOptions={{
         className: '',
         duration: 2500,
         style: {
-          fontSize: '2rem',
+          textAlign: 'center',
+          fontSize: '1.5rem',
           fontWeight: '600',
           background: '#ddd',
           color: '#333',
-          padding: '40px',
+          padding: '30px',
         },
 
         success: {

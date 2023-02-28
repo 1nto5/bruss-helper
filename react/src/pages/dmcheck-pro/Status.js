@@ -1,5 +1,7 @@
 import React from 'react'
 
+// TODO 3 boxes when no pallet
+
 function Status(props) {
   return (
     <div className="status">
