@@ -5,8 +5,6 @@ import Home from './pages/home'
 import DmcheckPro from './pages/dmcheck-pro'
 import DmcheckMgmt from './pages/dmcheck-mgmt'
 import './assets/global.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
