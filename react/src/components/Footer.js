@@ -1,11 +1,9 @@
 import React from 'react';
 
-const Footer = () => {
-  const version = "4.0.0-test";
-
+const Footer = (props) => {
   return (
     <footer>
-      {version}
+      {props.version}
     </footer>
   );
 }

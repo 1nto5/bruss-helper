@@ -5,7 +5,7 @@ import React, {useState, useEffect, useRef, useMemo} from 'react'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
 import Header from './Header'
-import Footer from './Footer'
+import Footer from '../../components/Footer'
 import Toast from '../../utils/Toast'
 import toast from 'react-hot-toast';
 import { playNotification } from '../../utils/NotificationSound';
@@ -469,7 +469,7 @@ function DmcheckPro() {
 
       <Toast/>
 
-      <Footer />
+      <Footer version={"4.0.2"}/>
 
     </div>
 

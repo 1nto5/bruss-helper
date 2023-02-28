@@ -2,9 +2,9 @@ import React, {useState} from 'react'
 import Header from './Header'
 import Chooser from './Chooser'
 import DmcList from './DmcList'
-import Footer from './Footer'
+import Footer from '../../components/Footer'
 
-// const API = "http://localhost:4000/"
+// TODO auth system
 
 const DmcheckMgmt = () => {
   
@@ -85,7 +85,7 @@ const DmcheckMgmt = () => {
           palletBatchInput={palletBatchInput}
         />
 
-        <Footer />
+        <Footer version={"1.0.0"}/>
 
     </div>
     )
