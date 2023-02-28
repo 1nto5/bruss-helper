@@ -25,4 +25,5 @@ dist-ssr
 
 # react
 /react/src/data
+/react/src/assets/audio
 /react/src/assets/logo.png
