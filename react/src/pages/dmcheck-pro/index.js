@@ -6,7 +6,9 @@ import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
 import Header from './Header'
 import Footer from './Footer'
-import Toast from './Toast'
+import Toast from '../../utils/Toast'
+import toast from 'react-hot-toast';
+import { playNotification } from '../../utils/NotificationSound';
 import Status from './Status'
 import Login from './Login'
 import WorkplaceCard from './WorkplaceCard'
@@ -18,37 +20,7 @@ ReactSession.setStoreType("localStorage")
 
 function DmcheckPro() { 
 
-
-  // NOTIFICATIONS aka TOASTS
-  const toastTypeRef = useRef()
-  const toastMessageRef = useRef()
-  const [showToast, setShowToast] = useState(false)
-  
-  // useEffect(() => {
-  //     setTimeout(() => {
-  //       setShowToast(false)
-  //     }, 5000);
-  // }, [showToast])
-
-  const toastShower = (type, text) => {
-    let timer = setTimeout(() => {
-      setShowToast(false)
-    }, 2000);
-
-    toastTypeRef.current = type
-    toastMessageRef.current = text
-    if (showToast) {
-      setShowToast(false)
-    }
-    setShowToast(true)
-    clearTimeout(timer)
-    // setTimeout(() => {
-    //   setShowToast(false)
-    // }, 2000);
-  }
-
-
- // WORKPLACE
+  // WORKPLACE
   const [workplaceLogged, setWorkplaceLogged] = useState(false)
   const currentWorkplaceRef = useRef("BRAK")
   useEffect(() => {
@@ -61,8 +33,8 @@ function DmcheckPro() {
   const handleWorkplaceLogin = (workplaceName) => {
     setWorkplaceLogged(true)
     ReactSession.set("workplace", workplaceName)
-    currentWorkplaceRef.current = workplaceName
-    toastShower('success', `Wybrano: ${workplaceName}!`)
+    toast.success(`Zalogowano: ${workplaceName}!`)
+    playNotification('ok');
   }
   const handleWorkplaceLogout = () => {
     setWorkplaceLogged(false)
@@ -70,8 +42,7 @@ function DmcheckPro() {
     currentWorkplaceRef.current = "BRAK"
     setArticleLogged(false)
     ReactSession.set("article", "")
-    currentArticleRef.current = "BRAK"
-    toastShower('notify', `Stanowisko wylogowane!`)
+    toast(`Stanowisko wylogowane!`)
   }
 
 
@@ -89,15 +60,13 @@ function DmcheckPro() {
      setArticleLogged(true)
      ReactSession.set("article", articleNumber)
      currentArticleRef.current = articleNumber
-     toastTypeRef.current = "toastSuccess"
-     toastMessageRef.current = `Artykuł ${articleNumber} zalogowany!`
-     setShowToast(true)
+     toast.success(`Zalogowano: ${articleNumber}!`)
+     playNotification('ok');
    }
    const handleArticleLogout = () => {
      setArticleLogged(false)
      ReactSession.set("article", "")
-     currentArticleRef.current = "BRAK"
-     toastShower('notify', `Artykuł wylogowany!`)
+     toast(`Artykuł wylogowany!`)
    }
   
 
@@ -115,22 +84,16 @@ function DmcheckPro() {
     setUserLogged(true)
     ReactSession.set("user", persNumb)
     currentUserRef.current = persNumb
-    toastTypeRef.current = "toastSuccess"
-    toastMessageRef.current = `Zalogowano: ${persNumb}!`
-    setShowToast(true)
+    toast.success(`Zalogowano: ${persNumb}!`)
+    playNotification('ok');
   }
   const handleErrorUserLogin = (persNumb) => {
-    toastTypeRef.current = "toastError"
-    toastMessageRef.current = `Niepoprawny numer!`
-    setShowToast(true)
+    toast.error(`NOK numer!`)
   }
   const handleUserLogout = () => {
     setUserLogged(false)
     ReactSession.set("user", "")
-    currentUserRef.current = "BRAK"
-    toastTypeRef.current = "toastNotify"
-    toastMessageRef.current = `Wylogowano!`
-    setShowToast(true)
+    toast(`Operator wylogowany!`)
   }
 
 
@@ -199,21 +162,24 @@ function DmcheckPro() {
     if (dmcInputRef.current) {
       const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
       const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
-      // LENGTH VALIDATION (compare with data.js)
       if (!dmcInputRef.current || dmcInputRef.current.length !== article.dmc.length) {
-        toastShower('error', 'Niepoprawny DMC!')
+        toast.error("NOK długość DMC!")
+        playNotification('nok');
         return
       }
       if (!article.dmcStartVal || dmcInputRef.current.substr(article.startVal[0], article.startVal[1]) !== article.dmc.substr(article.startVal[0], article.startVal[1])) {
-        toastShower('error', 'Niepoprawny DMC!')
+        toast.error("NOK treść DMC!")
+        playNotification('nok');
         return
       }
       if (!article.dmcEndVal || dmcInputRef.current.substr(article.endVal[0], article.endVal[1]) !== article.dmc.substr(article.endVal[0], article.endVal[1])) {
-        toastShower('error', 'Niepoprawny DMC!')
+        toast.error("NOK treść DMC!")
+        playNotification('nok');
         return
       }
       if (!article.fordDate || !fordDateValidation(dmcInputRef.current)) {
-        toastShower('error', 'Zła data w kodzie!')
+        toast.error("NOK data DMC!")
+        playNotification('nok');
         return
       }
       saveDmc(dmcInputRef.current)
@@ -240,14 +206,12 @@ function DmcheckPro() {
     })
       .then(res => {
         countStatus(0) // update inBox while success
-        toastTypeRef.current = res.data.message === "DMC istnieje w bazie!" ? "toastError" : "toastSuccess"
-        toastMessageRef.current = res.data.message
-        setShowToast(true)
+        res.data.message === "DMC istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
+        res.data.message === "DMC OK!" && toast.success(res.data.message) && playNotification('ok');
       })
       .catch(error => {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = "Błąd bazy danych!"
-        setShowToast(true)
+        toast.error("Błąd DB!")
+        playNotification('nok');
       })
   }
 
@@ -275,21 +239,18 @@ function DmcheckPro() {
       const hydraQuantity = splittedHydra[2] ? parseInt(splittedHydra[2].substr(2)) : '';
       const hydraProcess = splittedHydra[1] ? splittedHydra[1].substr(2) : ''
       if (hydraArticle !== currentArticleRef.current) {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Niepoprawny artykuł!`
-        setShowToast(true)
+        toast.error("NOK artykuł!")
+        playNotification('nok');
         return
       }
       if (hydraQuantity !== inBox) {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Niepoprawna ilość!`
-        setShowToast(true)
+        toast.error("NOK ilość!")
+        playNotification('nok');
         return
       }
       if (hydraProcess !== "050") {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Niepoprawny proces!`
-        setShowToast(true)
+        toast.error("NOK proces!")
+        playNotification('nok');
         return
       }
       saveHydra(hydraBatch)
@@ -313,14 +274,12 @@ function DmcheckPro() {
         .then(res => {
           countStatus(0) // update inBox while success
           countStatus(1) // update onPallet while success
-          toastTypeRef.current = res.data.message === "Batch istnieje w bazie!" ? "toastError" : "toastSuccess"
-          toastMessageRef.current = res.data.message
-          setShowToast(true)
+          res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
+          res.data.message === "Karta HYDRA zapisana!" && toast.success(res.data.message) && playNotification('ok');
         })
         .catch(error => {
-          toastTypeRef.current = "toastError"
-          toastMessageRef.current = "Błąd bazy danych!"
-          setShowToast(true)
+          toast.error("Błąd DB!")
+          playNotification('nok');
         })
     }
 
@@ -337,9 +296,8 @@ function DmcheckPro() {
       const pallet = palletInputRef.current
       if (pallet) {
         if (pallet.length < 34 || !pallet.includes("|")) {
-          toastTypeRef.current = "toastError"
-          toastMessageRef.current = `Niepoprawny kod QR!`
-          setShowToast(true)
+          toast.error("NOK kod QR!")
+          playNotification('nok');
           return
         }
         const splittedPallet = pallet.split("|")
@@ -348,24 +306,20 @@ function DmcheckPro() {
         const palletQuantity = splittedPallet[2] ? parseInt(splittedPallet[2].substr(2)) : ''
         const palletProcess = splittedPallet[1] ? splittedPallet[1].substr(2) : ''
         if (palletArticle !== currentArticleRef.current) {
-          toastTypeRef.current = "toastError"
-          toastMessageRef.current = `Niepoprawny artykuł!`
-          setShowToast(true)
+          toast.error("NOK artykuł!")
+          playNotification('nok');
           return
         }
         if (palletQuantity !== (onPallet * boxSize)) {
-          toastTypeRef.current = "toastError"
-          toastMessageRef.current = `Niepoprawna ilość!`
-          setShowToast(true)
+          toast.error("NOK ilość!")
+          playNotification('nok');
           return
         }
         if (palletProcess !== "000") {
-          toastTypeRef.current = "toastError"
-          toastMessageRef.current = `Niepoprawny proces!`
-          setShowToast(true)
+          toast.error("NOK proces!")
+          playNotification('nok');
           return
         }
-
         savePallet(palletBatch)
       }
     }, [palletInputted])
@@ -386,14 +340,12 @@ function DmcheckPro() {
       })
         .then(res => {
           countStatus(1) // update onPallet while success
-          toastTypeRef.current = res.data.message === "Batch istnieje w bazie!" ? "toastError" : "toastSuccess"
-          toastMessageRef.current = res.data.message
-          setShowToast(true)
+          res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
+          res.data.message === "Karta PALETA zapisana!" && toast.success(res.data.message) && playNotification('ok');
         })
         .catch(error => {
-          toastTypeRef.current = "toastError"
-          toastMessageRef.current = "Błąd bazy danych!"
-          setShowToast(true)
+          toast.error("Błąd DB!");
+          playNotification('nok');
         })
     }
 
@@ -515,7 +467,7 @@ function DmcheckPro() {
         </div>
       )}
 
-      {showToast && <Toast showToast={showToast} message={toastMessageRef.current} type={toastTypeRef.current} />}
+      <Toast/>
 
       <Footer />
 
