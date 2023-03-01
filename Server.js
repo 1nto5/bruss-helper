@@ -35,8 +35,9 @@ const DmcSchema = new mongoose.Schema({
   pallet_batch: String,
   pallet_operator: String,
   pallet_time: Date,
-  delete_user: String,
-  delete_time: Date
+  skip_user: String,
+  skip_time: Date,
+  skip_reason: String
 }, { versionKey: false });
 
 app.get('/dmcheck-mgmt-find', async (req, res) => {
