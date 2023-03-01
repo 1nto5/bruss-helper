@@ -19,7 +19,7 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', false)
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/dmcheck', { useNewUrlParser: true });
+mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/bruss-helper', { useNewUrlParser: true });
 // mongoose.connect('mongodb://10.27.10.160/dmcheck', { useNewUrlParser: true });
 
 const DmcSchema = new mongoose.Schema({
@@ -39,14 +39,15 @@ const DmcSchema = new mongoose.Schema({
   delete_time: Date
 }, { versionKey: false });
 
-app.get('/find', async (req, res) => {
+app.get('/dmcheck-mgmt-find', async (req, res) => {
   try {
-    const collection = req.query.workplace;
+    // const collection = req.query.workplace;
     const workplace = req.query.workplace;
     const article = req.query.article;
-    const hydra_batch = req.query.hydraBatchInput;
-    const pallet_batch = req.query.palletBatchInput;
-    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const status = req.query.status;
+    const operator = req.query.operator;
+    const dmcOrBatch = req.query.dmcOrBatch;
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
     let query = {};
     if (workplace) {
       query.workplace = workplace;
@@ -54,11 +55,23 @@ app.get('/find', async (req, res) => {
     if (article) {
       query.article = article;
     }
-    if (hydra_batch) {
-      query.hydra_batch = { $regex: hydra_batch, $options: 'i' };
+    if (status) {
+      query.status = status;
     }
-    if (pallet_batch) {
-      query.pallet_batch = { $regex: pallet_batch, $options: 'i' };
+    if (operator) {
+      query.$or = [
+        { dmc_operator: operator },
+        { hydra_operator: operator },
+        { pallet_operator: operator }
+      ];
+    }
+    if (dmcOrBatch) {
+      const regex = new RegExp(`.*${dmcOrBatch}.*`, "i");
+      query.$or = [
+        { dmc: { $regex: regex } },
+        { hydra_batch: { $regex: regex } },
+        { pallet_batch: { $regex: regex } }
+      ];
     }
     if (req.query.start) {
       const start = new Date(req.query.start);
@@ -83,10 +96,10 @@ app.get('/find', async (req, res) => {
   }
 });
 
-app.post('/delete', async (req, res) => {
+app.post('/dmcheck-mgmt-skip', async (req, res) => {
   const { selectedDmcs, collection } = req.body;
   try {
-    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
     if (!Array.isArray(selectedDmcs)) {
       return res.status(400).send('Invalid request body');
     }
@@ -98,12 +111,12 @@ app.post('/delete', async (req, res) => {
   }
 });
 
-app.post('/dmc-save', async (req, res) => {
+app.post('/dmcheck-pro-dmc-save', async (req, res) => {
   try {
     const data = req.body;
-    const collection = data.collection; // workplace name
+    // const collection = data.collection; // workplace name
     const dmc = data.dmc;
-    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
     const existingData = await Dmc.findOne({ dmc });
     if (existingData) return res.json({ message: `DMC istnieje w bazie!` });
     const newDmc = new Dmc(data);
@@ -114,48 +127,50 @@ app.post('/dmc-save', async (req, res) => {
   }
 });
 
-app.post('/hydra-save', async (req, res) => {
+app.post('/dmcheck-pro-hydra-save', async (req, res) => {
   try {
     const data = req.body;
-    const collection = data.collection; // workplace name
+    // const collection = data.collection; // workplace name
     const hydra_batch = data.hydra_batch;
     const hydra_operator = data.hydra_operator;
     const hydra_time = data.hydra_time;
     const article = data.article;
-    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const workplace = data.workplace;
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
     const result = await Dmc.findOne({ hydra_batch: hydra_batch, article: article });
     if (result) return res.json({ message: "Batch istnieje w bazie!" });
-    await Dmc.updateMany({ status: 0, article: article }, { $set: { status: 1, hydra_batch, hydra_operator, hydra_time } });
+    await Dmc.updateMany({ status: 0, article: article, workplace: workplace }, { $set: { status: 1, hydra_batch, hydra_operator, hydra_time } });
     res.json({ message: "Karta HYDRA zapisana!" });
   } catch (error) {
     return res.json({ message: error });
   }
 });
 
-app.post('/pallet-save', async (req, res) => {
+app.post('/dmcheck-pro-pallet-save', async (req, res) => {
   try {
     const data = req.body;
-    const collection = data.collection; // workplace name
+    // const collection = data.collection; // workplace name
     const pallet_batch = data.pallet_batch;
     const pallet_operator = data.pallet_operator;
     const pallet_time = data.pallet_time;
+    const workplace = data.workplace;
     const article = data.article;
-    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
     const result = await Dmc.findOne({ pallet_batch: pallet_batch, article: article });
     if (result) return res.json({ message: "Batch istnieje w bazie!" });
-    await Dmc.updateMany({ status: 1, article: article }, { $set: { status: 2, pallet_batch, pallet_operator, pallet_time } });
+    await Dmc.updateMany({ status: 1, article: article, workplace: workplace }, { $set: { status: 2, pallet_batch, pallet_operator, pallet_time } });
     res.json({ message: "Karta PALETA zapisana!" });
   } catch (error) {
     return res.json({ message: error });
   }
 });
 
-app.get('/count', async (req, res) => {
+app.get('/dmcheck-pro-count', async (req, res) => {
   try {
-    const collection = req.query.collection; // workplace name
+    // const collection = req.query.collection; // workplace name
     const article = req.query.article
     const status = req.query.status; // 0 / 1 / 2
-    const Dmc = mongoose.model('Dmc', DmcSchema, collection);
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
     const count = await Dmc.countDocuments({ status: status, article: article });
     res.json({ message: count });
   } catch (error) {
