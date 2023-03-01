@@ -164,7 +164,7 @@ const DmcList = (props) => {
           <table className='dmc-list--table'>
             <thead>
               <tr className='dmc-list--tr'>
-                <th className='dmc-list--th' colSpan={2} style={{ borderRight: '2px solid black' }}>wybierz</th>
+                <th className='dmc-list--th' colSpan={3} style={{ borderRight: '2px solid black' }}>wybierz</th>
                 <th className='dmc-list--th-dmc' colSpan={3} style={{ borderRight: '2px solid black' }}>część</th>
                 <th className='dmc-list--th-hydra' colSpan={3} style={{ borderRight: '2px solid black' }}>box</th>
                 <th className='dmc-list--th-pallet' colSpan={3}>paleta</th>
@@ -173,7 +173,8 @@ const DmcList = (props) => {
                 <th className='dmc-list--th'>
                   <input type="checkbox" onChange={handleSelectAll} checked={selectAll} />
                 </th>
-                <th className='dmc-list--th' style={{ borderRight: '2px solid black' }}>status</th>
+                <th className='dmc-list--th'>status</th>
+                <th className='dmc-list--th' style={{ borderRight: '2px solid black' }}>stanowisko</th>
                 <th className='dmc-list--th-dmc'>dmc</th>
                 <th className='dmc-list--th-dmc'>operator</th>
                 <th className='dmc-list--th-dmc' style={{ borderRight: '2px solid black' }}>czas</th>
@@ -197,12 +198,13 @@ const DmcList = (props) => {
                 <td className='dmc-list--td'>
                   <input type="checkbox" id={`dmc-${dmc._id}`} onChange={() => handleDmcSelection(dmc)} checked={isSelected(dmc)} />
                 </td>
-                <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>
+                <td className='dmc-list--td'>
                   {dmc.status === 0 && "box"}
                   {dmc.status === 1 && "paleta"}
                   {dmc.status === 2 && "magazyn"}
                   {dmc.status === 9 && "pominięty"}
                 </td>
+                <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>{dmc.workplace}</td>
                 <td className='dmc-list--td'>{dmc.dmc}</td>
                 <td className='dmc-list--td'>{dmc.dmc_operator}</td>
                 <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>{new Date(dmc.dmc_time).toLocaleString('pl-PL')}</td>
