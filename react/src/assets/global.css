@@ -321,7 +321,7 @@ body {
     background-color: #ddd;
     box-shadow: 0px 0px 5px #333;
     align-items: center;
-    height: 100px;
+    height: 150px;
   }
   
   .mgmt-chooser--box {
@@ -335,9 +335,6 @@ body {
     box-sizing: border-box;
   }
   
-  .mgmt-chooser--box--row {
-
-  }
 
   .mgmt-chooser--row--select {
     width: 135px;
@@ -365,26 +362,50 @@ body {
   }
   
   .mgmt--dmc-list {
-    margin-left: 10px;
-    margin-right: 10px;
+
   }
 
   .dmc-list--table {
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 5px;
     width: 100%;
   }
 
   .dmc-list--th, .dmc-list--td {
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     padding: 8px;
     text-align: left;
   }
 
   .dmc-list--th {
-    background-color: #f2f2f2;
+    background-color: #e9e9e9;
     font-weight: bold;
   }
+
+  .dmc-list--th-dmc {
+    background-color: #ddd;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: left;
+  }
+
+  .dmc-list--th-hydra {
+    background-color: #e9e9e9;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: left;
+  }
+
+  .dmc-list--th-pallet {
+    background-color: #ddd;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: left;
+  }
+
 
   
 
