@@ -196,11 +196,11 @@ function DmcheckPro() {
     const dmc = dmcToSave
     const dmc_operator = currentUserRef.current
     const dmc_time = new Date()
-    const collection = currentWorkplaceRef.current
+    // const collection = currentWorkplaceRef.current
 
-    const data = { status, workplace, article, dmc, dmc_operator, dmc_time, collection}
+    const data = { status, workplace, article, dmc, dmc_operator, dmc_time }
 
-    axios.post(`${API_URL}/dmc-save`, data, {
+    axios.post(`${API_URL}/dmcheck-pro-dmc-save`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -264,10 +264,11 @@ function DmcheckPro() {
       const hydra_batch = hydraToSave
       const hydra_operator = currentUserRef.current
       const hydra_time = new Date()
-      const collection = currentWorkplaceRef.current
+      // const collection = currentWorkplaceRef.current
+      const workplace = currentWorkplaceRef.current
       const article = currentArticleRef.current
-      const data = { hydra_batch, hydra_operator, hydra_time, collection, article }
-      axios.post(`${API_URL}/hydra-save`, data, {
+      const data = { hydra_batch, hydra_operator, hydra_time, workplace, article }
+      axios.post(`${API_URL}/dmcheck-pro-hydra-save`, data, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -331,10 +332,10 @@ function DmcheckPro() {
       const pallet_batch = palletToSave
       const pallet_operator = currentUserRef.current
       const pallet_time = new Date()
-      const collection = currentWorkplaceRef.current
+      const workplace = currentWorkplaceRef.current
       const article = currentArticleRef.current
-      const data = { pallet_batch, pallet_operator, pallet_time, collection, article }
-      axios.post(`${API_URL}/pallet-save`, data, {
+      const data = { pallet_batch, pallet_operator, pallet_time, workplace, article }
+      axios.post(`${API_URL}/dmcheck-pro-pallet-save`, data, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -355,11 +356,11 @@ function DmcheckPro() {
     const [inBox, setInBox] = useState(null)
     const [onPallet, setOnPallet] = useState(null)
     const countStatus = async (statusNumber) => {
-      const collection = currentWorkplaceRef.current
+      const workplace = currentWorkplaceRef.current
       const article = currentArticleRef.current
       const status = statusNumber
       try {
-        const response = await axios.get(`${API_URL}/count?collection=${collection}&status=${status}&article=${article}`)
+        const response = await axios.get(`${API_URL}/dmcheck-pro-count?status=${status}&workplace=${workplace}&article=${article}`)
         const count = response.data.message
         if (statusNumber === 0) {
           setInBox(count)
