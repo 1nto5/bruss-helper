@@ -3,10 +3,10 @@ import logo from '../../assets/logo.png'
 
 const Header = (props) => {
   
-  const handleClickDelete = (e) => {
+  const handleClickSkip = (e) => {
     e.preventDefault();
-    if (window.confirm("Czy na pewno chcesz usunąć zaznaczone DMC?")) {
-      props.clickDelete();
+    if (window.confirm("Czy na pewno chcesz pominąć zaznaczone pozycje?")) {
+      props.clickSkip();
     }
   }
   
@@ -30,7 +30,7 @@ const Header = (props) => {
       <nav className="header--nav">
         <a href="/#" onClick={handleClickPrint} className="header--link">Drukuj</a>
         {/* <a href="/#" onClick={handleClickExcel} className="header--link">Excel</a> */}
-        <a href="/#" onClick={handleClickDelete} className="header--link">Usuń</a>
+        <a href="/#" onClick={handleClickSkip} className="header--link">Pomiń</a>
       </nav>
     </header>
   );

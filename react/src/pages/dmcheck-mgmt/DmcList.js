@@ -9,38 +9,37 @@ const DmcList = (props) => {
     const [selectAll, setSelectAll] = useState(false);
     const [selectedDmcs, setSelectedDmcs] = useState([]);
     const [dmcList, setDmcList] = useState([]);
-    const [reloadAfterDelete, setReloadAfterDelete] = useState(false)
+    const [reloadAfterSkip, setReloadAfterSkip] = useState(false)
   
     useEffect(() => {
-      if (props.article !== 'default') {
         const params = {
-          workplace: props.workplace,
-          article: props.article,
+          ...(props.workplace && props.workplace !== "default" && { workplace: props.workplace }),
+          ...(props.article && props.article !== "default" && { article: props.article }),
+          ...(props.status && props.status !== "default" && { status: props.status }),
+          ...(props.operator && { operator: props.operator }),
           ...(props.startDate && { start: props.startDate }),
           ...(props.endDate && { end: props.endDate }),
-          ...(props.hydraBatchInput && { hydraBatchInput: props.hydraBatchInput }),
-          ...(props.palletBatchInput && { palletBatchInput: props.palletBatchInput })
+          ...(props.dmcOrBatchInput && { dmcOrBatch: props.dmcOrBatchInput }),
         };
-    
         axios
-          .get(`${API_URL}/find`, { params })
+          .get(`${API_URL}/dmcheck-mgmt-find`, { params })
           .then(response => {
             setDmcList(response.data);
           })
           .catch(error => {
             console.log(error);
           });
-      }
-    }, [props.startDate, props.endDate, props.workplace, props.article, props.hydraBatchInput, props.palletBatchInput, reloadAfterDelete]);
+      
+    }, [props.startDate, props.endDate, props.workplace, props.article, props.status, props.operator, props.dmcOrBatchInput, reloadAfterSkip]);
     
     useEffect(() => {
       if(dmcList.length) {
-        handleDelete();
+        handleSkip();
       }
-    }, [props.deleteClick])
+    }, [props.skipClick])
 
     useEffect(() => {
-      if(dmcList.length) {
+      if(props.printClick && dmcList.length) {
         printSelectedDmcs();
       }
     }, [props.printClick])
@@ -66,17 +65,17 @@ const DmcList = (props) => {
       setSelectedDmcs(selectAll ? [] : [...dmcList]);
     };
 
-    const handleDelete = () => {
+    const handleSkip = () => {
       const collection = props.workplace;
       axios
-        .post(`${API_URL}/delete`, { selectedDmcs, collection }, {
+        .post(`${API_URL}/dmcheck-mgmt-skip`, { selectedDmcs, collection }, {
           headers: {
             'Content-Type': 'application/json',
           },
         })
         .then((res) => {
           setSelectedDmcs([]);
-          setReloadAfterDelete(prev => !prev);
+          setReloadAfterSkip(prev => !prev);
         })
         .catch((error) => {
           console.log(error);
@@ -159,76 +158,34 @@ const DmcList = (props) => {
       printWindow.close();
     };
   
-    // const exportSelectedDmcsToExcel = async () => {
-    //   if (selectedDmcs.length === 0) {
-    //     alert('Please select some DMCs to export');
-    //     return;
-    //   }
-    
-    //   const workbook = await XlsxPopulate.fromBlankAsync();
-    //   const sheet = workbook.sheet('Sheet1');
-    
-    //   const headers = [
-    //     'status',
-    //     'dmc',
-    //     'operator',
-    //     'czas',
-    //     'batch hydra',
-    //     'operator hydra',
-    //     'czas hydra',
-    //     'batch paleta',
-    //     'operator paleta',
-    //     'czas paleta',
-    //   ];
-    //   sheet.row(1).cell(1).value(headers);
-    
-    //   selectedDmcs.forEach((dmc, index) => {
-    //     const row = sheet.row(index + 2);
-    //     row.cell(1).value(dmc.status === 0 ? 'w boksie' : '');
-    //     row.cell(2).value(dmc.dmc);
-    //     row.cell(3).value(dmc.dmc_operator);
-    //     row.cell(4).value(new Date(dmc.dmc_time).toLocaleString('pl-PL'));
-    //     row.cell(5).value(dmc.hydra_batch || '-');
-    //     row.cell(6).value(dmc.hydra_operator || '-');
-    //     row.cell(7).value(dmc.hydra_time ? new Date(dmc.hydra_time).toLocaleString('pl-PL') : '-');
-    //     row.cell(8).value(dmc.pallet_batch || '-');
-    //     row.cell(9).value(dmc.pallet_operator || '-');
-    //     row.cell(10).value(dmc.pallet_time ? new Date(dmc.pallet_time).toLocaleString('pl-PL') : '-');
-    //   });
-    
-    //   const fileBuffer = await workbook.outputAsync();
-    //   const fileName = `selected-dmcs-${new Date().toISOString().slice(0, 19)}.xlsx`;
-    //   const fileUrl = window.URL.createObjectURL(new Blob([fileBuffer]));
-    //   const fileLink = document.createElement('a');
-    //   fileLink.href = fileUrl;
-    //   fileLink.setAttribute('download', fileName);
-    //   document.body.appendChild(fileLink);
-    //   fileLink.click();
-    //   document.body.removeChild(fileLink);
-    // };
-
-
     return (
         <div className='mgmt--dmc-list'>
           {dmcList.length > 0 && (
           <table className='dmc-list--table'>
             <thead>
               <tr className='dmc-list--tr'>
+                <th className='dmc-list--th' colSpan={2} style={{ borderRight: '2px solid black' }}>wybierz</th>
+                <th className='dmc-list--th-dmc' colSpan={3} style={{ borderRight: '2px solid black' }}>część</th>
+                <th className='dmc-list--th-hydra' colSpan={3} style={{ borderRight: '2px solid black' }}>box</th>
+                <th className='dmc-list--th-pallet' colSpan={3}>paleta</th>
+              </tr>
+              <tr className='dmc-list--tr'>
                 <th className='dmc-list--th'>
                   <input type="checkbox" onChange={handleSelectAll} checked={selectAll} />
                 </th>
-                <th className='dmc-list--th'>status</th>
-                <th className='dmc-list--th'>dmc</th>
-                <th className='dmc-list--th'>operator</th>
-                <th className='dmc-list--th'>czas</th>
-                <th className='dmc-list--th'>hydra</th>
-                <th className='dmc-list--th'>operator</th>
-                <th className='dmc-list--th'>czas</th>
-                <th className='dmc-list--th'>paleta</th>
-                <th className='dmc-list--th'>operator</th>
-                <th className='dmc-list--th'>czas</th>
+                <th className='dmc-list--th' style={{ borderRight: '2px solid black' }}>status</th>
+                <th className='dmc-list--th-dmc'>dmc</th>
+                <th className='dmc-list--th-dmc'>operator</th>
+                <th className='dmc-list--th-dmc' style={{ borderRight: '2px solid black' }}>czas</th>
+                <th className='dmc-list--th-hydra'>batch</th>
+                <th className='dmc-list--th-hydra'>operator</th>
+                <th className='dmc-list--th-hydra' style={{ borderRight: '2px solid black' }}>czas</th>
+                <th className='dmc-list--th-pallet'>batch</th>
+                <th className='dmc-list--th-pallet'>operator</th>
+                <th className='dmc-list--th-pallet'>czas</th>
               </tr>
             </thead>
+            
             <tbody>
             {dmcList.map((dmc) => (
               <tr key={dmc._id} onClick={() => {
@@ -240,18 +197,18 @@ const DmcList = (props) => {
                 <td className='dmc-list--td'>
                   <input type="checkbox" id={`dmc-${dmc._id}`} onChange={() => handleDmcSelection(dmc)} checked={isSelected(dmc)} />
                 </td>
-                <td className='dmc-list--td'>
+                <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>
                   {dmc.status === 0 && "box"}
                   {dmc.status === 1 && "paleta"}
                   {dmc.status === 2 && "magazyn"}
-                  {dmc.status === 9 && "usunięty"}
+                  {dmc.status === 9 && "pominięty"}
                 </td>
                 <td className='dmc-list--td'>{dmc.dmc}</td>
                 <td className='dmc-list--td'>{dmc.dmc_operator}</td>
-                <td className='dmc-list--td'>{new Date(dmc.dmc_time).toLocaleString('pl-PL')}</td>
+                <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>{new Date(dmc.dmc_time).toLocaleString('pl-PL')}</td>
                 <td className='dmc-list--td'>{dmc.hydra_batch || "-"}</td>
                 <td className='dmc-list--td'>{dmc.hydra_operator || "-"}</td>
-                <td className='dmc-list--td'>{dmc.hydra_time ? new Date(dmc.hydra_time).toLocaleString('pl-PL') : "-"}</td>
+                <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>{dmc.hydra_time ? new Date(dmc.hydra_time).toLocaleString('pl-PL') : "-"}</td>
                 <td className='dmc-list--td'>{dmc.pallet_batch || "-"}</td>
                 <td className='dmc-list--td'>{dmc.pallet_operator || "-"}</td>
                 <td className='dmc-list--td'>{dmc.pallet_time ? new Date(dmc.pallet_time).toLocaleString('pl-PL') : "-"}</td>

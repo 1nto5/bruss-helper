@@ -12,19 +12,11 @@ const DmcheckMgmt = () => {
   const [endDate, setEndDate] = useState("");
   const [workplace, setWorkplace] = useState("default");
   const [article, setArticle] = useState("default");
-  const [deleteClick, setDeleteClick] = useState(false);
+  const [status, setStatus] = useState("default");
+  const [operator, setOperator] = useState("");
+  const [skipClick, setSkipClick] = useState(false);
   const [printClick, setPrintClick] = useState(false);
-  const [hydraBatchInput, setHydraBatchInput] = useState("");
-  const [palletBatchInput, setPalletBatchInput] = useState("");
-
-
-  const handleStartDateChange = (value) => {
-    setStartDate(value);
-  };
-
-  const handleEndDateChange = (value) => {
-    setEndDate(value);
-  };
+  const [dmcOrBatchInput, setDmcOrBatchInput] = useState("");
 
   const handleWorkplaceChange = (value) => {
     const selectedWorkplace = value;
@@ -36,42 +28,58 @@ const DmcheckMgmt = () => {
     setArticle(selectedArticle);
   };
 
-  const handleDelete = () => {
-    setDeleteClick(prevDeleteClick => !prevDeleteClick);
+  const handleStatusChange = (value) => {
+    const selectedStatus = value;
+    setStatus(selectedStatus);
+  };
+
+  const handleOperatorInput = (value) => {
+    const operatorInput = value;
+    setOperator(operatorInput);
+  };
+
+  const handleStartDateChange = (value) => {
+    setStartDate(value);
+  };
+
+  const handleEndDateChange = (value) => {
+    setEndDate(value);
+  };
+
+  const handleSkip = () => {
+    setSkipClick(prevSkipClick => !prevSkipClick);
   };
 
   const handlePrint = () => {
     setPrintClick(prevPrintClick => !prevPrintClick);
   };
 
-  const handleHydraBatchInput = (value) => {
-    const hydraBatchInput = value;
-    setHydraBatchInput(hydraBatchInput);
+  const handleDmcOrBatchInput = (value) => {
+    const dmcOrBatch = value;
+    setDmcOrBatchInput(dmcOrBatch);
   };
 
-  const handlePalletBatchInput = (value) => {
-    const palletBatchInput = value;
-    setPalletBatchInput(palletBatchInput);
-  };
 
   return (
     <div>
         
-        <Header clickDelete={handleDelete} clickPrint={handlePrint} clickExcel="test"/>
+        <Header clickSkip={handleSkip} clickPrint={handlePrint} clickExcel="test"/>
 
         <Chooser 
-          startDate={startDate} 
-          handleStartDateChange={handleStartDateChange} 
-          endDate={endDate}
-          handleEndDateChange={handleEndDateChange}
           workplace={workplace}
           handleWorkplaceChange={handleWorkplaceChange}
           article={article}
           handleArticleChange={handleArticleChange}
-          hydraBatchInput={hydraBatchInput}
-          handleHydraBatchInput={handleHydraBatchInput}
-          palletBatchInput={palletBatchInput}
-          handlePalletBatchInput={handlePalletBatchInput}
+          status={status}
+          handleStatusChange={handleStatusChange}
+          operator={operator}
+          handleOperatorInput={handleOperatorInput}
+          startDate={startDate}
+          handleStartDateChange={handleStartDateChange} 
+          endDate={endDate}
+          handleEndDateChange={handleEndDateChange}
+          dmcOrBatchInput={dmcOrBatchInput}
+          handleDmcOrBatchInput={handleDmcOrBatchInput}
         />
 
         <DmcList 
@@ -79,10 +87,11 @@ const DmcheckMgmt = () => {
           endDate={endDate}
           workplace={workplace}
           article={article}
-          deleteClick={deleteClick}
+          status={status}
+          operator={operator}
+          skipClick={skipClick}
           printClick={printClick}
-          hydraBatchInput={hydraBatchInput}
-          palletBatchInput={palletBatchInput}
+          dmcOrBatchInput={dmcOrBatchInput}
         />
 
         <Footer version={"1.0.0"}/>
