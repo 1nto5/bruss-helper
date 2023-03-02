@@ -94,7 +94,7 @@ const DmcheckMgmt = () => {
           dmcOrBatchInput={dmcOrBatchInput}
         />
 
-        <Footer version={"1.0.0"}/>
+        <Footer version={"1.0.3"}/>
 
     </div>
     )
