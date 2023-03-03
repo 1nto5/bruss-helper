@@ -6,21 +6,21 @@ const app = express();
 app.use(bodyParser.json());
 
 // DEVELOPMENT
-// const cors = require("cors");
-// app.use(cors({
-//   origin: "*"
-// }));
-// const PORT = "4000"
+const cors = require("cors");
+app.use(cors({
+  origin: "*"
+}));
+const PORT = "4000"
 
 // PRODUCTION
-const PORT = "80"
+// const PORT = "80"
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false)
 
 // Connect to MongoDB
-// mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/bruss-helper', { useNewUrlParser: true });
-mongoose.connect('mongodb://127.0.0.1/bruss_helper', { useNewUrlParser: true });
+mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/bruss-helper', { useNewUrlParser: true });
+// mongoose.connect('mongodb://127.0.0.1/bruss_helper', { useNewUrlParser: true });
 
 const DmcSchema = new mongoose.Schema({
   status: Number,
@@ -181,12 +181,11 @@ app.get('/dmcheck-pro-count', async (req, res) => {
 
 // PRODUCTION
 // Serve the static files from the React app
-app.use(serveStatic(path.join(__dirname, 'react/build')));
-
+// app.use(serveStatic(path.join(__dirname, 'react/build')));
 // Handles any requests
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'react/build/index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'react/build/index.html'));
+// });
 
 app.listen(PORT, () => {
   console.log(`Express server listening on port ${PORT}`);
