@@ -15,7 +15,6 @@ const DmcheckMgmt = () => {
   const [status, setStatus] = useState("default");
   const [operator, setOperator] = useState("");
   const [skipClick, setSkipClick] = useState(false);
-  const [printClick, setPrintClick] = useState(false);
   const [dmcOrBatchInput, setDmcOrBatchInput] = useState("");
 
   const handleWorkplaceChange = (value) => {
@@ -50,10 +49,6 @@ const DmcheckMgmt = () => {
     setSkipClick(prevSkipClick => !prevSkipClick);
   };
 
-  const handlePrint = () => {
-    setPrintClick(prevPrintClick => !prevPrintClick);
-  };
-
   const handleDmcOrBatchInput = (value) => {
     const dmcOrBatch = value;
     setDmcOrBatchInput(dmcOrBatch);
@@ -63,7 +58,7 @@ const DmcheckMgmt = () => {
   return (
     <div>
         
-        <Header clickSkip={handleSkip} clickPrint={handlePrint} clickExcel="test"/>
+        <Header clickSkip={handleSkip}/>
 
         <Chooser 
           workplace={workplace}
@@ -90,7 +85,6 @@ const DmcheckMgmt = () => {
           status={status}
           operator={operator}
           skipClick={skipClick}
-          printClick={printClick}
           dmcOrBatchInput={dmcOrBatchInput}
         />
 

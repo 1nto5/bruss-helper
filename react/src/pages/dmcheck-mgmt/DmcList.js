@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+
+
 // import XlsxPopulate from 'xlsx-populate';
 
 import { API_URL } from '../../assets/config.js';
 
+// TODO add article
+// TODO migrate to react table
 
 const DmcList = (props) => {
     const [selectAll, setSelectAll] = useState(false);
@@ -37,12 +41,6 @@ const DmcList = (props) => {
         handleSkip();
       }
     }, [props.skipClick])
-
-    useEffect(() => {
-      if(props.printClick && dmcList.length) {
-        printSelectedDmcs();
-      }
-    }, [props.printClick])
 
     const handleDmcSelection = (dmc) => {
       const index = selectedDmcs.findIndex((selectedDmc) => selectedDmc._id === dmc._id);
@@ -81,82 +79,6 @@ const DmcList = (props) => {
           console.log(error);
         });
     };
-
-    const printSelectedDmcs = () => {
-      const printContent = selectedDmcs.map((dmc) => {
-        const statusText = (status) => {
-          if (status === 0) {
-            return "box";
-          } else if (status === 1) {
-            return "paleta";
-          } else if (status === 2) {
-            return "magazyn";
-          } else if (status === 9) {
-            return "usunięty";
-          } else {
-            return "";
-          }
-        };
-        return `<tr>
-                  <td>${statusText(dmc.status)}</td>
-                  <td>${dmc.dmc}</td>
-                  <td>${dmc.dmc_operator}</td>
-                  <td>${new Date(dmc.dmc_time).toLocaleString('pl-PL')}</td>
-                  <td>${dmc.hydra_batch || '-'}</td>
-                  <td>${dmc.hydra_operator || '-'}</td>
-                  <td>${dmc.hydra_time ? new Date(dmc.hydra_time).toLocaleString('pl-PL') : '-'}</td>
-                  <td>${dmc.pallet_batch || '-'}</td>
-                  <td>${dmc.pallet_operator || '-'}</td>
-                  <td>${dmc.pallet_time ? new Date(dmc.pallet_time).toLocaleString('pl-PL') : '-'}</td>
-                </tr>`;
-      }).join('');
-      const printWindow = window.open('', 'PrintWindow', 'height=400,width=800');
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Selected DMCs</title>
-            <style>
-              table {
-                border-collapse: collapse;
-                font-size: 10px;
-              }
-              th, td {
-                border: 1px solid black;
-                padding: 2px;
-              }
-              th {
-                background-color: #ddd;
-              }
-            </style>
-          </head>
-          <body>
-            <table>
-              <thead>
-                <tr>
-                  <th>status</th>
-                  <th>dmc</th>
-                  <th>operator</th>
-                  <th>czas</th>
-                  <th>hydra</th>
-                  <th>operator</th>
-                  <th>czas</th>
-                  <th>paleta</th>
-                  <th>operator</th>
-                  <th>czas</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${printContent}
-              </tbody>
-            </table>
-          </body>
-        </html>`
-      );
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-    };
   
     return (
         <div className='mgmt--dmc-list'>
@@ -164,7 +86,7 @@ const DmcList = (props) => {
           <table className='dmc-list--table'>
             <thead>
               <tr className='dmc-list--tr'>
-                <th className='dmc-list--th' colSpan={3} style={{ borderRight: '2px solid black' }}>wybierz</th>
+                <th className='dmc-list--th' colSpan={4} style={{ borderRight: '2px solid black' }}></th>
                 <th className='dmc-list--th-dmc' colSpan={3} style={{ borderRight: '2px solid black' }}>część</th>
                 <th className='dmc-list--th-hydra' colSpan={3} style={{ borderRight: '2px solid black' }}>box</th>
                 <th className='dmc-list--th-pallet' colSpan={3}>paleta</th>
@@ -174,7 +96,8 @@ const DmcList = (props) => {
                   <input type="checkbox" onChange={handleSelectAll} checked={selectAll} />
                 </th>
                 <th className='dmc-list--th'>status</th>
-                <th className='dmc-list--th' style={{ borderRight: '2px solid black' }}>stanowisko</th>
+                <th className='dmc-list--th'>stanowisko</th>
+                <th className='dmc-list--th' style={{ borderRight: '2px solid black' }}>artykuł</th>
                 <th className='dmc-list--th-dmc'>dmc</th>
                 <th className='dmc-list--th-dmc'>operator</th>
                 <th className='dmc-list--th-dmc' style={{ borderRight: '2px solid black' }}>czas</th>
@@ -204,7 +127,8 @@ const DmcList = (props) => {
                   {dmc.status === 2 && "magazyn"}
                   {dmc.status === 9 && "pominięty"}
                 </td>
-                <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>{dmc.workplace}</td>
+                <td className='dmc-list--td'>{dmc.workplace}</td>
+                <td className='dmc-list--td'  style={{ borderRight: '2px solid black' }}>{dmc.article}</td>
                 <td className='dmc-list--td'>{dmc.dmc}</td>
                 <td className='dmc-list--td'>{dmc.dmc_operator}</td>
                 <td className='dmc-list--td' style={{ borderRight: '2px solid black' }}>{new Date(dmc.dmc_time).toLocaleString('pl-PL')}</td>

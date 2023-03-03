@@ -63,7 +63,7 @@ const PrintPalletLabel = (props) => {
     setTimeout(() => {
       printWindow.print();
       printWindow.close();
-    }, 1000);
+    }, 1500);
   };
 
   const handlePrint = () => {
