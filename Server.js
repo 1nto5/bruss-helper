@@ -6,21 +6,21 @@ const app = express();
 app.use(bodyParser.json());
 
 // DEVELOPMENT
-const cors = require("cors");
-app.use(cors({
-  origin: "*"
-}));
-const PORT = "4000"
+// const cors = require("cors");
+// app.use(cors({
+//   origin: "*"
+// }));
+// const PORT = "4000"
 
 // PRODUCTION
-// const PORT = "80"
+const PORT = "80"
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false)
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/bruss-helper', { useNewUrlParser: true });
-// mongoose.connect('mongodb://10.27.10.160/dmcheck', { useNewUrlParser: true });
+// mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/bruss-helper', { useNewUrlParser: true });
+mongoose.connect('mongodb://127.0.0.1/bruss_helper', { useNewUrlParser: true });
 
 const DmcSchema = new mongoose.Schema({
   status: Number,
@@ -48,7 +48,7 @@ app.get('/dmcheck-mgmt-find', async (req, res) => {
     const status = req.query.status;
     const operator = req.query.operator;
     const dmcOrBatch = req.query.dmcOrBatch;
-    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
     let query = {};
     if (workplace) {
       query.workplace = workplace;
@@ -100,7 +100,7 @@ app.get('/dmcheck-mgmt-find', async (req, res) => {
 app.post('/dmcheck-mgmt-skip', async (req, res) => {
   const { selectedDmcs, collection } = req.body;
   try {
-    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
     if (!Array.isArray(selectedDmcs)) {
       return res.status(400).send('Invalid request body');
     }
@@ -117,7 +117,7 @@ app.post('/dmcheck-pro-dmc-save', async (req, res) => {
     const data = req.body;
     // const collection = data.collection; // workplace name
     const dmc = data.dmc;
-    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
     const existingData = await Dmc.findOne({ dmc });
     if (existingData) return res.json({ message: `DMC istnieje w bazie!` });
     const newDmc = new Dmc(data);
@@ -137,7 +137,7 @@ app.post('/dmcheck-pro-hydra-save', async (req, res) => {
     const hydra_time = data.hydra_time;
     const article = data.article;
     const workplace = data.workplace;
-    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
     const result = await Dmc.findOne({ hydra_batch: hydra_batch, article: article });
     if (result) return res.json({ message: "Batch istnieje w bazie!" });
     await Dmc.updateMany({ status: 0, article: article, workplace: workplace }, { $set: { status: 1, hydra_batch, hydra_operator, hydra_time } });
@@ -156,7 +156,7 @@ app.post('/dmcheck-pro-pallet-save', async (req, res) => {
     const pallet_time = data.pallet_time;
     const workplace = data.workplace;
     const article = data.article;
-    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
     const result = await Dmc.findOne({ pallet_batch: pallet_batch, article: article });
     if (result) return res.json({ message: "Batch istnieje w bazie!" });
     await Dmc.updateMany({ status: 1, article: article, workplace: workplace }, { $set: { status: 2, pallet_batch, pallet_operator, pallet_time } });
@@ -171,7 +171,7 @@ app.get('/dmcheck-pro-count', async (req, res) => {
     // const collection = req.query.collection; // workplace name
     const article = req.query.article
     const status = req.query.status; // 0 / 1 / 2
-    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck-pro');
+    const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
     const count = await Dmc.countDocuments({ status: status, article: article });
     res.json({ message: count });
   } catch (error) {
@@ -180,13 +180,13 @@ app.get('/dmcheck-pro-count', async (req, res) => {
 });
 
 // PRODUCTION
-// // Serve the static files from the React app
-// app.use(serveStatic(path.join(__dirname, 'react/build')));
+// Serve the static files from the React app
+app.use(serveStatic(path.join(__dirname, 'react/build')));
 
-// // Handles any requests
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'react/build/index.html'));
-// });
+// Handles any requests
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'react/build/index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`Express server listening on port ${PORT}`);

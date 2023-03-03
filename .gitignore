@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 
 # react
+/react/build
 /react/src/data
 /react/src/assets/audio
 /react/src/assets/logo.png
