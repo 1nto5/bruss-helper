@@ -19,20 +19,31 @@ import { ReactSession }  from 'react-client-session'
 ReactSession.setStoreType("localStorage")
 
 function DmcheckPro() { 
-
-  // WORKPLACE
+  
   const [workplaceLogged, setWorkplaceLogged] = useState(false)
   const currentWorkplaceRef = useRef("BRAK")
+  const [articleLogged, setArticleLogged] = useState(false)
+  const currentArticleRef = useRef("BRAK")
+  const [userLogged, setUserLogged] = useState(false)
+  const currentUserRef = useRef("BRAK")
+  
+  
+  // WORKPLACE
   useEffect(() => {
     const sesWorkplaceName = ReactSession.get("workplace")
     if (sesWorkplaceName) {
       setWorkplaceLogged(true)
       currentWorkplaceRef.current = sesWorkplaceName
+    } else {
+      setWorkplaceLogged(false)
+      currentWorkplaceRef.current = "BRAK"
     }
   }, [])
   const handleWorkplaceLogin = (workplaceName) => {
     setWorkplaceLogged(true)
     ReactSession.set("workplace", workplaceName)
+    setArticleLogged(false)
+    ReactSession.set("article", "")
     toast.success(`Zalogowano: ${workplaceName}!`)
     playNotification('ok');
   }
@@ -47,8 +58,6 @@ function DmcheckPro() {
 
 
    // ARTICLE
-   const [articleLogged, setArticleLogged] = useState(false)
-   const currentArticleRef = useRef("BRAK")
    useEffect(() => {
      const sesArticleNumber = ReactSession.get("article")
      if (sesArticleNumber) {
@@ -71,8 +80,6 @@ function DmcheckPro() {
   
 
   // NUMER PERSONALNY
-  const [userLogged, setUserLogged] = useState(false)
-  const currentUserRef = useRef("BRAK")
   useEffect(() => {
     const sesPersNumb = ReactSession.get("user")
     if (sesPersNumb) {
@@ -105,6 +112,7 @@ function DmcheckPro() {
     playNotification('ok');
     setEndBox(true)
   }
+
 
   // WORKPLACES CARDS genereted from data.js file
   const workplaceCardsRef = useRef()
@@ -140,7 +148,7 @@ function DmcheckPro() {
         )
       }))
     }
-  }, [currentWorkplaceRef.current])
+  }, [])
 
 
   // BOX+PALLET STATUSES
@@ -170,7 +178,7 @@ function DmcheckPro() {
     }
   }, [articleLogged])
 
-  // WORKPLACE TYPE FROM data.js
+  // TYPE of packing FROM data.js
   const palletWorkplace = useMemo(() => {
     if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
       const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
@@ -239,6 +247,8 @@ function DmcheckPro() {
       return 0;
     } else if (!palletWorkplace && inBox < boxSize) {
       return 0;
+    } else if (!seriesBox) {
+      return 0;
     } else if (inBox === boxSize) {
       return 1;
     } else if (palletWorkplace && onPallet === palletSize) {
@@ -247,7 +257,7 @@ function DmcheckPro() {
   }, [inBox, onPallet, endBox]);
 
 
-  // FORD DATE VALIDATION FUNCTION
+  // FORD DATE VALIDATION 
   const fordDateValidation = () => {
     const today = new Date()
     const year = today.getFullYear()
@@ -260,6 +270,15 @@ function DmcheckPro() {
       : (365 - 13) + dotyGreg
     const dmcDotyJul = parseInt(dmcInputRef.current.substr(7, 3))
     return dmcDotyJul === dotyJul || dmcDotyJul === (dotyJul - 1)
+  }
+
+
+  // BMW DATE VALIDATION 
+  function bmwDateValidation(dmc) {
+    const todayDate = parseInt(new Date().toISOString().slice(2, 10).split('-').join(''));
+    const yesterdayDate = parseInt(new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString().slice(2, 10).split('-').join(''));
+    const dmcDate = parseInt(dmc.slice(17, 23));
+    return dmcDate === todayDate || dmcDate === yesterdayDate;
   }
 
 
@@ -280,17 +299,22 @@ function DmcheckPro() {
         playNotification('nok');
         return
       }
-      if (!article.dmcStartVal || dmcInputRef.current.substr(article.startVal[0], article.startVal[1]) !== article.dmc.substr(article.startVal[0], article.startVal[1])) {
+      if (article.dmcStartVal && dmcInputRef.current.substr(article.startVal[0], article.startVal[1]) !== article.dmc.substr(article.startVal[0], article.startVal[1])) {
         toast.error("NOK treść DMC!")
         playNotification('nok');
         return
       }
-      if (!article.dmcEndVal || dmcInputRef.current.substr(article.endVal[0], article.endVal[1]) !== article.dmc.substr(article.endVal[0], article.endVal[1])) {
+      if (article.dmcEndVal && dmcInputRef.current.substr(article.endVal[0], article.endVal[1]) !== article.dmc.substr(article.endVal[0], article.endVal[1])) {
         toast.error("NOK treść DMC!")
         playNotification('nok');
         return
       }
-      if (!article.fordDate || !fordDateValidation(dmcInputRef.current)) {
+      if (article.fordDate && !fordDateValidation(dmcInputRef.current)) {
+        toast.error("NOK data DMC!")
+        playNotification('nok');
+        return
+      }
+      if (article.bmwDate && !bmwDateValidation(dmcInputRef.current)) {
         toast.error("NOK data DMC!")
         playNotification('nok');
         return
@@ -370,97 +394,97 @@ function DmcheckPro() {
   }, [hydraInputted])
 
 
-    // POST HYDRA INTO API_URL -> SAVE TO DB
-    const saveHydra = (hydraToSave) => {
-      const hydra_batch = hydraToSave
-      const hydra_operator = currentUserRef.current
-      const hydra_time = new Date()
-      const workplace = currentWorkplaceRef.current
-      const article = currentArticleRef.current
-      const data = { hydra_batch, hydra_operator, hydra_time, workplace, article }
-      axios.post(`${API_URL}/dmcheck-pro-hydra-save`, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(res => {
-          setEndBox(false)
-          countStatus(0) // update inBox while success
-          countStatus(1) // update onPallet while success
-          res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
-          res.data.message === "Karta HYDRA zapisana!" && toast.success(res.data.message) && playNotification('ok');
-        })
-        .catch(error => {
-          toast.error("Błąd DB!")
-          playNotification('nok');
-        })
-    }
-
-
-    // PALLET INPUT
-    const palletInputRef = useRef()
-    const [palletInputted, setPalletInputted] = useState(false)
-    const handlePalletSubmit = (pallet) => {
-      palletInputRef.current = pallet
-      setPalletInputted(currentPalletInputted => {
-        return !currentPalletInputted})
-    }
-    useEffect(() => {
-      const pallet = palletInputRef.current
-      if (pallet) {
-        if (pallet.length < 34 || !pallet.includes("|")) {
-          toast.error("NOK kod QR!")
-          playNotification('nok');
-          return
-        }
-        const splittedPallet = pallet.split("|")
-        const palletArticle = splittedPallet[0].length === 7 ? splittedPallet[0].substr(2) : ''
-        const palletBatch = splittedPallet[3] ? splittedPallet[3].substr(2).toUpperCase() : ''
-        const palletQuantity = splittedPallet[2] ? parseInt(splittedPallet[2].substr(2)) : ''
-        const palletProcess = splittedPallet[1] ? splittedPallet[1].substr(2) : ''
-        if (palletArticle !== currentArticleRef.current) {
-          toast.error("NOK artykuł!")
-          playNotification('nok');
-          return
-        }
-        if (palletQuantity !== (onPallet * boxSize)) {
-          toast.error("NOK ilość!")
-          playNotification('nok');
-          return
-        }
-        if (palletProcess !== "000") {
-          toast.error("NOK proces!")
-          playNotification('nok');
-          return
-        }
-        savePallet(palletBatch)
+  // POST HYDRA INTO API_URL -> SAVE TO DB
+  const saveHydra = (hydraToSave) => {
+    const hydra_batch = hydraToSave
+    const hydra_operator = currentUserRef.current
+    const hydra_time = new Date()
+    const workplace = currentWorkplaceRef.current
+    const article = currentArticleRef.current
+    const data = { hydra_batch, hydra_operator, hydra_time, workplace, article }
+    axios.post(`${API_URL}/dmcheck-pro-hydra-save`, data, {
+      headers: {
+        'Content-Type': 'application/json'
       }
-    }, [palletInputted])
-
-
-    // POST PALLET INTO API_URL -> SAVE TO DB
-    const savePallet = (palletToSave) => {
-      const pallet_batch = palletToSave
-      const pallet_operator = currentUserRef.current
-      const pallet_time = new Date()
-      const workplace = currentWorkplaceRef.current
-      const article = currentArticleRef.current
-      const data = { pallet_batch, pallet_operator, pallet_time, workplace, article }
-      axios.post(`${API_URL}/dmcheck-pro-pallet-save`, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+    })
+      .then(res => {
+        setEndBox(false)
+        countStatus(0) // update inBox while success
+        countStatus(1) // update onPallet while success
+        res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
+        res.data.message === "Karta HYDRA zapisana!" && toast.success(res.data.message) && playNotification('ok');
       })
-        .then(res => {
-          countStatus(1) // update onPallet while success
-          res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
-          res.data.message === "Karta PALETA zapisana!" && toast.success(res.data.message) && playNotification('ok');
-        })
-        .catch(error => {
-          toast.error("Błąd DB!");
-          playNotification('nok');
-        })
+      .catch(error => {
+        toast.error("Błąd DB!")
+        playNotification('nok');
+      })
+  }
+
+
+  // PALLET INPUT
+  const palletInputRef = useRef()
+  const [palletInputted, setPalletInputted] = useState(false)
+  const handlePalletSubmit = (pallet) => {
+    palletInputRef.current = pallet
+    setPalletInputted(currentPalletInputted => {
+      return !currentPalletInputted})
+  }
+  useEffect(() => {
+    const pallet = palletInputRef.current
+    if (pallet) {
+      if (pallet.length < 34 || !pallet.includes("|")) {
+        toast.error("NOK kod QR!")
+        playNotification('nok');
+        return
+      }
+      const splittedPallet = pallet.split("|")
+      const palletArticle = splittedPallet[0].length === 7 ? splittedPallet[0].substr(2) : ''
+      const palletBatch = splittedPallet[3] ? splittedPallet[3].substr(2).toUpperCase() : ''
+      const palletQuantity = splittedPallet[2] ? parseInt(splittedPallet[2].substr(2)) : ''
+      const palletProcess = splittedPallet[1] ? splittedPallet[1].substr(2) : ''
+      if (palletArticle !== currentArticleRef.current) {
+        toast.error("NOK artykuł!")
+        playNotification('nok');
+        return
+      }
+      if (palletQuantity !== (onPallet * boxSize)) {
+        toast.error("NOK ilość!")
+        playNotification('nok');
+        return
+      }
+      if (palletProcess !== "000") {
+        toast.error("NOK proces!")
+        playNotification('nok');
+        return
+      }
+      savePallet(palletBatch)
     }
+  }, [palletInputted])
+
+
+  // POST PALLET INTO API_URL -> SAVE TO DB
+  const savePallet = (palletToSave) => {
+    const pallet_batch = palletToSave
+    const pallet_operator = currentUserRef.current
+    const pallet_time = new Date()
+    const workplace = currentWorkplaceRef.current
+    const article = currentArticleRef.current
+    const data = { pallet_batch, pallet_operator, pallet_time, workplace, article }
+    axios.post(`${API_URL}/dmcheck-pro-pallet-save`, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => {
+        countStatus(1) // update onPallet while success
+        res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
+        res.data.message === "Karta PALETA zapisana!" && toast.success(res.data.message) && playNotification('ok');
+      })
+      .catch(error => {
+        toast.error("Błąd DB!");
+        playNotification('nok');
+      })
+  }
 
 
   return (
@@ -514,7 +538,7 @@ function DmcheckPro() {
 
       <Toast/>
 
-      <Footer version={"4.0.3"}/>
+      <Footer version={"4.0.5"}/>
 
     </div>
 
