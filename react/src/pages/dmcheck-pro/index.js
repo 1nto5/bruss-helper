@@ -98,6 +98,14 @@ function DmcheckPro() {
   }
 
 
+  // END BOX
+  const [endBox, setEndBox] = useState(false)
+  const handleEndBox = () => {
+    toast.success(`Koniec BOX!`)
+    playNotification('ok');
+    setEndBox(true)
+  }
+
   // WORKPLACES CARDS genereted from data.js file
   const workplaceCardsRef = useRef()
   useEffect(() => {
@@ -225,7 +233,9 @@ function DmcheckPro() {
 
   // WORK STAGE
   const workStage = useMemo(() => {
-    if (palletWorkplace && inBox < boxSize && onPallet !== palletSize) {
+    if (endBox) {
+      return 1;
+    } else if (palletWorkplace && inBox < boxSize && onPallet !== palletSize) {
       return 0;
     } else if (!palletWorkplace && inBox < boxSize) {
       return 0;
@@ -234,7 +244,7 @@ function DmcheckPro() {
     } else if (palletWorkplace && onPallet === palletSize) {
       return 2;
     }
-  }, [inBox, onPallet]);
+  }, [inBox, onPallet, endBox]);
 
 
   // FORD DATE VALIDATION FUNCTION
@@ -365,7 +375,6 @@ function DmcheckPro() {
       const hydra_batch = hydraToSave
       const hydra_operator = currentUserRef.current
       const hydra_time = new Date()
-      // const collection = currentWorkplaceRef.current
       const workplace = currentWorkplaceRef.current
       const article = currentArticleRef.current
       const data = { hydra_batch, hydra_operator, hydra_time, workplace, article }
@@ -375,6 +384,7 @@ function DmcheckPro() {
         }
       })
         .then(res => {
+          setEndBox(false)
           countStatus(0) // update inBox while success
           countStatus(1) // update onPallet while success
           res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
@@ -457,7 +467,14 @@ function DmcheckPro() {
 
     <div className="App">
       
-      <Header workplaceName={workplaceLogged ? currentWorkplaceRef.current : ""} userLogout={handleUserLogout} articleLogout={handleArticleLogout} workplaceLogout={handleWorkplaceLogout} workplaceLogged={workplaceLogged}/>
+      <Header 
+        workplaceName={workplaceLogged ? currentWorkplaceRef.current : ""} 
+        userLogout={handleUserLogout} 
+        articleLogout={handleArticleLogout} 
+        workplaceLogout={handleWorkplaceLogout} 
+        workplaceLogged={workplaceLogged}
+        endBox={!seriesBox && handleEndBox}
+      />
       
       <Status 
         operator={currentUserRef.current}
@@ -494,11 +511,6 @@ function DmcheckPro() {
           <PrintPalletLabel palletQr={generatePalletQr()} article={currentArticleRef.current} name={articleName} quantity={onPallet * boxSize} /> 
         </div>
       )}
-
-      {/* {seriesBox && (
-
-      )
-      } */}
 
       <Toast/>
 
