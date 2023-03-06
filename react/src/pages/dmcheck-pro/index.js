@@ -135,6 +135,108 @@ function DmcheckPro() {
   }, [currentWorkplaceRef.current])
 
 
+  // BOX+PALLET STATUSES
+  const [inBox, setInBox] = useState(null)
+  const [onPallet, setOnPallet] = useState(null)
+  const countStatus = async (statusNumber) => {
+    const workplace = currentWorkplaceRef.current
+    const article = currentArticleRef.current
+    const status = statusNumber
+    try {
+      const response = await axios.get(`${API_URL}/dmcheck-pro-count?status=${status}&workplace=${workplace}&article=${article}`)
+      const count = response.data.message
+      if (statusNumber === 0) {
+        setInBox(count)
+      } 
+      if (statusNumber === 1 && articleLogged) {
+        setOnPallet(count/boxSize)  
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  useEffect(() => {
+    if(currentWorkplaceRef !== "BRAK") {
+      countStatus(0)
+      countStatus(1)
+    }
+  }, [articleLogged])
+
+  // WORKPLACE TYPE FROM data.js
+  const palletWorkplace = useMemo(() => {
+    if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
+      const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
+      const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
+      return article.pallet
+    } else {
+      return false
+    }
+  }, [articleLogged])
+
+  const seriesBox = useMemo(() => {
+    if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
+      const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
+      const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
+      return article.box
+    } else {
+      return false
+    }
+  }, [articleLogged])
+
+
+  // SIZES FROM data.js
+  const boxSize = useMemo(() => {
+    if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
+      const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
+      const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
+      return article.boxSize
+    } else {
+      return "BRAK"
+    }
+  }, [articleLogged])
+  const palletSize = useMemo(() => {
+    if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
+      const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
+      const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
+      return article.pallet && article.palletSize
+    } else {
+      return "BRAK"
+    }
+  }, [articleLogged])
+
+
+  // ARTICLE NAME FROM data.js
+  const articleName = useMemo(() => {
+    if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
+      const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
+      const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
+      return article.name
+    } else {
+      return "BRAK"
+    }
+  }, [articleLogged])
+
+
+  // QR GENERATOR
+  const generatePalletQr = () => {
+    return `A:${currentArticleRef.current}|O:000|Q:${onPallet * boxSize}|B:AA${uuidv4().slice(0, 8).toUpperCase()}|C:G`;
+  };
+  
+
+  // WORK STAGE
+  const workStage = useMemo(() => {
+    if (palletWorkplace && inBox < boxSize && onPallet !== palletSize) {
+      return 0;
+    } else if (!palletWorkplace && inBox < boxSize) {
+      return 0;
+    } else if (inBox === boxSize) {
+      return 1;
+    } else if (palletWorkplace && onPallet === palletSize) {
+      return 2;
+    }
+  }, [inBox, onPallet]);
+
+
   // FORD DATE VALIDATION FUNCTION
   const fordDateValidation = () => {
     const today = new Date()
@@ -229,9 +331,8 @@ function DmcheckPro() {
     const hydra = hydraInputRef.current
     if (hydra) {
       if (hydra.length < 34 || !hydra.includes("|")) {
-        toastTypeRef.current = "toastError"
-        toastMessageRef.current = `Niepoprawny kod QR!`
-        setShowToast(true)
+        toast.error("NOK QR!")
+        playNotification('nok');
         return
       }
       const splittedHydra = hydra.split("|")
@@ -352,84 +453,6 @@ function DmcheckPro() {
     }
 
 
-    // BOX+PALLET STATUSES
-    const [inBox, setInBox] = useState(null)
-    const [onPallet, setOnPallet] = useState(null)
-    const countStatus = async (statusNumber) => {
-      const workplace = currentWorkplaceRef.current
-      const article = currentArticleRef.current
-      const status = statusNumber
-      try {
-        const response = await axios.get(`${API_URL}/dmcheck-pro-count?status=${status}&workplace=${workplace}&article=${article}`)
-        const count = response.data.message
-        if (statusNumber === 0) {
-          setInBox(count)
-        } 
-        if (statusNumber === 1 && articleLogged) {
-          setOnPallet(count/boxSize)  
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    useEffect(() => {
-      if(currentWorkplaceRef !== "BRAK") {
-        countStatus(0)
-        countStatus(1)
-      }
-    }, [articleLogged])
-
-
-    // SIZES FROM data.js
-    const boxSize = useMemo(() => {
-      if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
-        const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
-        const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
-        return article.boxSize
-      } else {
-        return "BRAK"
-      }
-    }, [articleLogged])
-    const palletSize = useMemo(() => {
-      if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
-        const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
-        const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
-        return article.palletSize
-      } else {
-        return "BRAK"
-      }
-    }, [articleLogged])
-
-
-    // ARTICLE NAME FROM data.js
-    const articleName = useMemo(() => {
-      if (currentArticleRef.current && currentArticleRef.current !== "BRAK") {
-        const eol = production.find(item => Object.keys(item)[0] === currentWorkplaceRef.current)
-        const article = eol[currentWorkplaceRef.current].articles[currentArticleRef.current]
-        return article.name
-      } else {
-        return "BRAK"
-      }
-    }, [articleLogged])
-
-
-    // QR GENERATOR
-    const generatePalletQr = () => {
-      return `A:${currentArticleRef.current}|O:000|Q:${onPallet * boxSize}|B:AA${uuidv4().slice(0, 8).toUpperCase()}|C:G`;
-    };
-    
-    // WORK STAGE
-    const workStage = useMemo(() => {
-      if (inBox < boxSize && onPallet !== palletSize) {
-        return 0;
-      } else if (inBox === boxSize) {
-        return 1;
-      } else if (onPallet === palletSize) {
-        return 2;
-      }
-    }, [inBox, onPallet]);
-
-
   return (
 
     <div className="App">
@@ -439,7 +462,8 @@ function DmcheckPro() {
       <Status 
         operator={currentUserRef.current}
         article={currentArticleRef.current}
-        box={`${inBox} / ${boxSize}`}
+        box={seriesBox ? `${inBox} / ${boxSize}` : inBox}
+        palletBox={palletWorkplace}
         pallet={`${onPallet} / ${palletSize}`}
         workStage={workStage}
       />
@@ -464,12 +488,17 @@ function DmcheckPro() {
 
       {workStage === 1 && workplaceLogged && articleLogged && userLogged &&  (<Input onSubmit={handleHydraSubmit} placeholder="skan hydra"/>)}
 
-      {workStage === 2 && workplaceLogged && articleLogged && userLogged &&  (
+      {palletWorkplace && workStage === 2 && workplaceLogged && articleLogged && userLogged &&  (
         <div>
           <Input onSubmit={handlePalletSubmit} placeholder="skan paleta"/>
           <PrintPalletLabel palletQr={generatePalletQr()} article={currentArticleRef.current} name={articleName} quantity={onPallet * boxSize} /> 
         </div>
       )}
+
+      {/* {seriesBox && (
+
+      )
+      } */}
 
       <Toast/>
 

@@ -14,7 +14,7 @@ const Toast = () => {
       }}
       toastOptions={{
         className: '',
-        duration: 2500,
+        duration: 3500,
         style: {
           textAlign: 'center',
           fontSize: '1.5rem',
@@ -25,7 +25,7 @@ const Toast = () => {
         },
 
         success: {
-          duration: 2000,
+          duration: 3000,
           style: {
             background: '#8bb63b',
             color: '#f5f4f4', 
@@ -33,7 +33,7 @@ const Toast = () => {
         },
 
         error: {
-          duration: 3000,
+          duration: 4000,
           style: {
             background: 'red',
             color: '#f5f4f4', 

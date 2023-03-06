@@ -74,14 +74,16 @@ body {
   }
   
   .status--box {
-    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
     padding: 20px;
     box-sizing: border-box;
   }
-
+  
   .status--box-blinking {
-    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
     padding: 20px;
     box-sizing: border-box;

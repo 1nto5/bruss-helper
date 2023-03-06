@@ -15,15 +15,17 @@ function Status(props) {
         <p className="box--value">{props.article}</p>
       </div>
       <div className="status--separator"></div>
-      <div className={props.workStage === 1 ? "status--box-blinking" : "status--box"}>
+      <div className={props.workStage === 1 ? "status--box-blinking" :  "status--box"}>
         <p className="box--label">Box:</p>
         <p className="box--value">{props.box}</p>
       </div>
-      <div className="status--separator"></div>
-      <div className={props.workStage === 2 ? "status--box-blinking" : "status--box"}>
-        <p className="box--label">Paleta:</p>
-        <p className="box--value">{props.pallet}</p>
-      </div>
+      {props.palletBox && [
+        <div className="status--separator"></div>,
+        <div className={props.workStage === 2 ? "status--box-blinking" : "status--box"}>
+          <p className="box--label">Paleta:</p>
+          <p className="box--value">{props.pallet}</p>
+        </div>
+      ]}
     </div>
   );
 }

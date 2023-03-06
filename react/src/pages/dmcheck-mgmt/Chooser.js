@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import production from "../../data/production"
 
+// TODO after selecting the status restart the article
 
 const Chooser = (props) => {
     const workplaces = useMemo(() => production.map(workplace => Object.keys(workplace)[0]), [production]);
