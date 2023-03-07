@@ -18,6 +18,8 @@ import PrintPalletLabel from './PrintPalletLabel'
 import { ReactSession }  from 'react-client-session'
 ReactSession.setStoreType("localStorage")
 
+// TODO save time in API, not client
+
 function DmcheckPro() { 
   
   const [workplaceLogged, setWorkplaceLogged] = useState(false)

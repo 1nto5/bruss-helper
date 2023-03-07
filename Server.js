@@ -5,6 +5,8 @@ const serveStatic = require('serve-static');
 const app = express();
 app.use(bodyParser.json());
 
+// TODO save time in API, not client
+
 // DEVELOPMENT
 // const cors = require("cors");
 // app.use(cors({
@@ -115,7 +117,6 @@ app.post('/dmcheck-mgmt-skip', async (req, res) => {
 app.post('/dmcheck-pro-dmc-save', async (req, res) => {
   try {
     const data = req.body;
-    // const collection = data.collection; // workplace name
     const dmc = data.dmc;
     const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
     const existingData = await Dmc.findOne({ dmc });
