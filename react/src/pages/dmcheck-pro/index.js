@@ -384,7 +384,7 @@ function DmcheckPro() {
         playNotification('nok');
         return
       }
-      if (hydraProcess !== "050" || hydraProcess !== "090") {
+      if (hydraProcess !== "050" && hydraProcess !== "090") { // TODO proces from config
         toast.error("NOK proces!")
         playNotification('nok');
         return
