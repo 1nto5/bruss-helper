@@ -1,28 +1,21 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 function RegistrationForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Send form data to server-side API
-    fetch('/api/register', {
-      method: 'POST',
-      body: JSON.stringify({ name, email, password }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Registration successful');
-    })
-    .catch(error => {
+    try {
+      // Send form data to server-side API using Axios
+      const response = await axios.post('/api/register', { name, email, password });
+      console.log('Registration successful:', response.data);
+    } catch (error) {
       console.error('Error registering user:', error);
-    });
+    }
   }
 
   return (

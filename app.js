@@ -181,9 +181,9 @@ app.get('/dmcheck-pro/count', async (req, res) => {
 });
 
 // PRODUCTION
-// app.use(serveStatic(path.join(__dirname, 'react/build')));
+// app.use(serveStatic(path.join(__dirname, 'client/build')));
 // app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'react/build/index.html'));
+//   res.sendFile(path.join(__dirname, 'client/build/index.html'));
 // });
 
 app.listen(PORT, () => {
