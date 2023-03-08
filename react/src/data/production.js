@@ -119,7 +119,7 @@ export default [
             name: "",
             articles: {
                 28028: {
-                    name: "F-IWDR92,1L-ST-1-C",
+                    name: "F-IWDR-80-L-ST-9-D",
                     dmc: "C9E0CYYDAYAXXXXXH6BG 6K301 AA", 
                     fordDate: true,
                     bmwDate: false,
