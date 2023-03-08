@@ -256,7 +256,7 @@ function DmcheckPro() {
     } else if (palletWorkplace && onPallet === palletSize) {
       return 2;
     }
-  }, [inBox, onPallet, endBox]);
+  }, [inBox, onPallet, endBox, articleLogged]);
 
 
   // FORD DATE VALIDATION 
