@@ -269,7 +269,7 @@ export default [
                     palletSize: 0,
                     note: "",
                 },
-                40422: {
+                30422: {
                     name: "M-662-K-J (BAW)",
                     dmc: "8490769011895021022081600001", 
                     fordDate: false,
