@@ -26,7 +26,7 @@ const DmcList = (props) => {
           ...(props.dmcOrBatchInput && { dmcOrBatch: props.dmcOrBatchInput }),
         };
         axios
-          .get(`${API_URL}/dmcheck-mgmt-find`, { params })
+          .get(`${API_URL}/dmcheck-mgmt/find`, { params })
           .then(response => {
             setDmcList(response.data);
           })
@@ -66,7 +66,7 @@ const DmcList = (props) => {
     const handleSkip = () => {
       const collection = props.workplace;
       axios
-        .post(`${API_URL}/dmcheck-mgmt-skip`, { selectedDmcs, collection }, {
+        .post(`${API_URL}/dmcheck-mgmt/skip`, { selectedDmcs, collection }, {
           headers: {
             'Content-Type': 'application/json',
           },

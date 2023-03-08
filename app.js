@@ -21,8 +21,8 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', false)
 
 // Connect to MongoDB
-// mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/bruss_helper', { useNewUrlParser: true });
-mongoose.connect('mongodb://127.0.0.1/bruss_helper', { useNewUrlParser: true });
+mongoose.connect('mongodb+srv://express:VWEsRJtgYvsUTjTQ@dmcheck-mongo.sqcfxa5.mongodb.net/bruss_helper', { useNewUrlParser: true });
+// mongoose.connect('mongodb://127.0.0.1/bruss_helper', { useNewUrlParser: true });
 
 const DmcSchema = new mongoose.Schema({
   status: Number,
