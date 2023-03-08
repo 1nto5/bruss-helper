@@ -8,14 +8,14 @@ app.use(bodyParser.json());
 // TODO save time in API, not client
 
 // DEVELOPMENT
-// const cors = require("cors");
-// app.use(cors({
-//   origin: "*"
-// }));
-// const PORT = "4000"
+const cors = require("cors");
+app.use(cors({
+  origin: "*"
+}));
+const PORT = "4000"
 
 // PRODUCTION
-const PORT = "80"
+// const PORT = "80"
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false)
@@ -42,7 +42,7 @@ const DmcSchema = new mongoose.Schema({
   skip_reason: String
 }, { versionKey: false });
 
-app.get('/dmcheck-mgmt-find', async (req, res) => {
+app.get('/dmcheck-mgmt/find', async (req, res) => {
   try {
     // const collection = req.query.workplace;
     const workplace = req.query.workplace;
@@ -99,7 +99,7 @@ app.get('/dmcheck-mgmt-find', async (req, res) => {
   }
 });
 
-app.post('/dmcheck-mgmt-skip', async (req, res) => {
+app.post('/dmcheck-mgmt/skip', async (req, res) => {
   const { selectedDmcs, collection } = req.body;
   try {
     const Dmc = mongoose.model('Dmc', DmcSchema, 'dmcheck_pro');
@@ -114,7 +114,7 @@ app.post('/dmcheck-mgmt-skip', async (req, res) => {
   }
 });
 
-app.post('/dmcheck-pro-dmc-save', async (req, res) => {
+app.post('/dmcheck-pro/dmc-save', async (req, res) => {
   try {
     const data = req.body;
     const dmc = data.dmc;
@@ -129,7 +129,7 @@ app.post('/dmcheck-pro-dmc-save', async (req, res) => {
   }
 });
 
-app.post('/dmcheck-pro-hydra-save', async (req, res) => {
+app.post('/dmcheck-pro/hydra-save', async (req, res) => {
   try {
     const data = req.body;
     // const collection = data.collection; // workplace name
@@ -148,7 +148,7 @@ app.post('/dmcheck-pro-hydra-save', async (req, res) => {
   }
 });
 
-app.post('/dmcheck-pro-pallet-save', async (req, res) => {
+app.post('/dmcheck-pro/pallet-save', async (req, res) => {
   try {
     const data = req.body;
     // const collection = data.collection; // workplace name
@@ -167,7 +167,7 @@ app.post('/dmcheck-pro-pallet-save', async (req, res) => {
   }
 });
 
-app.get('/dmcheck-pro-count', async (req, res) => {
+app.get('/dmcheck-pro/count', async (req, res) => {
   try {
     // const collection = req.query.collection; // workplace name
     const article = req.query.article
@@ -181,10 +181,10 @@ app.get('/dmcheck-pro-count', async (req, res) => {
 });
 
 // PRODUCTION
-app.use(serveStatic(path.join(__dirname, 'react/build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'react/build/index.html'));
-});
+// app.use(serveStatic(path.join(__dirname, 'react/build')));
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'react/build/index.html'));
+// });
 
 app.listen(PORT, () => {
   console.log(`Express server listening on port ${PORT}`);
