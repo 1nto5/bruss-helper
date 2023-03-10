@@ -29,7 +29,7 @@ export default [
                     startVal: [0, 5],
                     endVal: [16, 13],
                     box: true,
-                    boxSize: 1,
+                    boxSize: 4,
                     pallet: true,
                     palletSize: 2,
                     note: "karton",

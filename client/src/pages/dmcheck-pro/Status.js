@@ -18,8 +18,9 @@ function Status(props) {
         <p className="box--value">{props.box}</p>
       </div>
       {props.palletBox && [
-        <div className="status--separator"></div>,
-        <div className={props.workStage === 2 ? "status--box-blinking" : "status--box"}>
+        // ERROR WHEN NO KEY?
+        <div key='pallet-separator' className="status--separator"></div>,
+        <div key='pallet-box' className={props.workStage === 2 ? "status--box-blinking" : "status--box"}>
           <p className="box--label">Paleta:</p>
           <p className="box--value">{props.pallet}</p>
         </div>

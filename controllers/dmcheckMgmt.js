@@ -55,7 +55,7 @@ export const findDmcs = async (req, res) => {
   }
 };
 
-export const skip = async (req, res) => {
+export const skipDmc = async (req, res) => {
   const { selectedDmcs } = req.body;
   try {
     if (!Array.isArray(selectedDmcs)) {

@@ -1,9 +1,9 @@
 import express from 'express';
-const routes = express.Router();
+const router = express.Router();
 
-import { findDmcs, skip } from '../controllers/dmcheckMgmt.js';
+import { findDmcs, skipDmc } from '../controllers/dmcheckMgmt.js';
 
-routes.get('/dmcheck-mgmt/find', findDmcs);
-routes.post('/dmcheck-mgmt/skip', skip);
+router.get('/dmcheck-mgmt/find', findDmcs);
+router.post('/dmcheck-mgmt/skip', skipDmc);
 
-export default routes;
+export default router;

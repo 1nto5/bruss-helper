@@ -161,7 +161,7 @@ function DmcheckPro() {
     const article = currentArticleRef.current
     const status = statusNumber
     try {
-      const response = await axios.get(`${API_URL}/dmcheck-pro/count?status=${status}&workplace=${workplace}&article=${article}`)
+      const response = await axios.get(`${API_URL}/dmcheck-pro/count-dmc?status=${status}&workplace=${workplace}&article=${article}`)
       const count = response.data.message
       if (statusNumber === 0) {
         setInBox(count)
@@ -328,27 +328,23 @@ function DmcheckPro() {
 
   // POST DMC INTO API_URL -> SAVE TO DB
   const saveDmc = (dmcToSave) => {
-    const status = 0
     const workplace = currentWorkplaceRef.current
     const article = currentArticleRef.current
     const dmc = dmcToSave
     const dmc_operator = currentUserRef.current
-    const dmc_time = new Date()
-    // const collection = currentWorkplaceRef.current
-
-    const data = { status, workplace, article, dmc, dmc_operator, dmc_time }
-
-    axios.post(`${API_URL}/dmcheck-pro/dmc-save`, data, {
+    const data = { workplace, article, dmc, dmc_operator }
+    axios.post(`${API_URL}/dmcheck-pro/save-dmc`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
     })
       .then(res => {
         countStatus(0) // update inBox while success
-        res.data.message === "DMC istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
-        res.data.message === "DMC OK!" && toast.success(res.data.message) && playNotification('ok');
+        res.data.message === 'exists' && toast.error("DMC istnieje w bazie!") && playNotification('nok');
+        res.data.message === 'saved' && toast.success("DMC OK!") && playNotification('ok');
       })
       .catch(error => {
+        console.log(res.data.message)
         toast.error("Błąd DB!")
         playNotification('nok');
       })
@@ -400,11 +396,10 @@ function DmcheckPro() {
   const saveHydra = (hydraToSave) => {
     const hydra_batch = hydraToSave
     const hydra_operator = currentUserRef.current
-    const hydra_time = new Date()
     const workplace = currentWorkplaceRef.current
     const article = currentArticleRef.current
-    const data = { hydra_batch, hydra_operator, hydra_time, workplace, article }
-    axios.post(`${API_URL}/dmcheck-pro/hydra-save`, data, {
+    const data = { hydra_batch, hydra_operator, workplace, article }
+    axios.post(`${API_URL}/dmcheck-pro/save-hydra`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -413,10 +408,11 @@ function DmcheckPro() {
         setEndBox(false)
         countStatus(0) // update inBox while success
         countStatus(1) // update onPallet while success
-        res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
-        res.data.message === "Karta HYDRA zapisana!" && toast.success(res.data.message) && playNotification('ok');
+        res.data.message === 'exists' && toast.error("Batch istnieje w bazie!") && playNotification('nok');
+        res.data.message === 'saved' && toast.success("HYDRA OK!") && playNotification('ok');
       })
       .catch(error => {
+        console.log(res.data.message)
         toast.error("Błąd DB!")
         playNotification('nok');
       })
@@ -472,17 +468,18 @@ function DmcheckPro() {
     const workplace = currentWorkplaceRef.current
     const article = currentArticleRef.current
     const data = { pallet_batch, pallet_operator, pallet_time, workplace, article }
-    axios.post(`${API_URL}/dmcheck-pro/pallet-save`, data, {
+    axios.post(`${API_URL}/dmcheck-pro/save-pallet`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
     })
       .then(res => {
         countStatus(1) // update onPallet while success
-        res.data.message === "Batch istnieje w bazie!" && toast.error(res.data.message) && playNotification('nok');
-        res.data.message === "Karta PALETA zapisana!" && toast.success(res.data.message) && playNotification('ok');
+        res.data.message === 'exists' && toast.error("Paleta istnieje w bazie!") && playNotification('nok');
+        res.data.message === 'saved' && toast.success("Paleta OK!") && playNotification('ok');
       })
       .catch(error => {
+        console.log(res.data.message)
         toast.error("Błąd DB!");
         playNotification('nok');
       })
