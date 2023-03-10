@@ -1,4 +1,4 @@
-import Model from '../models/dmc.js';
+import ModelDmc from '../models/dmc.js';
 
 export const findDmcs = async (req, res) => {
   try {
@@ -44,7 +44,7 @@ export const findDmcs = async (req, res) => {
         query.dmc_time = { $lte: end };
       }
     }
-    const documents = await Model
+    const documents = await ModelDmc
       .find(query)
       .sort({ dmc_time: -1 }) // sort by dmc_time in descending order
       .limit(100) // limit to 100 documents
@@ -61,7 +61,7 @@ export const skipDmc = async (req, res) => {
     if (!Array.isArray(selectedDmcs)) {
       return res.status(400).send('Invalid request body');
     }
-    await Model.updateMany({ _id: { $in: selectedDmcs.map(dmc => dmc._id) } }, { $set: { status: 9 } });
+    await ModelDmc.updateMany({ _id: { $in: selectedDmcs.map(dmc => dmc._id) } }, { $set: { status: 9 } });
     res.status(200).send();
   } catch (error) {
     console.error(error);
