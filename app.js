@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import dmcheckMgmtRoutes from './routes/dmcheckMgmt.js';
 import dmcheckProRoutes from './routes/dmcheckPro.js'
+import userRoutes from './routes/user.js'
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -28,7 +29,8 @@ const PORT = "4000"
 // ROUTES
 app.use('/', 
   dmcheckMgmtRoutes, 
-  dmcheckProRoutes
+  dmcheckProRoutes,
+  userRoutes
 );
 
 // PRODUCTION serve React app
