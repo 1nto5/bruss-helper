@@ -4,9 +4,7 @@ import User from '../models/user.js';
 export const confirmUser = async (req, res) => {
     try {
       const token = req.query.token;
-      console.log(token);
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-  
       const user = await User.findOneAndUpdate(
         { email: decodedToken.email },
         { confirmed: true, confirmationToken: null },
