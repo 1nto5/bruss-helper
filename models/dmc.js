@@ -18,6 +18,6 @@ const Schema = new mongoose.Schema({
     skip_reason: String
   }, { versionKey: false });
 
-const ModelDmc = mongoose.model('ModelDmc', Schema, 'dmcheck_pro');
+const Dmc = mongoose.model('Dmc', Schema, 'dmcheck_pro');
 
-export default ModelDmc;
+export default Dmc;
