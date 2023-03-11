@@ -52,7 +52,7 @@ async function sendConfirmationEmail(email, token) {
       from: process.env.SMTP_FROM_ADDRESS,
       to: email,
       subject: 'Confirm Your Account',
-      html: `Please click <a href="${process.env.CLIENT_URL}/user/confirm?${token}">here</a> to confirm your account.`,
+      html: `Please click <a href="${process.env.CLIENT_URL}/user/confirm/${token}">here</a> to confirm your account.`,
     };
     await transporter.sendMail(mailOptions);
   } catch (error) {
