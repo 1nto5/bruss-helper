@@ -22,6 +22,10 @@ ReactSession.setStoreType("localStorage")
 
 function DmcheckPro() { 
   
+  useEffect(() => {
+    document.title = "DMCheck PRO"
+  }, []);
+
   const [workplaceLogged, setWorkplaceLogged] = useState(false)
   const currentWorkplaceRef = useRef("BRAK")
   const [articleLogged, setArticleLogged] = useState(false)

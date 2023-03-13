@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Header from './Header'
 import Chooser from './Chooser'
 import DmcList from './DmcList'
@@ -8,6 +8,10 @@ import Footer from '../../components/Footer'
 
 const DmcheckMgmt = () => {
   
+  useEffect(() => {
+    document.title = "DMCheck MGMT"
+  }, []);
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [workplace, setWorkplace] = useState("default");
@@ -56,8 +60,9 @@ const DmcheckMgmt = () => {
 
 
   return (
-    <div>
-        
+    <>
+
+
         <Header clickSkip={handleSkip}/>
 
         <Chooser 
@@ -90,7 +95,7 @@ const DmcheckMgmt = () => {
 
         <Footer version={"1.0.3"}/>
 
-    </div>
+    </>
     )
 };
 
