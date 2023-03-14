@@ -275,7 +275,7 @@ function DmcheckPro() {
       ? dotyGreg - 13
       : (365 - 13) + dotyGreg
     const dmcDotyJul = parseInt(dmcInputRef.current.substr(7, 3))
-    return dmcDotyJul === dotyJul || dmcDotyJul === (dotyJul - 1)
+    return dmcDotyJul === dotyJul || dmcDotyJul === (dotyJul - 1) || dmcDotyJul === (dotyJul - 2)
   }
 
 
@@ -283,9 +283,11 @@ function DmcheckPro() {
   function bmwDateValidation(dmc) {
     const todayDate = parseInt(new Date().toISOString().slice(2, 10).split('-').join(''));
     const yesterdayDate = parseInt(new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString().slice(2, 10).split('-').join(''));
+    const dayBeforeYesterdayDate = parseInt(new Date(new Date().getTime() - 48 * 60 * 60 * 1000).toISOString().slice(2, 10).split('-').join(''));
     const dmcDate = parseInt(dmc.slice(17, 23));
-    return dmcDate === todayDate || dmcDate === yesterdayDate;
+    return dmcDate === todayDate || dmcDate === yesterdayDate || dmcDate === dayBeforeYesterdayDate;
   }
+  
 
 
   // DMC INPUT
