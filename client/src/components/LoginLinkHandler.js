@@ -10,11 +10,12 @@ function LoginLinkHandler() {
   useEffect(() => {
     const login = async () => {
       try {
-        const response = await axios.get(`${API_URL}/auth/login/${token}`);
+        const response = await axios.get(`${API_URL}/login/${token}`);
         setMessage(response.data.message);
-        // Here you can set the user's session or JWT in local storage or context
+
+        // Save the user's email to local storage
+        localStorage.setItem('userEmail', response.data.email);
       } catch (error) {
-        console.error(error);
         setMessage('Invalid or expired login link');
       }
     };

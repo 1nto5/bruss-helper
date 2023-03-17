@@ -3,12 +3,12 @@ import nodemailer from 'nodemailer';
 import User from '../models/User.js';
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-        user: 'fae8@ethereal.email',
-        pass: '9hpBQSJwxtcCZNkEyY'
-    }
+  host: 'smtp.ethereal.email',
+  port: 587,
+  auth: {
+    user: 'fae8@ethereal.email',
+    pass: '9hpBQSJwxtcCZNkEyY'
+  }
 });
 
 export const register = async (req, res) => {
@@ -20,14 +20,14 @@ export const register = async (req, res) => {
   }
 
   const token = crypto.randomBytes(20).toString('hex');
-  const tokenExpiration = new Date(Date.now() + 15 * 60 * 1000);
+  const tokenExpiration = new Date(Date.now() + 120 * 60 * 1000);
 
   user.token = token;
   user.tokenExpiration = tokenExpiration;
 
   await user.save();
 
-  const loginLink = `https://yourapp.com/login/${token}`;
+  const loginLink = `https://localhost:3000/auth/${token}`;
 
   const mailOptions = {
     from: 'your-email@example.com',
@@ -38,7 +38,6 @@ export const register = async (req, res) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error);
       res.status(500).json({ error: 'Failed to send email' });
     } else {
       res.status(200).json({ message: 'Login link sent to email' });
@@ -50,20 +49,15 @@ export const login = async (req, res) => {
   const { token } = req.params;
   const user = await User.findOne({ token });
 
-  if (!user || Date.now() > user.tokenExpiration) {
+  if (!user) {
     res.status(401).json({ error: 'Invalid or expired token' });
     return;
   }
 
-  const newToken = crypto.randomBytes(20).toString('hex');
-  const newTokenExpiration = new Date(Date.now() + 15 * 60 * 1000);
+  if (Date.now() > user.tokenExpiration) {
+    res.status(401).json({ error: 'Invalid or expired token' });
+    return;
+  }
 
-  user.token = newToken;
-  user.tokenExpiration = newTokenExpiration;
-
-  await user.save();
-
-  // Set session or JWT for the user (you can use express-session or jsonwebtoken)
-
-  res.status(200).json({ message: 'Logged in successfully' });
+  res.status(200).json({ message: 'Logged in successfully', email: user.email });
 };
