@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const Schema = new mongoose.Schema({
+const dmcSchema = new mongoose.Schema({
     status: Number,
     workplace: String,
     article: String,
@@ -18,6 +18,6 @@ const Schema = new mongoose.Schema({
     skip_reason: String
   }, { versionKey: false });
 
-const Dmc = mongoose.model('Dmc', Schema, 'dmcheck_pro');
+const Dmc = mongoose.model('Dmc', dmcSchema, 'dmcheck_pro');
 
 export default Dmc;
