@@ -2,19 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* body {
     margin: 0;
     font-family: 'Open Sans', sans-serif;
     background-color: #fff;
-  }
+  } */
 
-  input:focus {
+  /* input:focus {
     outline-color: #8bb63b;
-  }
+  } */
 
   /* HEADER */
 
-  .header {
+  /* .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,14 +23,14 @@ body {
     background-color: #333;
     box-shadow: 0px 0px 5px #333;
     box-sizing: border-box;
-  }
+  } */
   
-  .header--logo {
+  /* .header--logo {
     height: 3rem;
     margin-left: 1rem;
-  }
+  } */
   
-  .header--title {
+  /* .header--title {
     margin: 0;
     color: #fff;
     font-size: 1.5rem;
@@ -57,7 +57,7 @@ body {
     color: #333;
     text-decoration: none;
     box-shadow: 1px 1px 2px #ddd;
-  }
+  } */
 
   .header--link:hover {
     background-color: #8bb63b;

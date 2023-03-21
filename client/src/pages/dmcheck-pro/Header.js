@@ -26,17 +26,22 @@ const Header = (props) => {
   }
   
   return (
-    <header className="header">
-      <img src={logo} alt="logo" className="header--logo" />
-      <h1 className="header--title">DMCheck {props.workplaceName}</h1>
-      <nav className="header--nav">
+    <header className='bg-black h-24 text-white flex items-center justify-between  px-5 py-3'>
+      <div className='flex items-center'>
+        <img src={logo} alt="logo" className='h-8 mr-2' />
+        <h1 className='text-lg font-bold'>DMCheck {props.workplaceName}</h1>
+      </div>
+
+      
         {props.endBox && (
-          <a href="/#" onClick={handleClickBoxEnd} className="header--link">Zakończ box</a>
+          <a href="/#" onClick={handleClickBoxEnd} className=''>Zakończ box</a>
         )}
-        <a href="/#" onClick={handleClickUserLogout} className="header--link">Operator</a>
-        <a href="/#" onClick={handleClickArticleLogout} className="header--link">Artykuł</a>
-        {!props.workplaceLogged && <a href="/#" onClick={handleClickWorkplaceLogout} className="header--link">Stanowisko</a>}
-      </nav>
+        <a href="/#" onClick={handleClickUserLogout} className=''>Operator</a>
+        <a href="/#" onClick={handleClickArticleLogout} className=''>Artykuł</a>
+        {!props.workplaceLogged && <a href="/#" onClick={handleClickWorkplaceLogout} className=''>Stanowisko</a>}
+
+
+      
     </header>
   );
 };
