@@ -1,46 +1,63 @@
-import React from 'react'
-import logo from '../../assets/logo.png'
-import { navButton, navButtonRed } from '../../assets/tailwind';
+import React from "react";
+import logo from "../../assets/logo.png";
+import {
+  HeaderLinkButton,
+  HeaderLinkButtonRed,
+} from "../../components/Buttons";
 
 const Header = (props) => {
-  
   const handleClickUserLogout = (e) => {
     e.preventDefault();
     props.userLogout();
-  }
+  };
 
   const handleClickArticleLogout = (e) => {
     e.preventDefault();
     props.articleLogout();
-  }
+  };
 
   const handleClickWorkplaceLogout = (e) => {
     e.preventDefault();
     props.workplaceLogout();
-  }
+  };
 
   const handleClickBoxEnd = (e) => {
     e.preventDefault();
-    if (window.confirm("Czy na pewno chcesz zakończyć aktualny BOX? System poprosi o skan etykiety HYDRA.")) {
+    if (
+      window.confirm(
+        "Czy na pewno chcesz zakończyć aktualny BOX? System poprosi o skan etykiety HYDRA."
+      )
+    ) {
       props.endBox();
     }
-  }
-  
+  };
+
   return (
-    <nav className='flex items-center justify-between flex-wrap bg-gray-200 shadow-2xl text-white p-6'>
-      <div className="flex items-center flex-shrink-0 text-black mr-6">
-        <img className="fill-current w-48 mr-2" src={logo} alt="logo" />
-        <span className="font-semibold text-2xl tracking-tight">DMCheck {props.workplaceName}</span>
+    <nav className="flex flex-wrap items-center justify-between bg-gray-800  p-6 shadow-2xl">
+      <div className="mr-6 flex flex-shrink-0 items-center text-gray-50">
+        <img className="mr-2 w-48 fill-current" src={logo} alt="logo" />
+        <span className="text-2xl font-semibold tracking-tight">
+          DMCheck {props.workplaceName}
+        </span>
       </div>
       <div>
         {props.endBox && (
-          <a href="/#" className={navButtonRed} onClick={handleClickBoxEnd}>zakończ box</a>
+          <HeaderLinkButtonRed text="zakończ box" onClick={handleClickBoxEnd} />
         )}
-        <a href="/#" className={navButton} onClick={handleClickUserLogout}>wyloguj operatora</a>
-        <a href="/#" className={navButton} onClick={handleClickArticleLogout}>zmień artykuł</a>
-        {!props.workplaceLogged && 
-          <a href="/#" className={navButton} onClick={handleClickWorkplaceLogout}>zmień stanowisko</a>
-        }
+        <HeaderLinkButton
+          text="wyloguj operatora"
+          onClick={handleClickUserLogout}
+        />
+        <HeaderLinkButton
+          text="zmień artykuł"
+          onClick={handleClickArticleLogout}
+        />
+        {!props.workplaceLogged && (
+          <HeaderLinkButton
+            text="stanowisko"
+            onClick={handleClickWorkplaceLogout}
+          />
+        )}
       </div>
     </nav>
   );
