@@ -1,72 +1,143 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
 const Login = (props) => {
-  
-  const [persNumb, setPersNumb] = useState("")
+  const [persNumb, setPersNumb] = useState("");
 
   const handleChange = (e) => {
-    setPersNumb(e)
+    setPersNumb(e);
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!persNumb || persNumb.length > 4 || persNumb[0] === '0') {
-      setPersNumb("")
-      props.errorUserLogin()
-      return
+    e.preventDefault();
+    if (!persNumb || persNumb.length > 4 || persNumb[0] === "0") {
+      setPersNumb("");
+      props.errorUserLogin();
+      return;
     }
-    props.userLogin(persNumb)
-  }
-  
+    props.userLogin(persNumb);
+  };
+
   const handleClickNumber = (calcNum) => {
-    setPersNumb(persNumb + calcNum.toString())
-  }
+    setPersNumb(persNumb + calcNum.toString());
+  };
 
   const handleClickClear = () => {
-    setPersNumb("")
-  }
+    setPersNumb("");
+  };
 
   const handleClickBack = () => {
-    setPersNumb(persNumb.slice(0, -1))
-  }
+    setPersNumb(persNumb.slice(0, -1));
+  };
 
   return (
-    <div className="login">
-      <form className='login--input-form' onSubmit={handleSubmit}>
+    <div className="mt-8">
+      <form
+        className="flex flex-col items-center justify-center"
+        onSubmit={handleSubmit}
+      >
         <input
-          className='input-form--input'
+          className="h-20 w-3/12 rounded-lg bg-gray-100 text-center text-5xl caret-transparent shadow-lg outline-none"
           type="text"
           value={persNumb}
           onChange={(event) => handleChange(event.target.value)}
-          placeholder="numer personalny"
+          placeholder="nr personalny"
           autoFocus
         />
-      <button className='login--button' type="submit">zaloguj</button>
-      <div className='login--calc'>
-        <div>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(1)}>1</button>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(2)}>2</button>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(3)}>3</button>
+        <div className="mt-4">
+          <div>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(1)}
+              type="button"
+            >
+              1
+            </button>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(2)}
+              type="button"
+            >
+              2
+            </button>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(3)}
+              type="button"
+            >
+              3
+            </button>
+          </div>
+          <div>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(4)}
+              type="button"
+            >
+              4
+            </button>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(5)}
+              type="button"
+            >
+              5
+            </button>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(6)}
+              type="button"
+            >
+              6
+            </button>
+          </div>
+          <div>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(7)}
+              type="button"
+            >
+              7
+            </button>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(8)}
+              type="button"
+            >
+              8
+            </button>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(9)}
+              type="button"
+            >
+              9
+            </button>
+          </div>
+          <div>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-red-500 hover:text-white"
+              onClick={() => handleClickClear()}
+              type="button"
+            >
+              C
+            </button>
+            <button
+              className="m-4 inline-block h-24 w-24 rounded bg-gray-100 text-center text-4xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+              onClick={() => handleClickNumber(0)}
+              type="button"
+            >
+              0
+            </button>
+            <button
+              className="m-4 h-24 w-24 rounded bg-bruss text-center text-4xl font-thin text-white shadow-md transition-colors duration-300 hover:bg-gray-100 hover:text-gray-800"
+              type="submit"
+            >
+              OK
+            </button>
+          </div>
         </div>
-        <div>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(4)}>4</button>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(5)}>5</button>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(6)}>6</button>
-        </div>
-        <div>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(7)}>7</button>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(8)}>8</button>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(9)}>9</button>
-        </div>
-        <div>
-          <button className='calc--button' type="button" onClick={() => handleClickClear()}>C</button>
-          <button className='calc--button' type="button" onClick={() => handleClickNumber(0)}>0</button>
-          <button className='calc--button' type="button" onClick={() => handleClickBack(0)}>{"<"}</button>
-        </div>
-      </div>
       </form>
     </div>
-
-  )
-}
-export default Login
+  );
+};
+export default Login;

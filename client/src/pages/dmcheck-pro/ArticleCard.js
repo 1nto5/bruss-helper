@@ -1,22 +1,21 @@
-import React, {useState, useEffect} from "react"
+import React, { useState, useEffect } from "react";
 
 const ArticleCard = (props) => {
-    
-    const [articleNumber, setArticleNumber] = useState("")
-    const handleClickArticle = () => {
-        setArticleNumber(props.workplace)
+  const [articleNumber, setArticleNumber] = useState("");
+  const handleClickArticle = () => {
+    setArticleNumber(props.workplace);
+  };
+  useEffect(() => {
+    if (articleNumber) {
+      props.articleLogin(articleNumber);
     }
-    useEffect(() => {
-        if (articleNumber) {
-            props.articleLogin(articleNumber)
-        }
-      }, [articleNumber]
-    )
+  }, [articleNumber]);
 
-    
-    return (
-            <button onClick={handleClickArticle} className="articles--button">{props.workplace}</button>
-    )
-}
+  return (
+    <button onClick={handleClickArticle} className="articles--button">
+      {props.workplace}
+    </button>
+  );
+};
 
-export default ArticleCard
+export default ArticleCard;

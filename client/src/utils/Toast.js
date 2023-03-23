@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Toaster } from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 const Toast = () => {
-
   return (
     <Toaster
       position="bottom-center"
@@ -10,39 +9,40 @@ const Toast = () => {
       gutter={8}
       containerClassName=""
       containerStyle={{
-        bottom: '15%',
+        bottom: "15%",
       }}
       toastOptions={{
-        className: '',
+        className: "",
         duration: 3500,
         style: {
-          textAlign: 'center',
-          fontSize: '1.5rem',
-          fontWeight: '600',
-          background: '#ddd',
-          color: '#333',
-          padding: '30px',
+          textAlign: "center",
+          fontSize: "1.5rem",
+          fontWeight: "600",
+          background: "rgb(243 244 246)",
+          color: "#333",
+          padding: "30px",
+          fontWeight: "100",
         },
 
         success: {
           duration: 3000,
           style: {
-            background: '#8bb63b',
-            color: '#f5f4f4', 
+            background: "rgb(139 182 59)",
+            color: "white",
+            fontWeight: "400",
           },
         },
 
         error: {
           duration: 4000,
           style: {
-            background: 'red',
-            color: '#f5f4f4', 
+            background: "rgb(239 68 68)",
+            color: "rgb(249 250 251)",
+            fontWeight: "600",
           },
         },
-        
       }}
     />
-    
   );
 };
 

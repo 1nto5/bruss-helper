@@ -1,17 +1,17 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import dmcheckMgmtRoutes from './routes/dmcheckMgmt.js';
-import dmcheckProRoutes from './routes/dmcheckPro.js'
-import authRoutes from './routes/auth.js'
-import dotenv from 'dotenv';
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import dmcheckMgmtRoutes from "./routes/dmcheckMgmt.js";
+import dmcheckProRoutes from "./routes/dmcheckPro.js";
+import authRoutes from "./routes/auth.js";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
 
-mongoose.set('strictQuery', false)
+mongoose.set("strictQuery", false);
 const dbUri = process.env.DB_URI;
 mongoose.connect(dbUri, { useNewUrlParser: true });
 
@@ -20,18 +20,16 @@ mongoose.connect(dbUri, { useNewUrlParser: true });
 // mongoose.connect('mongodb://127.0.0.1/bruss_helper', { useNewUrlParser: true });
 
 // DEVELOPMENT
-import cors from 'cors';
-app.use(cors({
-  origin: "*"
-}));
-const PORT = "4000"
+import cors from "cors";
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+const PORT = "4000";
 
 // ROUTES
-app.use('/', 
-  dmcheckMgmtRoutes, 
-  dmcheckProRoutes,
-  authRoutes
-);
+app.use("/", dmcheckMgmtRoutes, dmcheckProRoutes, authRoutes);
 
 // PRODUCTION serve React app
 // import path from 'path';

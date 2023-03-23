@@ -2,14 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* body {
   margin: 0;
   font-family: "Open Sans", sans-serif;
   background-color: #fff;
-}
-*/ input:focus {
+} */
+
+/* input:focus {
   outline-color: #8bb63b;
-}
+} */
 
 /* HEADER */
 
@@ -64,7 +65,7 @@ body {
 
 /* STATUS */
 
-.status {
+/* .status {
   display: flex;
   flex-direction: row;
   margin-top: 5px;
@@ -109,11 +110,11 @@ body {
   height: 80%;
   background-color: #ccc;
   margin: 0 10px;
-}
+} */
 
 /* LOGIN */
 
-.login--input-form {
+/* .login--input-form {
   display: flex;
   flex-direction: column;
   margin-top: 30px;
@@ -172,7 +173,7 @@ body {
   border-radius: 15px;
   text-transform: uppercase;
   font-weight: bold;
-}
+} */
 
 .cards-list {
   display: flex;
