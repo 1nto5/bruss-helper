@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Toaster } from "react-hot-toast";
 
 const Toast = () => {
@@ -13,7 +13,8 @@ const Toast = () => {
       }}
       toastOptions={{
         className: "",
-        duration: 3500,
+        duration: 2500,
+        limit: 3,
         style: {
           textAlign: "center",
           fontSize: "1.5rem",
@@ -25,7 +26,7 @@ const Toast = () => {
         },
 
         success: {
-          duration: 3000,
+          duration: 2000,
           style: {
             background: "rgb(139 182 59)",
             color: "white",
@@ -34,7 +35,7 @@ const Toast = () => {
         },
 
         error: {
-          duration: 4000,
+          duration: 3000,
           style: {
             background: "rgb(239 68 68)",
             color: "rgb(249 250 251)",

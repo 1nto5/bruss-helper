@@ -5,6 +5,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import Header from "./Header";
 import Footer from "../../components/Footer";
+import ReloadButton from "../../components/ReloadButton";
 import Toast from "../../utils/Toast";
 import toast from "react-hot-toast";
 import { playNotification } from "../../utils/NotificationSound";
@@ -16,8 +17,6 @@ import Input from "./Input";
 import PrintPalletLabel from "./PrintPalletLabel";
 import { ReactSession } from "react-client-session";
 ReactSession.setStoreType("localStorage");
-
-// TODO save time in API, not client
 
 function DmcheckPro() {
   useEffect(() => {
@@ -115,6 +114,7 @@ function DmcheckPro() {
 
   // WORKPLACES CARDS genereted from data.js file
   const workplaceCardsRef = useRef();
+
   useEffect(() => {
     workplaceCardsRef.current = production.map((item) => {
       const workplace = Object.keys(item)[0];
@@ -151,11 +151,6 @@ function DmcheckPro() {
       articleCardsRef.current = articleCards;
     }
   }, []);
-
-  const articleCards = useMemo(
-    () => articleCardsRef.current,
-    [articleCardsRef.current]
-  );
 
   // BOX+PALLET STATUSES
   const [inBox, setInBox] = useState(null);
@@ -589,12 +584,14 @@ function DmcheckPro() {
       />
 
       {!workplaceLogged && (
-        <section className="workplaces">{workplaceCardsRef.current}</section>
+        <section className="flex flex-wrap justify-center">
+          {workplaceCardsRef.current}
+        </section>
       )}
 
       {workplaceLogged && !articleLogged && (
         <section className="flex flex-wrap justify-center">
-          {articleCards}
+          {articleCardsRef.current}
         </section>
       )}
 
@@ -631,7 +628,9 @@ function DmcheckPro() {
 
       <Toast />
 
-      <Footer version={"4.0.5"} />
+      <ReloadButton />
+
+      <Footer version={"4.1.0"} />
     </div>
   );
 }
