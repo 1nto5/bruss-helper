@@ -30,7 +30,7 @@ const Login = (props) => {
   };
 
   return (
-    <div className="mt-8">
+    <div>
       <form
         className="flex flex-col items-center justify-center"
         onSubmit={handleSubmit}

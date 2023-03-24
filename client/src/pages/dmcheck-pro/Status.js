@@ -1,3 +1,5 @@
+// check code in Status.js and give me a hint what is wrong with it
+
 import React from "react";
 import {
   StatusBox,
@@ -7,7 +9,7 @@ import {
 
 function Status(props) {
   return (
-    <div className="mt-10 flex h-40 flex-row items-center justify-between bg-gray-50 shadow-lg">
+    <div className="mb-10 flex h-40 flex-row items-center justify-between bg-gray-50 shadow-lg">
       <StatusBox text="operator:" value={props.operator} />
       <BoxSeparator />
       <StatusBox text="artykuł:" value={props.article} />

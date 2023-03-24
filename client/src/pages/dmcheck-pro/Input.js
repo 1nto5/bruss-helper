@@ -16,7 +16,7 @@ const Input = (props) => {
   };
 
   return (
-    <div className="mt-24 flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <input
         className="h-20 w-6/12 rounded-lg bg-gray-100 text-center text-4xl shadow-lg focus:outline-bruss"
         type="text"

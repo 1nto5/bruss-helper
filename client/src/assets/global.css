@@ -222,13 +222,13 @@
   background-color: #8bb63b;
 }
 
-.articles {
+/* .articles {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   margin-top: 2%;
-}
+} */
 
 .articles--button {
   flex: auto;
@@ -300,7 +300,7 @@
   background-color: #8bb63b;
 }
 
-footer {
+/* footer {
   position: fixed;
   bottom: 5px;
   right: 5px;
@@ -311,7 +311,7 @@ footer {
   font-weight: bolder;
   border-radius: 10px;
   box-shadow: 1px 1px 2px #ddd;
-}
+} */
 
 /* MGMT CHOOSER */
 
