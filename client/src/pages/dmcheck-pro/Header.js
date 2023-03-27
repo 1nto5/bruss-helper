@@ -41,23 +41,35 @@ const Header = (props) => {
         </span>
       </div>
       <div>
-        {props.endBox && (
-          <HeaderLinkButtonRed text="zakończ box" onClick={handleClickBoxEnd} />
+        {props.endBox &&
+          props.articleLogged &&
+          props.userLogged &&
+          props.workplaceLogged && (
+            <HeaderLinkButtonRed
+              text="zakończ box"
+              onClick={handleClickBoxEnd}
+            />
+          )}
+        {props.articleLogged && (
+          <HeaderLinkButton
+            text="zmień artykuł"
+            onClick={handleClickArticleLogout}
+          />
         )}
-        <HeaderLinkButton
-          text="wyloguj operatora"
-          onClick={handleClickUserLogout}
-        />
-        <HeaderLinkButton
-          text="zmień artykuł"
-          onClick={handleClickArticleLogout}
-        />
-        {!props.workplaceLogged && (
+
+        {props.userLogged && (
+          <HeaderLinkButton
+            text="wyloguj operatora"
+            onClick={handleClickUserLogout}
+          />
+        )}
+
+        {/* {!props.workplaceLogged && (
           <HeaderLinkButton
             text="stanowisko"
             onClick={handleClickWorkplaceLogout}
           />
-        )}
+        )} */}
       </div>
     </nav>
   );

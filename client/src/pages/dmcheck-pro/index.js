@@ -572,6 +572,8 @@ function DmcheckPro() {
         workplaceLogout={handleWorkplaceLogout}
         workplaceLogged={workplaceLogged}
         endBox={!seriesBox && handleEndBox}
+        userLogged={userLogged}
+        articleLogged={articleLogged}
       />
 
       <Status
