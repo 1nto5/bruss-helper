@@ -174,7 +174,7 @@
   text-transform: uppercase;
   font-weight: bold;
 } */
-
+/* 
 .cards-list {
   display: flex;
   flex-wrap: nowrap;
@@ -220,7 +220,7 @@
 
 .workplaces--button:hover {
   background-color: #8bb63b;
-}
+} */
 
 /* .articles {
   display: flex;
@@ -361,7 +361,7 @@
   margin: 0 10px;
 } */
 
-.mgmt--dmc-list {
+/* .mgmt--dmc-list {
 }
 
 .dmc-list--table {
@@ -404,10 +404,10 @@
   border: 1px solid #ccc;
   padding: 5px;
   text-align: left;
-}
+} */
 
 /* POPUP login window */
-.popup {
+/* .popup {
   position: fixed;
   z-index: 1000;
   top: 0;
@@ -516,4 +516,4 @@
 
 .popup-content--register-link a {
   color: #3f51b5;
-}
+} */
