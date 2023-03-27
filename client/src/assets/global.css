@@ -315,7 +315,7 @@
 
 /* MGMT CHOOSER */
 
-.mgmt-chooser {
+/* .mgmt-chooser {
   display: flex;
   flex-direction: row;
   margin-top: 5px;
@@ -359,7 +359,7 @@
   height: 80%;
   background-color: #ccc;
   margin: 0 10px;
-}
+} */
 
 .mgmt--dmc-list {
 }
