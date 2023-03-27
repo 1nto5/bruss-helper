@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import QRCode from 'qrcode.react';
-import html2canvas from 'html2canvas';
+import React, { useRef } from "react";
+import QRCode from "qrcode.react";
+import html2canvas from "html2canvas";
 
 const PrintPalletLabel = (props) => {
   const qrCodeRef = useRef(null);
@@ -67,23 +67,28 @@ const PrintPalletLabel = (props) => {
   };
 
   const handlePrint = () => {
-    const qrCodeCanvas = qrCodeRef.current.querySelector('canvas');
+    const qrCodeCanvas = qrCodeRef.current.querySelector("canvas");
     html2canvas(qrCodeCanvas, { scale: 2 })
-      .then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
+      .then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
         generatePrintWindow(imgData);
       })
-      .catch(error => {
-        console.error('Error generating canvas from QR code:', error);
+      .catch((error) => {
+        console.error("Error generating canvas from QR code:", error);
       });
   };
 
   return (
-    <div className='print-pallet-label'>
+    <div className="mt-8 flex flex-col items-center justify-center">
       <div ref={qrCodeRef}>
-      <QRCode className='print-pallet-label--qr' value={props.palletQr}/>
+        <QRCode value={props.palletQr} />
       </div>
-      <button className='print-pallet-label--button' onClick={handlePrint}>Wydruk etykiety</button>
+      <button
+        className="mt-8 inline-block w-52 rounded bg-gray-200 px-2 py-4 text-center text-xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+        onClick={handlePrint}
+      >
+        wydruk etykiety
+      </button>
     </div>
   );
 };

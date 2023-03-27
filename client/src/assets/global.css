@@ -253,7 +253,7 @@
 
 /* INPUT DMC */
 
-.input-all {
+/* .input-all {
   display: flex;
   flex-direction: column;
   margin-top: 40px;
@@ -270,9 +270,9 @@
   background-color: #ddd;
   border: none;
   border-radius: 15px;
-}
+} */
 
-/* PRINT LABEL QR */
+/* PRINT LABEL QR
 .print-pallet-label {
   display: flex;
   flex-direction: column;
@@ -298,7 +298,7 @@
 
 .print-pallet-label--button:hover {
   background-color: #8bb63b;
-}
+} */
 
 /* footer {
   position: fixed;
