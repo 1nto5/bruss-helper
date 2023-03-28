@@ -1,63 +1,94 @@
-import crypto from 'crypto';
-import nodemailer from 'nodemailer';
-import User from '../models/User.js';
+import dotenv from "dotenv";
+dotenv.config();
+import User from "../models/User.js";
+import passport from "passport";
+import JwtStrategy from "passport-jwt";
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
-  auth: {
-    user: 'fae8@ethereal.email',
-    pass: '9hpBQSJwxtcCZNkEyY'
-  }
-});
+import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
+import { v4 as uuidv4 } from "uuid";
 
-export const register = async (req, res) => {
+passport.use(
+  new JwtStrategy.Strategy(
+    {
+      jwtFromRequest: JwtStrategy.ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_SECRET,
+    },
+    (jwtPayload, done) => {
+      User.findById(jwtPayload.id, (err, user) => {
+        if (err) return done(err, false);
+        if (user) return done(null, user);
+        return done(null, false);
+      });
+    }
+  )
+);
+
+const sendLoginLinkEmail = async (email, loginToken) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    auth: {
+      user: "fae8@ethereal.email",
+      pass: "9hpBQSJwxtcCZNkEyY",
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Login Link",
+    text: `Click on this link to log in: http://localhost:3000/login/${loginToken}`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+export const login = async (req, res) => {
   const { email } = req.body;
   let user = await User.findOne({ email });
 
   if (!user) {
     user = new User({ email });
+    await user.save();
   }
 
-  const token = crypto.randomBytes(20).toString('hex');
-  const tokenExpiration = new Date(Date.now() + 120 * 60 * 1000);
+  const loginToken = uuidv4();
+  const loginTokenExpires = new Date();
+  loginTokenExpires.setHours(loginTokenExpires.getHours() + 1);
 
-  user.token = token;
-  user.tokenExpiration = tokenExpiration;
+  await User.findByIdAndUpdate(user._id, { loginToken, loginTokenExpires });
 
-  await user.save();
+  await sendLoginLinkEmail(email, loginToken);
 
-  const loginLink = `https://localhost:3000/auth/${token}`;
-
-  const mailOptions = {
-    from: 'your-email@example.com',
-    to: email,
-    subject: 'Login link',
-    text: `Click the link to log in: ${loginLink}`,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      res.status(500).json({ error: 'Failed to send email' });
-    } else {
-      res.status(200).json({ message: 'Login link sent to email' });
-    }
-  });
+  res.json({ message: "Login link sent to your email" });
 };
 
-export const login = async (req, res) => {
-  const { token } = req.params;
-  const user = await User.findOne({ token });
+export const loginToken = async (req, res) => {
+  const { loginToken } = req.params;
+
+  const user = await User.findOne({
+    loginToken,
+    loginTokenExpires: { $gt: new Date() },
+  });
 
   if (!user) {
-    res.status(401).json({ error: 'Invalid or expired token' });
-    return;
+    return res.status(401).json({ message: "Invalid or expired login link" });
   }
 
-  if (Date.now() > user.tokenExpiration) {
-    res.status(401).json({ error: 'Invalid or expired token' });
-    return;
-  }
+  const payload = { id: user.id, email: user.email };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-  res.status(200).json({ message: 'Logged in successfully', email: user.email });
+  res.json({ token });
 };
+
+// app.get(
+//   "/profile",
+//   passport.authenticate("jwt", { session: false }),
+//   (req, res) => {
+//     res.json({
+//       message: "You have accessed a protected route!",
+//       user: req.user,
+//     });
+//   }
+// );
