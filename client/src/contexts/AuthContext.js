@@ -1,10 +1,33 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // default to not logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [mgmtAccess, setMgmtAccess] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+      fetchMgmtAccess(token); // call fetchMgmtAccess after login
+    }
+  }, []);
+
+  const fetchMgmtAccess = async (token) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4000/auth/mgmt-access",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setMgmtAccess(response.data.dmcheckMgmtAccess);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const login = async (email, password) => {
     try {
@@ -15,19 +38,20 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("token", response.data.token);
       setIsLoggedIn(true);
-      alert("Logged in successfully");
+      fetchMgmtAccess(response.data.token); // call fetchMgmtAccess after setting the token
     } catch (error) {
       console.log(error);
     }
   };
 
   const logout = () => {
-    // perform logout logic, e.g. send logout request to server
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
+    setMgmtAccess(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, mgmtAccess, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

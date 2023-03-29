@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import LoginModal from "../../components/LoginModal";
+import React, { useState, useContext, useEffect } from "react";
 import Header from "./Header";
 import Chooser from "./Chooser";
 import DmcList from "./DmcList";
 import Footer from "../../components/Footer";
+import { AuthContext } from "../../contexts/AuthContext";
 
 // TODO auth system
 
@@ -11,6 +11,9 @@ const DmcheckMgmt = () => {
   useEffect(() => {
     document.title = "DMCheck MGMT";
   }, []);
+
+  const { isLoggedIn } = useContext(AuthContext);
+  const { mgmtAccess } = useContext(AuthContext);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -61,32 +64,37 @@ const DmcheckMgmt = () => {
   return (
     <>
       <Header clickSkip={handleSkip} />
-      <Chooser
-        workplace={workplace}
-        handleWorkplaceChange={handleWorkplaceChange}
-        article={article}
-        handleArticleChange={handleArticleChange}
-        status={status}
-        handleStatusChange={handleStatusChange}
-        operator={operator}
-        handleOperatorInput={handleOperatorInput}
-        startDate={startDate}
-        handleStartDateChange={handleStartDateChange}
-        endDate={endDate}
-        handleEndDateChange={handleEndDateChange}
-        dmcOrBatchInput={dmcOrBatchInput}
-        handleDmcOrBatchInput={handleDmcOrBatchInput}
-      />
-      <DmcList
-        startDate={startDate}
-        endDate={endDate}
-        workplace={workplace}
-        article={article}
-        status={status}
-        operator={operator}
-        skipClick={skipClick}
-        dmcOrBatchInput={dmcOrBatchInput}
-      />
+
+      {isLoggedIn && mgmtAccess && (
+        <>
+          <Chooser
+            workplace={workplace}
+            handleWorkplaceChange={handleWorkplaceChange}
+            article={article}
+            handleArticleChange={handleArticleChange}
+            status={status}
+            handleStatusChange={handleStatusChange}
+            operator={operator}
+            handleOperatorInput={handleOperatorInput}
+            startDate={startDate}
+            handleStartDateChange={handleStartDateChange}
+            endDate={endDate}
+            handleEndDateChange={handleEndDateChange}
+            dmcOrBatchInput={dmcOrBatchInput}
+            handleDmcOrBatchInput={handleDmcOrBatchInput}
+          />
+          <DmcList
+            startDate={startDate}
+            endDate={endDate}
+            workplace={workplace}
+            article={article}
+            status={status}
+            operator={operator}
+            skipClick={skipClick}
+            dmcOrBatchInput={dmcOrBatchInput}
+          />
+        </>
+      )}
 
       <Footer version={"1.0.4"} />
     </>

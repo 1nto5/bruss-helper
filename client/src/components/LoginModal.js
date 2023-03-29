@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
-import { AuthProvider } from "../contexts/AuthContext";
 
 const LoginModal = ({ onClose }) => {
   const [showRegister, setShowRegister] = useState(false);
@@ -10,6 +9,10 @@ const LoginModal = ({ onClose }) => {
     if (e.target.className.includes("modal-background")) {
       onClose();
     }
+  };
+
+  const handleCloseModal = () => {
+    onClose();
   };
 
   return (
@@ -27,9 +30,7 @@ const LoginModal = ({ onClose }) => {
         {showRegister ? (
           <RegisterForm />
         ) : (
-          <AuthProvider>
-            <LoginForm />
-          </AuthProvider>
+          <LoginForm onSuccess={handleCloseModal} />
         )}
         <button
           className="mt-4 text-blue-600"

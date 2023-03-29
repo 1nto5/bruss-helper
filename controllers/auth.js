@@ -26,10 +26,6 @@ export const login = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  console.log("Email:", email);
-  console.log("Password:", password);
-  console.log("User password:", user.password);
-
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
@@ -40,4 +36,33 @@ export const login = async (req, res) => {
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
   res.json({ token });
+};
+
+export const fetchMgmtAccess = async (req, res) => {
+  try {
+    // Get the token from the request headers
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    // Verify the token and retrieve the user's email
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userEmail = decodedToken.email;
+
+    // Find the user with the email address
+    const user = await User.findOne({ email: userEmail });
+
+    if (!user) {
+      return res.status(401).json({ msg: "User not found" });
+    }
+
+    // Return the dmcheckMgmtAccess value from the user object
+    res.json({ dmcheckMgmtAccess: user.dmcheckMgmtAccess });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
 };

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 
-const LoginForm = () => {
+const LoginForm = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
@@ -9,6 +9,7 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(email, password);
+    props.onSuccess();
   };
 
   return (

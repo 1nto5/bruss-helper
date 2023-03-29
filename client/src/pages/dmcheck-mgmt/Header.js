@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import logo from "../../assets/logo.png";
 import { HeaderLinkButton } from "../../components/Buttons";
 import LoginModal from "../../components/LoginModal";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Header = (props) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const { isLoggedIn, logout, mgmtAccess } = useContext(AuthContext);
 
   const handleClickSkip = (e) => {
     e.preventDefault();
     if (window.confirm("Czy na pewno chcesz pominąć zaznaczone pozycje?")) {
       props.clickSkip();
+    }
+  };
+
+  const handleLogout = () => {
+    if (window.confirm("Czy na pewno chcesz się wylogować?")) {
+      logout();
     }
   };
 
@@ -24,8 +32,16 @@ const Header = (props) => {
         <span className="text-2xl font-bold tracking-tight">DMCheck MGMT</span>
       </div>
       <div>
-        <HeaderLinkButton text="pomiń" onClick={handleClickSkip} />
-        <HeaderLinkButton text="zaloguj" onClick={toggleLoginModal} />
+        {isLoggedIn ? (
+          <>
+            <HeaderLinkButton text="wyloguj" onClick={handleLogout} />
+            {mgmtAccess && (
+              <HeaderLinkButton text="pomiń" onClick={handleClickSkip} />
+            )}
+          </>
+        ) : (
+          <HeaderLinkButton text="zaloguj" onClick={toggleLoginModal} />
+        )}
       </div>
       {showLoginModal && <LoginModal onClose={toggleLoginModal} />}
     </nav>
