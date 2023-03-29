@@ -1,79 +1,39 @@
-import dotenv from "dotenv";
-dotenv.config();
 import User from "../models/User.js";
-import passport from "passport";
-import JwtStrategy from "passport-jwt";
-
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import { v4 as uuidv4 } from "uuid";
 
-passport.use(
-  new JwtStrategy.Strategy(
-    {
-      jwtFromRequest: JwtStrategy.ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
-    },
-    (jwtPayload, done) => {
-      User.findById(jwtPayload.id, (err, user) => {
-        if (err) return done(err, false);
-        if (user) return done(null, user);
-        return done(null, false);
-      });
-    }
-  )
-);
+export const register = async (req, res) => {
+  const { email, password } = req.body;
 
-const sendLoginLinkEmail = async (email, loginToken) => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    auth: {
-      user: "fae8@ethereal.email",
-      pass: "9hpBQSJwxtcCZNkEyY",
-    },
-  });
+  const existingUser = await User.findOne({ email });
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "Login Link",
-    text: `Click on this link to log in: http://localhost:3000/login/${loginToken}`,
-  };
+  if (existingUser) {
+    return res.status(409).json({ message: "User already exists" });
+  }
 
-  await transporter.sendMail(mailOptions);
+  const user = new User({ email, password });
+  await user.save();
+
+  res.json({ message: "User registered successfully" });
 };
 
 export const login = async (req, res) => {
-  const { email } = req.body;
-  let user = await User.findOne({ email });
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
 
   if (!user) {
-    user = new User({ email });
-    await user.save();
+    return res.status(404).json({ message: "User not found" });
   }
 
-  const loginToken = uuidv4();
-  const loginTokenExpires = new Date();
-  loginTokenExpires.setHours(loginTokenExpires.getHours() + 1);
+  console.log("Email:", email);
+  console.log("Password:", password);
+  console.log("User password:", user.password);
 
-  await User.findByIdAndUpdate(user._id, { loginToken, loginTokenExpires });
+  const passwordMatch = await bcrypt.compare(password, user.password);
 
-  await sendLoginLinkEmail(email, loginToken);
-
-  res.json({ message: "Login link sent to your email" });
-};
-
-export const loginToken = async (req, res) => {
-  const { loginToken } = req.params;
-
-  const user = await User.findOne({
-    loginToken,
-    loginTokenExpires: { $gt: new Date() },
-  });
-
-  if (!user) {
-    return res.status(401).json({ message: "Invalid or expired login link" });
+  if (!passwordMatch) {
+    return res.status(401).json({ message: "Invalid password" });
   }
 
   const payload = { id: user.id, email: user.email };
@@ -81,14 +41,3 @@ export const loginToken = async (req, res) => {
 
   res.json({ token });
 };
-
-// app.get(
-//   "/profile",
-//   passport.authenticate("jwt", { session: false }),
-//   (req, res) => {
-//     res.json({
-//       message: "You have accessed a protected route!",
-//       user: req.user,
-//     });
-//   }
-// );

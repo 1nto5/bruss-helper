@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import LoginModal from "../../components/LoginModal";
 import Header from "./Header";
 import Chooser from "./Chooser";
 import DmcList from "./DmcList";
@@ -60,7 +61,6 @@ const DmcheckMgmt = () => {
   return (
     <>
       <Header clickSkip={handleSkip} />
-
       <Chooser
         workplace={workplace}
         handleWorkplaceChange={handleWorkplaceChange}
@@ -77,7 +77,6 @@ const DmcheckMgmt = () => {
         dmcOrBatchInput={dmcOrBatchInput}
         handleDmcOrBatchInput={handleDmcOrBatchInput}
       />
-
       <DmcList
         startDate={startDate}
         endDate={endDate}
