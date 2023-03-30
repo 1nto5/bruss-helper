@@ -16,8 +16,8 @@ const dbUri = process.env.DB_URI;
 mongoose.connect(dbUri, { useNewUrlParser: true });
 
 // PRODUCTION
-// const PORT = "80"
-// mongoose.connect('mongodb://127.0.0.1/bruss_helper', { useNewUrlParser: true });
+// const PORT = "80";
+// mongoose.connect("mongodb://127.0.0.1/bruss_helper", { useNewUrlParser: true });
 
 // DEVELOPMENT
 import cors from "cors";
@@ -32,11 +32,14 @@ const PORT = "4000";
 app.use("/", dmcheckMgmtRoutes, dmcheckProRoutes, authRoutes);
 
 // PRODUCTION serve React app
-// import path from 'path';
-// import serveStatic from 'serve-static';
-// app.use(serveStatic(path.join(__dirname, 'client/build')));
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'client/build/index.html'));
+// import path from "path";
+// import serveStatic from "serve-static";
+
+// const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+// app.use(serveStatic(path.join(__dirname, "client/build")));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "client/build/index.html"));
 // });
 
 app.listen(PORT, () => {
