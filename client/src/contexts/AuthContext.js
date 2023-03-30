@@ -3,31 +3,34 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
+// TODO account confirmation with email
+
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mgmtAccess, setMgmtAccess] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-      fetchMgmtAccess(token); // call fetchMgmtAccess after login
-    }
-  }, []);
-
-  const fetchMgmtAccess = async (token) => {
+  const isTokenExpired = async (token) => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/auth/mgmt-access",
+        "http://localhost:4000/auth/is-token-expired",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setMgmtAccess(response.data.dmcheckMgmtAccess);
+      return response.status === 200;
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (isTokenExpired(token)) {
+      setIsLoggedIn(true);
+      fetchMgmtAccess(token); // call fetchMgmtAccess after login
+    }
+  }, []);
 
   const login = async (email, password) => {
     try {
@@ -48,6 +51,20 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setMgmtAccess(false);
+  };
+
+  const fetchMgmtAccess = async (token) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4000/auth/mgmt-access",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setMgmtAccess(response.data.dmcheckMgmtAccess);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
