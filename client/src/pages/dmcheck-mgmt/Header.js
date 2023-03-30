@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import logo from "../../assets/logo.png";
 import { HeaderLinkButton } from "../../components/Buttons";
-import LoginModal from "../../components/LoginModal";
+import LoginModal from "../../components/AuthModal";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const Header = (props) => {

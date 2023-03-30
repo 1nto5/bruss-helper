@@ -96,7 +96,7 @@ const DmcheckMgmt = () => {
         </>
       )}
 
-      <Footer version={"1.0.4"} />
+      <Footer version={"1.1.0"} />
     </>
   );
 };

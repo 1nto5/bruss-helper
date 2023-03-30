@@ -1,9 +1,9 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import Toast from "../utils/Toast";
+import toast from "react-hot-toast";
 
 export const AuthContext = createContext();
-
-// TODO account confirmation with email
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (isTokenExpired(token)) {
+    if (token && !isTokenExpired(token)) {
       setIsLoggedIn(true);
       fetchMgmtAccess(token); // call fetchMgmtAccess after login
     }
@@ -42,8 +42,16 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", response.data.token);
       setIsLoggedIn(true);
       fetchMgmtAccess(response.data.token); // call fetchMgmtAccess after setting the token
+      toast.success(`Zalogowano!`);
     } catch (error) {
+      if (error.response.status === 401) {
+        toast.error(`Niepoporawne hasło!`);
+      }
+      if (error.response.status === 404) {
+        toast.error(`Nie znaleziono konta!`);
+      }
       console.log(error);
+      return false;
     }
   };
 
@@ -51,6 +59,48 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setMgmtAccess(false);
+    toast(`Wylogowano!`);
+  };
+
+  const register = async (email, password, repeatPassword) => {
+    if (password !== repeatPassword) {
+      toast.error(`Hasła niezgodne!`);
+      return false;
+    }
+
+    const validateCompanyEmail = (email) => {
+      const emailRegex = /^[a-z]{3,}\.[a-z]{3,}@bruss-group.com$/i;
+      return emailRegex.test(email);
+    };
+
+    if (!validateCompanyEmail(email)) {
+      toast.error(`Niepoprawny email!`);
+      return false;
+    }
+
+    const validatePassword = (password) => {
+      const passwordRegex = /^.*(?=.{6,})(?=.*[!@#$%^&*]).*$/;
+      return passwordRegex.test(password);
+    };
+
+    if (!validatePassword(password)) {
+      toast.error(`Hasło nie spełnia wymagań!`);
+      return false;
+    }
+
+    try {
+      await axios.post("http://localhost:4000/auth/register", {
+        email,
+        password,
+      });
+      toast.success(`Zarejestrowano!`);
+    } catch (error) {
+      if (error.response.status === 409) {
+        toast.error(`Konto istnieje!`);
+      }
+      console.log(error);
+      return false;
+    }
   };
 
   const fetchMgmtAccess = async (token) => {
@@ -68,8 +118,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, mgmtAccess, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, mgmtAccess, login, logout, register }}
+    >
       {children}
+      <Toast />
     </AuthContext.Provider>
   );
 };
