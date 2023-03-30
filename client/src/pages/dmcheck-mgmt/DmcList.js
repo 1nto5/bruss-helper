@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 // import XlsxPopulate from 'xlsx-populate';
+// TODO excel export
 
 import { API_URL } from "../../assets/config.js";
-
-// TODO add article
-// TODO migrate to react table
 
 const DmcList = (props) => {
   const [selectAll, setSelectAll] = useState(false);
