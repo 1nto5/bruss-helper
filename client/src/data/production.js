@@ -1,41 +1,41 @@
 export default [
-  // {
-  //     TEST: {
-  //         name: "",
-  //         articles: {
-  //             99999: {
-  //                 name: "F-IWDR92,1L-ST",
-  //                 dmc: "C9E0CYYDAYAXXXXXGK2Q 6K301 AA",
-  //                 fordDate: true,
-  //                 bmwDate: false,
-  //                 dmcStartVal: true,
-  //                 dmcEndVal: true,
-  //                 startVal: [0, 5],
-  //                 endVal: [16, 13],
-  //                 box: false,
-  //                 boxSize: 4, // q / box
-  //                 pallet: false,
-  //                 palletSize: 2, // box / pallet
-  //                 note: "boxon",
-  //             },
-  //             99988: {
-  //                 name: "F-IWDR92,1L-ST",
-  //                 dmc: "C9E0CYYDAYAXXXXXGK2Q 6K301 AA",
-  //                 fordDate: true,
-  //                 bmwDate: false,
-  //                 dmcStartVal: true,
-  //                 dmcEndVal: true,
-  //                 startVal: [0, 5],
-  //                 endVal: [16, 13],
-  //                 box: true,
-  //                 boxSize: 1,
-  //                 pallet: true,
-  //                 palletSize: 2,
-  //                 note: "karton",
-  //             },
-  //         },
-  //     },
-  // },
+  {
+    TEST: {
+      name: "",
+      articles: {
+        99999: {
+          name: "F-IWDR92,1L-ST",
+          dmc: "C9E0CYYDAYAXXXXXGK2Q 6K301 AA",
+          fordDate: true,
+          bmwDate: false,
+          dmcStartVal: true,
+          dmcEndVal: true,
+          startVal: [0, 5],
+          endVal: [16, 13],
+          box: false,
+          boxSize: 4, // q / box
+          pallet: false,
+          palletSize: 2, // box / pallet
+          note: "boxon",
+        },
+        99988: {
+          name: "F-IWDR92,1L-ST",
+          dmc: "C9E0CYYDAYAXXXXXGK2Q 6K301 AA",
+          fordDate: true,
+          bmwDate: false,
+          dmcStartVal: true,
+          dmcEndVal: true,
+          startVal: [0, 5],
+          endVal: [16, 13],
+          box: true,
+          boxSize: 1,
+          pallet: true,
+          palletSize: 2,
+          note: "karton",
+        },
+      },
+    },
+  },
 
   {
     EOL74: {
