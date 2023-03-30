@@ -1,3 +1,4 @@
+import { API_URL } from "../assets/config";
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import Toast from "../utils/Toast";
@@ -11,12 +12,9 @@ export const AuthProvider = ({ children }) => {
 
   const isTokenExpired = async (token) => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/auth/is-token-expired",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.get(`${API_URL}/auth/is-token-expired`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return response.status === 200;
     } catch (error) {
       console.log(error);
@@ -34,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post("http://localhost:4000/auth/login", {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });
@@ -89,7 +87,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      await axios.post("http://localhost:4000/auth/register", {
+      await axios.post(`${API_URL}auth/register`, {
         email,
         password,
       });
@@ -105,12 +103,9 @@ export const AuthProvider = ({ children }) => {
 
   const fetchMgmtAccess = async (token) => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/auth/mgmt-access",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.get(`${API_URL}/auth/mgmt-access`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setMgmtAccess(response.data.dmcheckMgmtAccess);
     } catch (error) {
       console.log(error);
