@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token && !isTokenExpired(token)) {
+    if (token && isTokenExpired(token)) {
       setIsLoggedIn(true);
       fetchMgmtAccess(token); // call fetchMgmtAccess after login
     }
