@@ -3,14 +3,14 @@ import {
   login,
   register,
   fetchMgmtAccess,
-  isTokenExpired,
+  isTokenValid,
 } from "../controllers/auth.js";
 
 const router = express.Router();
 
 router.post("/auth/register", register);
 router.post("/auth/login", login);
-router.get("/auth/is-token-expired", isTokenExpired);
+router.get("/auth/is-token-expired", isTokenValid);
 router.get("/auth/mgmt-access", fetchMgmtAccess);
 
 export default router;

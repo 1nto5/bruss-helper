@@ -75,7 +75,7 @@ export const fetchMgmtAccess = async (req, res) => {
 };
 
 // Check if a JWT token has expired
-export const isTokenExpired = (req, res) => {
+export const isTokenValid = (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
 
