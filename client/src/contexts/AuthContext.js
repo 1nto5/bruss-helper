@@ -6,40 +6,59 @@ import toast from "react-hot-toast";
 
 export const AuthContext = createContext();
 
+// AuthProvider component to manage authentication state and provide functions for login, logout, and registration
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mgmtAccess, setMgmtAccess] = useState(false);
 
-  const isTokenExpired = async (token) => {
+  // Function to check if the provided token is still valid
+  const isTokenValid = async (token) => {
     try {
       const response = await axios.get(`${API_URL}/auth/is-token-expired`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return response.status === 200;
+      if (response.status === 200) {
+        return true;
+      } else {
+        console.log("Token is expired");
+        return false;
+      }
     } catch (error) {
-      console.log(error);
+      console.log("Error checking token validity:", error);
       return false;
     }
   };
 
+  // useEffect hook to initialize the authentication state when the component mounts
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token && isTokenExpired(token)) {
-      setIsLoggedIn(true);
-      fetchMgmtAccess(token); // call fetchMgmtAccess after login
+    const initializeAuth = async () => {
+      const tokenIsValid = await isTokenValid(token);
+      if (tokenIsValid) {
+        setIsLoggedIn(true);
+        fetchMgmtAccess(token);
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+    if (token) {
+      initializeAuth();
     }
   }, []);
 
+  // Function to handle user login, perform validations on the input fields,
+  // and send a POST request to the '/auth/login' endpoint with email and password,
+  // handle specific error statuses, show appropriate error messages,
+  // and return false if the login attempt was unsuccessful
   const login = async (email, password) => {
     try {
       const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });
-
       localStorage.setItem("token", response.data.token);
       setIsLoggedIn(true);
-      fetchMgmtAccess(response.data.token); // call fetchMgmtAccess after setting the token
+      fetchMgmtAccess(response.data.token);
       toast.success(`Zalogowano!`);
     } catch (error) {
       if (error.response.status === 401) {
@@ -53,6 +72,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to handle user logout, remove the token from localStorage,
+  // set the user as logged out, reset the management access status,
+  // and show a toast message indicating successful logout
   const logout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
@@ -60,32 +82,31 @@ export const AuthProvider = ({ children }) => {
     toast(`Wylogowano!`);
   };
 
+  // Function to handle user registration, perform validations on the input fields,
+  // and send a POST request to the '/auth/register' endpoint with email and password,
+  // handle specific error statuses, show appropriate error messages,
+  // and return false if the registration attempt was unsuccessful
   const register = async (email, password, repeatPassword) => {
     if (password !== repeatPassword) {
       toast.error(`Hasła niezgodne!`);
       return false;
     }
-
     const validateCompanyEmail = (email) => {
       const emailRegex = /^[a-z]{3,}\.[a-z]{3,}@bruss-group.com$/i;
       return emailRegex.test(email);
     };
-
     if (!validateCompanyEmail(email)) {
       toast.error(`Niepoprawny email!`);
       return false;
     }
-
     const validatePassword = (password) => {
       const passwordRegex = /^.*(?=.{6,})(?=.*[!@#$%^&*]).*$/;
       return passwordRegex.test(password);
     };
-
     if (!validatePassword(password)) {
       toast.error(`Hasło nie spełnia wymagań!`);
       return false;
     }
-
     try {
       await axios.post(`${API_URL}/auth/register`, {
         email,
@@ -101,6 +122,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to fetch management access information for the user
+  // using their token, then update the mgmtAccess state
   const fetchMgmtAccess = async (token) => {
     try {
       const response = await axios.get(`${API_URL}/auth/mgmt-access`, {
@@ -112,6 +135,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Return the AuthContext.Provider component with the context values
+  // containing the authentication state and functions for managing it
   return (
     <AuthContext.Provider
       value={{ isLoggedIn, mgmtAccess, login, logout, register }}
