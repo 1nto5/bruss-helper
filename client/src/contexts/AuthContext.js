@@ -1,4 +1,3 @@
-import { API_URL } from "../assets/config";
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import Toast from "../utils/Toast";
@@ -14,9 +13,12 @@ export const AuthProvider = ({ children }) => {
   // Function to check if the provided token is still valid
   const isTokenValid = async (token) => {
     try {
-      const response = await axios.get(`${API_URL}/auth/is-token-expired`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/auth/is-token-valid`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         return true;
       } else {
@@ -26,6 +28,22 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.log("Error checking token validity:", error);
       return false;
+    }
+  };
+
+  // Function to fetch management access information for the user
+  // using their token, then update the mgmtAccess state
+  const fetchMgmtAccess = async (token) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/auth/mgmt-access`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setMgmtAccess(response.data.dmcheckMgmtAccess);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -52,10 +70,13 @@ export const AuthProvider = ({ children }) => {
   // and return false if the login attempt was unsuccessful
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
       localStorage.setItem("token", response.data.token);
       setIsLoggedIn(true);
       fetchMgmtAccess(response.data.token);
@@ -108,7 +129,7 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
     try {
-      await axios.post(`${API_URL}/auth/register`, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, {
         email,
         password,
       });
@@ -119,19 +140,6 @@ export const AuthProvider = ({ children }) => {
       }
       console.log(error);
       return false;
-    }
-  };
-
-  // Function to fetch management access information for the user
-  // using their token, then update the mgmtAccess state
-  const fetchMgmtAccess = async (token) => {
-    try {
-      const response = await axios.get(`${API_URL}/auth/mgmt-access`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setMgmtAccess(response.data.dmcheckMgmtAccess);
-    } catch (error) {
-      console.log(error);
     }
   };
 

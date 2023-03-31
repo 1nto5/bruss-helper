@@ -3,8 +3,8 @@ import axios from "axios";
 
 // import XlsxPopulate from 'xlsx-populate';
 // TODO excel export
-
-import { API_URL } from "../../assets/config.js";
+// TODO change color when no pallet batch
+// TODO loading data icon + limit to 10000 (API)
 
 const DmcList = (props) => {
   const [selectAll, setSelectAll] = useState(false);
@@ -26,7 +26,7 @@ const DmcList = (props) => {
       ...(props.dmcOrBatchInput && { dmcOrBatch: props.dmcOrBatchInput }),
     };
     axios
-      .get(`${API_URL}/dmcheck-mgmt/find`, { params })
+      .get(`${process.env.REACT_APP_API_URL}/dmcheck-mgmt/find`, { params })
       .then((response) => {
         setDmcList(response.data);
       })
@@ -77,7 +77,7 @@ const DmcList = (props) => {
     const collection = props.workplace;
     axios
       .post(
-        `${API_URL}/dmcheck-mgmt/skip`,
+        `${process.env.REACT_APP_API_URL}/dmcheck-mgmt/skip`,
         { selectedDmcs, collection },
         {
           headers: {

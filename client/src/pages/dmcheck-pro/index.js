@@ -1,4 +1,6 @@
-import { API_URL } from "../../assets/config";
+// TODO rerender article / operator in Status box after logout
+// TODO prevent possibility to end box when inBox = 0
+
 import production from "../../data/production";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
@@ -161,7 +163,7 @@ function DmcheckPro() {
     const status = statusNumber;
     try {
       const response = await axios.get(
-        `${API_URL}/dmcheck-pro/count-dmc?status=${status}&workplace=${workplace}&article=${article}`
+        `${process.env.REACT_APP_API_URL}/dmcheck-pro/count-dmc?status=${status}&workplace=${workplace}&article=${article}`
       );
       const count = response.data.message;
       if (statusNumber === 0) {
@@ -372,7 +374,7 @@ function DmcheckPro() {
     }
   }, [dmcInputted]);
 
-  // POST DMC INTO API_URL -> SAVE TO DB
+  // POST DMC INTO process.env.REACT_APP_API_URL -> SAVE TO DB
   const saveDmc = (dmcToSave) => {
     const workplace = currentWorkplaceRef.current;
     const article = currentArticleRef.current;
@@ -380,7 +382,7 @@ function DmcheckPro() {
     const dmc_operator = currentUserRef.current;
     const data = { workplace, article, dmc, dmc_operator };
     axios
-      .post(`${API_URL}/dmcheck-pro/save-dmc`, data, {
+      .post(`${process.env.REACT_APP_API_URL}/dmcheck-pro/save-dmc`, data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -448,7 +450,7 @@ function DmcheckPro() {
     }
   }, [hydraInputted]);
 
-  // POST HYDRA INTO API_URL -> SAVE TO DB
+  // POST HYDRA INTO process.env.REACT_APP_API_URL -> SAVE TO DB
   const saveHydra = (hydraToSave) => {
     const hydra_batch = hydraToSave;
     const hydra_operator = currentUserRef.current;
@@ -456,7 +458,7 @@ function DmcheckPro() {
     const article = currentArticleRef.current;
     const data = { hydra_batch, hydra_operator, workplace, article };
     axios
-      .post(`${API_URL}/dmcheck-pro/save-hydra`, data, {
+      .post(`${process.env.REACT_APP_API_URL}/dmcheck-pro/save-hydra`, data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -527,7 +529,7 @@ function DmcheckPro() {
     }
   }, [palletInputted]);
 
-  // POST PALLET INTO API_URL -> SAVE TO DB
+  // POST PALLET INTO process.env.REACT_APP_API_URL -> SAVE TO DB
   const savePallet = (palletToSave) => {
     const pallet_batch = palletToSave;
     const pallet_operator = currentUserRef.current;
@@ -542,7 +544,7 @@ function DmcheckPro() {
       article,
     };
     axios
-      .post(`${API_URL}/dmcheck-pro/save-pallet`, data, {
+      .post(`${process.env.REACT_APP_API_URL}/dmcheck-pro/save-pallet`, data, {
         headers: {
           "Content-Type": "application/json",
         },
