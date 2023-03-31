@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import * as XLSX from "xlsx";
 
-// import XlsxPopulate from 'xlsx-populate';
 // TODO excel export
 // TODO change color when no pallet batch
 // TODO loading data icon + limit to 10000 (API)
@@ -93,9 +93,98 @@ const DmcList = (props) => {
         console.log(error);
       });
   };
+  const exportToExcel = () => {
+    const formattedDmcs = selectedDmcs.map((dmc) => {
+      let statusText;
+      switch (dmc.status) {
+        case 0:
+          statusText = "box";
+          break;
+        case 1:
+          statusText = "paleta";
+          break;
+        case 2:
+          statusText = "magazyn";
+          break;
+        case 9:
+          statusText = "pominięty";
+          break;
+        default:
+          statusText = "";
+      }
+
+      const formatDate = (date) => {
+        if (!date) return "-";
+        const d = new Date(date);
+        return `${d.getFullYear()}-${(d.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
+      };
+
+      const formatTime = (date) => {
+        if (!date) return "-";
+        const d = new Date(date);
+        return `${d.getHours().toString().padStart(2, "0")}:${d
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`;
+      };
+
+      return {
+        status: statusText,
+        workplace: dmc.workplace,
+        article: dmc.article,
+        dmc: dmc.dmc,
+        dmc_operator: dmc.dmc_operator,
+        dmc_date: formatDate(dmc.dmc_time),
+        dmc_time: formatTime(dmc.dmc_time),
+        hydra_batch: dmc.hydra_batch || "-",
+        hydra_operator: dmc.hydra_operator || "-",
+        hydra_date: formatDate(dmc.hydra_time),
+        hydra_time: formatTime(dmc.hydra_time),
+        pallet_batch: dmc.pallet_batch || "-",
+        pallet_operator: dmc.pallet_operator || "-",
+        pallet_date: formatDate(dmc.pallet_time),
+        pallet_time: formatTime(dmc.pallet_time),
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(formattedDmcs, {
+      header: [
+        "status",
+        "workplace",
+        "article",
+        "dmc",
+        "dmc_operator",
+        "dmc_date",
+        "dmc_time",
+        "hydra_batch",
+        "hydra_operator",
+        "hydra_date",
+        "hydra_time",
+        "pallet_batch",
+        "pallet_operator",
+        "pallet_date",
+        "pallet_time",
+      ],
+    });
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Selected Rows");
+    XLSX.writeFile(wb, "selected_rows.xlsx");
+  };
 
   return (
     <div className="mt-4 shadow-lg">
+      {selectedDmcs.length > 0 && (
+        <button
+          className="mt-4 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+          onClick={exportToExcel}
+        >
+          Export Selected Rows to Excel
+        </button>
+      )}
+
       {dmcList.length > 0 && (
         <table className="w-full">
           <thead>
