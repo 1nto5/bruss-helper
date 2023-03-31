@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import production from "../../data/production";
 import { BoxSeparator } from "../../components/StatusElements";
 
+// TODO restart article when change workplace
+
 const Chooser = (props) => {
   const workplaces = useMemo(
     () => production.map((workplace) => Object.keys(workplace)[0]),

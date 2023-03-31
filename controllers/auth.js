@@ -23,7 +23,6 @@ export const register = async (req, res) => {
 // Log in a user and issue a JWT token
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
   // Find the user with the given email
   const user = await User.findOne({ email });
 
@@ -66,7 +65,6 @@ export const fetchMgmtAccess = async (req, res) => {
     if (!user) {
       return res.status(401).json({ msg: "User not found" });
     }
-
     // Return the management access level for the user
     res.json({ dmcheckMgmtAccess: user.dmcheckMgmtAccess });
   } catch (err) {
@@ -78,7 +76,6 @@ export const fetchMgmtAccess = async (req, res) => {
 export const isTokenValid = (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
-
   if (!token) {
     return res.status(401).json({ msg: "Unauthorized" });
   }
