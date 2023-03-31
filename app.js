@@ -5,43 +5,37 @@ import dmcheckMgmtRoutes from "./routes/dmcheckMgmt.js";
 import dmcheckProRoutes from "./routes/dmcheckPro.js";
 import authRoutes from "./routes/auth.js";
 import dotenv from "dotenv";
-
-dotenv.config();
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(bodyParser.json());
+
+if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: ".env.production" });
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  console.log("production");
+  app.use(express.static(path.join(__dirname, "client/build")));
+  app.use("/", dmcheckMgmtRoutes, dmcheckProRoutes, authRoutes);
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/build/index.html"));
+  });
+} else {
+  dotenv.config({ path: ".env.development" });
+  console.log("development");
+  app.use(cors({ origin: "http://localhost:3000" }));
+  app.use("/", dmcheckMgmtRoutes, dmcheckProRoutes, authRoutes);
+}
 
 mongoose.set("strictQuery", false);
 const dbUri = process.env.DB_URI;
 mongoose.connect(dbUri, { useNewUrlParser: true });
 
-// PRODUCTION
-// const PORT = "80";
-// mongoose.connect("mongodb://127.0.0.1/bruss_helper", { useNewUrlParser: true });
-
-// DEVELOPMENT
-import cors from "cors";
-app.use(
-  cors({
-    origin: "*",
-  })
-);
-const PORT = "4000";
-
-// ROUTES
-app.use("/", dmcheckMgmtRoutes, dmcheckProRoutes, authRoutes);
-
-// PRODUCTION serve React app
-// import path from "path";
-// import serveStatic from "serve-static";
-
-// const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
-// app.use(serveStatic(path.join(__dirname, "client/build")));
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "client/build/index.html"));
-// });
-
-app.listen(PORT, () => {
-  console.log(`Express server listening on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Express server listening on port ${process.env.PORT}`);
 });
+
+// NODE_ENV=production node app.js
+// yarn nodemon
