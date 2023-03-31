@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-.env
+.env*
 
 # Editor directories and files
 .vscode/*
@@ -28,3 +28,5 @@ dist-ssr
 /client/build
 /client/src/assets/audio
 /client/src/assets/logo.png
+# /client/.env*
+
