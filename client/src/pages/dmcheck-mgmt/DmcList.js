@@ -4,15 +4,18 @@ import * as XLSX from "xlsx";
 
 // TODO excel export
 // TODO change color when no pallet batch
-// TODO loading data icon + limit to 10000 (API)
+// TODO clean selected when reload
 
 const DmcList = (props) => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedDmcs, setSelectedDmcs] = useState([]);
   const [dmcList, setDmcList] = useState([]);
   const [reloadAfterSkip, setReloadAfterSkip] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setSelectedDmcs([]); // Empty selectedDmcs when reloading data
+    setIsLoading(true); // Set loading state to true before fetching data
     const params = {
       ...(props.workplace &&
         props.workplace !== "default" && { workplace: props.workplace }),
@@ -29,9 +32,11 @@ const DmcList = (props) => {
       .get(`${process.env.REACT_APP_API_URL}/dmcheck-mgmt/find`, { params })
       .then((response) => {
         setDmcList(response.data);
+        setIsLoading(false); // Set loading state to false after fetching data
       })
       .catch((error) => {
         console.log(error);
+        setIsLoading(false); // Set loading state to false even if there's an error
       });
   }, [
     props.startDate,
@@ -176,6 +181,11 @@ const DmcList = (props) => {
 
   return (
     <div className="mt-4 shadow-lg">
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div className="h-32 w-32 animate-spin rounded-full border-t-2 border-b-2 border-gray-800"></div>
+        </div>
+      )}
       {selectedDmcs.length > 0 && (
         <button
           className="mt-4 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
@@ -185,7 +195,7 @@ const DmcList = (props) => {
         </button>
       )}
 
-      {dmcList.length > 0 && (
+      {dmcList.length > 0 && !isLoading && (
         <table className="w-full">
           <thead>
             <tr className="bg-gray-800 text-left text-gray-50">

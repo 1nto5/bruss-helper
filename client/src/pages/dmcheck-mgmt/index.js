@@ -26,6 +26,7 @@ const DmcheckMgmt = () => {
   const handleWorkplaceChange = (value) => {
     const selectedWorkplace = value;
     setWorkplace(selectedWorkplace);
+    setArticle("default"); // Reset the article state to its default value when the workplace changes
   };
 
   const handleArticleChange = (value) => {
@@ -59,8 +60,6 @@ const DmcheckMgmt = () => {
     const dmcOrBatch = value;
     setDmcOrBatchInput(dmcOrBatch);
   };
-
-  // TODO show info when user is no logged in or dont have access to mgmt
 
   return (
     <>

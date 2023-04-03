@@ -1,4 +1,4 @@
-import Dmc from '../models/dmc.js';
+import Dmc from "../models/dmc.js";
 
 export const findDmcs = async (req, res) => {
   try {
@@ -21,7 +21,7 @@ export const findDmcs = async (req, res) => {
       query.$or = [
         { dmc_operator: operator },
         { hydra_operator: operator },
-        { pallet_operator: operator }
+        { pallet_operator: operator },
       ];
     }
     if (dmcOrBatch) {
@@ -29,7 +29,7 @@ export const findDmcs = async (req, res) => {
       query.$or = [
         { dmc: { $regex: regex } },
         { hydra_batch: { $regex: regex } },
-        { pallet_batch: { $regex: regex } }
+        { pallet_batch: { $regex: regex } },
       ];
     }
     if (req.query.start) {
@@ -44,10 +44,9 @@ export const findDmcs = async (req, res) => {
         query.dmc_time = { $lte: end };
       }
     }
-    const documents = await Dmc
-      .find(query)
+    const documents = await Dmc.find(query)
       .sort({ dmc_time: -1 }) // sort by dmc_time in descending order
-      .limit(100) // limit to 100 documents
+      .limit(5000) // limit to 5000 documents
       .exec();
     res.json(documents);
   } catch (err) {
@@ -59,9 +58,12 @@ export const skipDmc = async (req, res) => {
   const { selectedDmcs } = req.body;
   try {
     if (!Array.isArray(selectedDmcs)) {
-      return res.status(400).send('Invalid request body');
+      return res.status(400).send("Invalid request body");
     }
-    await Dmc.updateMany({ _id: { $in: selectedDmcs.map(dmc => dmc._id) } }, { $set: { status: 9 } });
+    await Dmc.updateMany(
+      { _id: { $in: selectedDmcs.map((dmc) => dmc._id) } },
+      { $set: { status: 9 } }
+    );
     res.status(200).send();
   } catch (error) {
     console.error(error);
