@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 
 import DmcheckPro from "./pages/dmcheck-pro";
 import DmcheckMgmt from "./pages/dmcheck-mgmt";
+import ExtraHours from "./pages/extrahours";
 import "./assets/global.css";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -20,6 +21,14 @@ root.render(
           element={
             <AuthProvider>
               <DmcheckMgmt />
+            </AuthProvider>
+          }
+        />
+        <Route
+          path="/extrahours"
+          element={
+            <AuthProvider>
+              <ExtraHours />
             </AuthProvider>
           }
         />
