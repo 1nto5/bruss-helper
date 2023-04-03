@@ -8,7 +8,23 @@ export const AuthContext = createContext();
 // AuthProvider component to manage authentication state and provide functions for login, logout, and registration
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
   const [mgmtAccess, setMgmtAccess] = useState(false);
+
+  // ********************
+  const [supervisorList, setSupervisorList] = useState([]);
+
+  useEffect(() => {
+    // You can replace this static data with data fetched from your API
+    const exampleSupervisors = [
+      { id: 1, name: "John Doe" },
+      { id: 2, name: "Jane Smith" },
+      { id: 3, name: "Bob Johnson" },
+    ];
+
+    setSupervisorList(exampleSupervisors);
+  }, []);
+  // ********************
 
   // Function to check if the provided token is still valid
   const isTokenValid = async (token) => {
@@ -28,6 +44,20 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.log("Error checking token validity:", error);
       return false;
+    }
+  };
+
+  const fetchUsername = async (token) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/auth/extract-username`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setUsername(response.data.username);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -55,6 +85,7 @@ export const AuthProvider = ({ children }) => {
       if (tokenIsValid) {
         setIsLoggedIn(true);
         fetchMgmtAccess(token);
+        fetchUsername(token); // Add this line
       } else {
         setIsLoggedIn(false);
       }
@@ -82,10 +113,10 @@ export const AuthProvider = ({ children }) => {
       fetchMgmtAccess(response.data.token);
       toast.success(`Zalogowano!`);
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response.status && error.response.status === 401) {
         toast.error(`Niepoporawne hasło!`);
       }
-      if (error.response.status === 404) {
+      if (error.response.status && error.response.status === 404) {
         toast.error(`Nie znaleziono konta!`);
       }
       console.log(error);
@@ -147,7 +178,15 @@ export const AuthProvider = ({ children }) => {
   // containing the authentication state and functions for managing it
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, mgmtAccess, login, logout, register }}
+      value={{
+        username,
+        isLoggedIn,
+        mgmtAccess,
+        login,
+        logout,
+        register,
+        supervisorList,
+      }}
     >
       {children}
       <Toast />
