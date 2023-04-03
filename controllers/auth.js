@@ -88,3 +88,36 @@ export const isTokenValid = (req, res) => {
     res.status(401).json({ msg: "Token expired" });
   }
 };
+
+// Extract username from an email address
+const extractUsername = (email) => {
+  const atIndex = email.indexOf("@");
+  if (atIndex === -1) {
+    throw new Error("Invalid email address");
+  }
+  return email.substring(0, atIndex);
+};
+
+// Function to get the username from the token
+export const getUsernameFromToken = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    // Decode the token to get the user email
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userEmail = decodedToken.email;
+
+    // Extract the username from the email
+    const username = extractUsername(userEmail);
+
+    res.json({ username });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+};
