@@ -1,6 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const dmcSchema = new mongoose.Schema({
+const DmcSchema = new mongoose.Schema(
+  {
     status: Number,
     workplace: String,
     article: String,
@@ -15,9 +16,11 @@ const dmcSchema = new mongoose.Schema({
     pallet_time: Date,
     skip_user: String,
     skip_time: Date,
-    skip_reason: String
-  }, { versionKey: false });
+    skip_reason: String,
+  },
+  { versionKey: false }
+);
 
-const Dmc = mongoose.model('Dmc', dmcSchema, 'dmcheck_pro');
+const Dmc = mongoose.model("Dmc", DmcSchema, "dmcheck_pro");
 
 export default Dmc;
