@@ -14,18 +14,6 @@ export const AuthProvider = ({ children }) => {
   // ********************
   const [supervisorList, setSupervisorList] = useState([]);
 
-  useEffect(() => {
-    // You can replace this static data with data fetched from your API
-    const exampleSupervisors = [
-      { id: 1, name: "John Doe" },
-      { id: 2, name: "Jane Smith" },
-      { id: 3, name: "Bob Johnson" },
-    ];
-
-    setSupervisorList(exampleSupervisors);
-  }, []);
-  // ********************
-
   // Function to check if the provided token is still valid
   const isTokenValid = async (token) => {
     try {
