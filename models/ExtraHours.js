@@ -24,30 +24,28 @@ const ExtraHoursSchema = new mongoose.Schema(
       required: true,
     },
     supervisor: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       required: true,
-      // type: mongoose.Schema.Types.ObjectId,
-      // ref: "users",
-      // required: true,
     },
-    // supervisorApproval: {
-    //   type: Boolean,
-    //   default: false,
-    // },
-    // supervisorComment: {
-    //   type: String,
-    // },
-    // hrReviewer: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "users",
-    // },
-    // hrApproval: {
-    //   type: Boolean,
-    //   default: false,
-    // },
-    // hrComment: {
-    //   type: String,
-    // },
+    supervisorApproval: {
+      type: Boolean,
+      default: false,
+    },
+    supervisorComment: {
+      type: String,
+    },
+    hrReviewer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+    },
+    hrApproval: {
+      type: Boolean,
+      default: false,
+    },
+    hrComment: {
+      type: String,
+    },
   },
   { versionKey: false }
 );
