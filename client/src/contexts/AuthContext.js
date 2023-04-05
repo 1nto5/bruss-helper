@@ -9,11 +9,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState("");
   const [mgmtAccess, setMgmtAccess] = useState(false);
-
-  // ********************
-  const [supervisorList, setSupervisorList] = useState([]);
 
   // Function to check if the provided token is still valid
   const isTokenValid = async (token) => {
@@ -190,7 +187,6 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         register,
-        supervisorList,
       }}
     >
       {children}
