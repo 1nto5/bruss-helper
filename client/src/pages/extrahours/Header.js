@@ -22,11 +22,15 @@ const Header = (props) => {
     <nav className="flex flex-wrap items-center justify-between bg-gray-800 p-4 shadow-lg">
       <div className="shad mr-6 flex flex-shrink-0 items-center text-gray-50">
         <img className="ml-4 mr-6 w-48 fill-current" src={logo} alt="logo" />
-        <span className="text-2xl font-bold tracking-tight">DMCheck MGMT</span>
+        <span className="text-2xl font-bold tracking-tight">Extra Hours</span>
       </div>
       <div>
         {isLoggedIn ? (
           <>
+            <HeaderLinkButton
+              text="dodaj nadgodziny"
+              onClick={props.showExtraHoursForm}
+            />
             <HeaderLinkButton text="wyloguj" onClick={handleLogout} />
           </>
         ) : (
