@@ -9,6 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState(null);
   const [mgmtAccess, setMgmtAccess] = useState(false);
 
   // ********************
@@ -49,6 +50,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const fetchUserId = async (token) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/auth/extract-userid`, // Update this with the correct endpoint for fetching user ID
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setUserId(response.data.userId); // Update this with the correct response field for user ID
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Function to fetch management access information for the user
   // using their token, then update the mgmtAccess state
   const fetchMgmtAccess = async (token) => {
@@ -73,7 +88,8 @@ export const AuthProvider = ({ children }) => {
       if (tokenIsValid) {
         setIsLoggedIn(true);
         fetchMgmtAccess(token);
-        fetchUsername(token); // Add this line
+        fetchUsername(token);
+        fetchUserId(token);
       } else {
         setIsLoggedIn(false);
       }
@@ -167,6 +183,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
+        userId,
         username,
         isLoggedIn,
         mgmtAccess,
