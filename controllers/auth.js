@@ -2,6 +2,11 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// Helper function to capitalize the first letter of a string
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
 // Register a new user
 export const register = async (req, res) => {
   const { email, password } = req.body;
@@ -13,8 +18,16 @@ export const register = async (req, res) => {
     return res.status(409).json({ message: "User already exists" });
   }
 
+  // Extract first name and last name from the email
+  const emailSplit = email.split("@");
+  const [rawFirstName, rawLastName] = emailSplit[0].split(".");
+
+  // Capitalize the first letters of first name and last name
+  const firstName = capitalizeFirstLetter(rawFirstName);
+  const lastName = capitalizeFirstLetter(rawLastName);
+
   // Create a new user and save it to the database
-  const user = new User({ email, password });
+  const user = new User({ email, password, firstName, lastName });
   await user.save();
 
   res.json({ message: "User registered successfully" });
@@ -140,5 +153,17 @@ export const getUserIdFromToken = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");
+  }
+};
+
+export const getExtraHoursSupervisors = async (req, res) => {
+  try {
+    const supervisors = await User.find({ extraHoursSupervisor: true }).select(
+      "firstName lastName"
+    );
+    console.log(supervisors);
+    res.status(200).json(supervisors);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
