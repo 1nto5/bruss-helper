@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
+import axios from "axios";
 import Header from "./Header";
 import Footer from "../../components/Footer";
 import InfoBox from "../../components/InfoBox";
-import ExtraHoursFormModal from "./ExtraHoursFormModal";
+import ModalForm from "./ModalForm";
+import Table from "./Table";
 
 import { AuthContext } from "../../contexts/AuthContext";
 
@@ -16,36 +18,53 @@ const ExtraHours = () => {
     };
   }, []);
 
+  const [extraHoursData, setExtraHoursData] = useState([]);
+
   const { isLoggedIn } = useContext(AuthContext);
-  const { extrahoursSupervisor } = useContext(AuthContext);
-  const { extrahoursHr } = useContext(AuthContext);
+  const { userId } = useContext(AuthContext);
+  // const { extrahoursSupervisor } = useContext(AuthContext);
+  // const { extrahoursHr } = useContext(AuthContext);
 
   const [showExtraHoursForm, setShowExtraHoursForm] = useState(false);
 
+  const fetchUserExtraHours = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/extrahours/user-data/${userId}`
+      );
+      setExtraHoursData(response.data);
+    } catch (error) {
+      console.error("Error fetching extra hours:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn && userId) {
+      fetchUserExtraHours();
+    }
+  }, [isLoggedIn, userId]);
+
   return (
     <>
-      <Header />
+      <Header showExtraHoursForm={() => setShowExtraHoursForm(true)} />
 
       {isLoggedIn && <></>}
 
       {!isLoggedIn && (
         <InfoBox>
-          <p className="">Zaloguj się aby uzyskać dostęp do extra hours.</p>
+          <p className="">Zaloguj się aby uzyskać dostęp.</p>
         </InfoBox>
       )}
 
-      {/* Button to open the ExtraHoursFormModal */}
-      <button
-        className="mx-auto my-10 w-2/3 rounded bg-gray-200 py-2 px-4 font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
-        onClick={() => setShowExtraHoursForm(true)}
-      >
-        Add Extra Hours
-      </button>
-
-      {/* Show the ExtraHoursFormModal based on state */}
+      {/* Show the ModalForm based on state */}
       {showExtraHoursForm && (
-        <ExtraHoursFormModal onClose={() => setShowExtraHoursForm(false)} />
+        <ModalForm
+          onClose={() => setShowExtraHoursForm(false)}
+          userId={userId}
+        />
       )}
+
+      {isLoggedIn && extraHoursData && <Table data={extraHoursData} />}
 
       <Footer version={"0.0.1"} />
     </>

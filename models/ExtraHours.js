@@ -4,7 +4,7 @@ const ExtraHoursSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
       required: true,
     },
     startDateTime: {
@@ -25,7 +25,7 @@ const ExtraHoursSchema = new mongoose.Schema(
     },
     supervisor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
       required: true,
     },
     supervisorApproval: {
@@ -37,7 +37,7 @@ const ExtraHoursSchema = new mongoose.Schema(
     },
     hrReviewer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
     },
     hrApproval: {
       type: Boolean,
