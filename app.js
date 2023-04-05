@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import dmcheckMgmtRoutes from "./routes/dmcheckMgmt.js";
 import dmcheckProRoutes from "./routes/dmcheckPro.js";
 import authRoutes from "./routes/auth.js";
+import extraHoursRoutes from "./routes/extraHours.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
@@ -18,7 +19,13 @@ if (process.env.NODE_ENV === "production") {
   const __dirname = path.dirname(__filename);
   console.log("production");
   app.use(express.static(path.join(__dirname, "client/build")));
-  app.use("/", dmcheckMgmtRoutes, dmcheckProRoutes, authRoutes);
+  app.use(
+    "/",
+    dmcheckMgmtRoutes,
+    dmcheckProRoutes,
+    authRoutes,
+    extraHoursRoutes
+  );
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client/build/index.html"));
   });
@@ -26,7 +33,13 @@ if (process.env.NODE_ENV === "production") {
   dotenv.config({ path: ".env.development" });
   console.log("development");
   app.use(cors({ origin: "http://localhost:3000" }));
-  app.use("/", dmcheckMgmtRoutes, dmcheckProRoutes, authRoutes);
+  app.use(
+    "/",
+    dmcheckMgmtRoutes,
+    dmcheckProRoutes,
+    authRoutes,
+    extraHoursRoutes
+  );
 }
 
 mongoose.set("strictQuery", false);
