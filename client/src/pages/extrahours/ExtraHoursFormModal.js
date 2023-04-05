@@ -3,6 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const ExtraHoursFormModal = (props) => {
+  const [supervisorsList, setSupervisorsList] = useState([]);
   const [startDateTime, setStartDateTime] = useState("");
   const [endDateTime, setEndDateTime] = useState("");
   const [supervisor, setSupervisor] = useState("");
@@ -10,11 +11,20 @@ const ExtraHoursFormModal = (props) => {
   const [reason, setReason] = useState("");
   const { userId } = useContext(AuthContext);
 
-  const supervisorsExample = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Bob Johnson" },
-  ];
+  const fetchSupervisorsList = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/auth/extrahours-supervisors`
+      );
+      setSupervisorsList(response.data);
+    } catch (error) {
+      console.error("Error fetching supervisors:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchSupervisorsList();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,16 +129,16 @@ const ExtraHoursFormModal = (props) => {
             przełożony:
           </label>
           <select
-            id="spervisor"
+            id="supervisor"
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
             value={supervisor}
             onChange={(e) => setSupervisor(e.target.value)}
             required
           >
             <option value="">wybierz</option>
-            {supervisorsExample.map((supervisor) => (
-              <option key={supervisor.id} value={supervisor.id}>
-                {supervisor.name}
+            {supervisorsList.map((supervisor) => (
+              <option key={supervisor._id} value={supervisor._id}>
+                {supervisor.firstName} {supervisor.lastName}
               </option>
             ))}
           </select>
