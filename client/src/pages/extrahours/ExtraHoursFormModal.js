@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const ExtraHoursFormModal = (props) => {
@@ -7,6 +8,7 @@ const ExtraHoursFormModal = (props) => {
   const [supervisor, setSupervisor] = useState("");
   const [extraHours, setExtraHours] = useState(0);
   const [reason, setReason] = useState("");
+  const { userId } = useContext(AuthContext);
 
   const supervisorsExample = [
     { id: 1, name: "John Doe" },
@@ -14,9 +16,24 @@ const ExtraHoursFormModal = (props) => {
     { id: 3, name: "Bob Johnson" },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Send the extra hours data to the API or perform any other required action
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/extrahours/save`,
+        {
+          userId, // assuming you have access to the current user's ID
+          startDateTime,
+          endDateTime,
+          extraHours,
+          reason,
+          supervisor,
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error saving extra hours:", error.message);
+    }
   };
 
   useEffect(() => {
@@ -108,7 +125,7 @@ const ExtraHoursFormModal = (props) => {
             onChange={(e) => setSupervisor(e.target.value)}
             required
           >
-            <option value="">Select Supervisor</option>
+            <option value="">wybierz</option>
             {supervisorsExample.map((supervisor) => (
               <option key={supervisor.id} value={supervisor.id}>
                 {supervisor.name}
@@ -126,13 +143,13 @@ const ExtraHoursFormModal = (props) => {
             onChange={(e) => setReason(e.target.value)}
             required
           />
+          <button
+            className="rounded bg-gray-200 py-2 px-4 font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+            type="submit"
+          >
+            wyślij
+          </button>
         </form>
-        <button
-          className="rounded bg-gray-200 py-2 px-4 font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
-          type="submit"
-        >
-          wyślij
-        </button>
       </div>
     </div>
   );
