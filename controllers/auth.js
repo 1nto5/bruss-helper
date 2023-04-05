@@ -161,7 +161,6 @@ export const getExtraHoursSupervisors = async (req, res) => {
     const supervisors = await User.find({ extraHoursSupervisor: true }).select(
       "firstName lastName"
     );
-    console.log(supervisors);
     res.status(200).json(supervisors);
   } catch (error) {
     res.status(500).json({ error: error.message });
