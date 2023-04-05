@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-const UserSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  dmcheckMgmtAccess: { type: Boolean, default: false },
-});
+const UserSchema = new mongoose.Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    dmcheckMgmtAccess: { type: Boolean, default: false },
+    extraHoursSupervisor: { type: Boolean, default: false },
+  },
+  { versionKey: false }
+);
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
