@@ -1,8 +1,8 @@
-import countDocuments from "../models/dmc.js";
+import countDocDmcments from "../models/dmc.js";
 
 export const countDmc = async (req, res) => {
   try {
-    const count = await countDocuments.countDocuments({
+    const count = await Dmc.countDocuments({
       status: req.query.status,
       article: req.query.article,
     });
@@ -15,9 +15,9 @@ export const countDmc = async (req, res) => {
 export const saveDmc = async (req, res) => {
   try {
     const data = req.body;
-    const existingData = await countDocuments.findOne({ dmc: data.dmc });
+    const existingData = await Dmc.findOne({ dmc: data.dmc });
     if (existingData) return res.json({ message: "exists" });
-    const newDmc = new countDocuments({
+    const newDmc = new Dmc({
       status: 0,
       ...data,
       dmc_time: new Date(),
@@ -32,14 +32,14 @@ export const saveDmc = async (req, res) => {
 export const saveHydra = async (req, res) => {
   try {
     const data = req.body;
-    const existingData = await countDocuments.findOne({
+    const existingData = await Dmc.findOne({
       workplace: data.workplace,
       article: data.article,
       hydra_batch: data.hydra_batch,
     });
     console.log(existingData);
     if (existingData) return res.json({ message: "exists" });
-    await countDocuments.updateMany(
+    await Dmc.updateMany(
       { status: 0, article: data.article, workplace: data.workplace },
       {
         $set: {
@@ -59,12 +59,12 @@ export const saveHydra = async (req, res) => {
 export const savePallet = async (req, res) => {
   try {
     const data = req.body;
-    const existingData = await countDocuments.findOne({
+    const existingData = await Dmc.findOne({
       pallet_batch: data.pallet_batch,
     });
 
     if (existingData) return res.json({ message: "exists" });
-    await countDocuments.updateMany(
+    await Dmc.updateMany(
       { status: 1, article: data.article, workplace: data.workplace },
       {
         $set: {
