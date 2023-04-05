@@ -1,37 +1,55 @@
-// models/extraHours.js
-
 import mongoose from "mongoose";
 
-const ExtraHoursSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+const ExtraHoursSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+    startDateTime: {
+      type: Date,
+      required: true,
+    },
+    endDateTime: {
+      type: Date,
+      required: true,
+    },
+    extraHours: {
+      type: Number,
+      required: true,
+    },
+    reason: {
+      type: String,
+      required: true,
+    },
+    supervisor: {
+      type: String,
+      required: true,
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: "users",
+      // required: true,
+    },
+    // supervisorApproval: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    // supervisorComment: {
+    //   type: String,
+    // },
+    // hrReviewer: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "users",
+    // },
+    // hrApproval: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    // hrComment: {
+    //   type: String,
+    // },
   },
-  date: {
-    type: Date,
-    required: true,
-  },
-  startTime: {
-    type: String,
-    required: true,
-  },
-  endTime: {
-    type: String,
-    required: true,
-  },
-  supervisor: {
-    type: String,
-    required: true,
-  },
-  extraHours: {
-    type: Number,
-    required: true,
-  },
-  reason: {
-    type: String,
-    required: true,
-  },
-});
+  { versionKey: false }
+);
 
-export default mongoose.model("ExtraHours", ExtraHoursSchema, "extrahours");
+export default mongoose.model("ExtraHours", ExtraHoursSchema, "extra_hours");
