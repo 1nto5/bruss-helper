@@ -121,3 +121,24 @@ export const getUsernameFromToken = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+// Function to get the user ID from the token
+export const getUserIdFromToken = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    // Decode the token to get the user ID
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.id;
+
+    res.json({ userId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+};
