@@ -2,12 +2,16 @@ import mongoose from "mongoose";
 
 const cardSchema = new mongoose.Schema({
   cardNumber: { type: Number, required: true, unique: true },
-  reservedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  warehouse: { type: String, required: true },
+  reservedBy: [{ type: String, required: true }],
   positions: [
     {
-      article: { type: mongoose.Schema.Types.ObjectId, ref: "Article" },
-      weight: Number,
-      quantity: Number,
+      number: { type: Number, required: true },
+      article: { type: String, required: true },
+      quantity: { type: Number, required: true },
+      vip: { type: Boolean, required: true },
+      inventoryTakers: [{ type: String, required: true }],
+      dateTime: { type: Date, default: Date.now },
     },
   ],
 });

@@ -6,6 +6,7 @@ import Home from "./pages/home";
 import DmcheckPro from "./pages/dmcheck-pro";
 import DmcheckMgmt from "./pages/dmcheck-mgmt";
 import ExtraHours from "./pages/extrahours";
+import Inventory from "./pages/inventory";
 import "./assets/global.css";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -29,6 +30,14 @@ root.render(
           element={
             <AuthProvider>
               <ExtraHours />
+            </AuthProvider>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <AuthProvider>
+              <Inventory />
             </AuthProvider>
           }
         />
