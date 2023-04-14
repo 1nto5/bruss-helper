@@ -5,6 +5,7 @@ import dmcheckMgmtRoutes from "./routes/dmcheckMgmt.js";
 import dmcheckProRoutes from "./routes/dmcheckPro.js";
 import authRoutes from "./routes/auth.js";
 import extraHoursRoutes from "./routes/extraHours.js";
+import inventoryRoutes from "./routes/inventory.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
@@ -24,7 +25,8 @@ if (process.env.NODE_ENV === "production") {
     dmcheckMgmtRoutes,
     dmcheckProRoutes,
     authRoutes,
-    extraHoursRoutes
+    extraHoursRoutes,
+    inventoryRoutes
   );
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client/build/index.html"));
@@ -38,7 +40,8 @@ if (process.env.NODE_ENV === "production") {
     dmcheckMgmtRoutes,
     dmcheckProRoutes,
     authRoutes,
-    extraHoursRoutes
+    extraHoursRoutes,
+    inventoryRoutes
   );
 }
 

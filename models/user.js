@@ -9,6 +9,12 @@ const UserSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     dmcheckMgmtAccess: { type: Boolean, default: false },
     extraHoursSupervisor: { type: Boolean, default: false },
+    inventoryRole: {
+      type: String,
+      required: true,
+      enum: ["none", "regular", "admin"],
+      default: "none",
+    },
   },
   { versionKey: false }
 );
