@@ -47,7 +47,7 @@ export const Provider = ({ children }) => {
     localStorage.removeItem("inventoryTaker2");
   };
 
-  const setValues = (
+  const setValues = async (
     newCardNumber,
     newWarehouse,
     newInventoryTaker1,
@@ -57,6 +57,34 @@ export const Provider = ({ children }) => {
     setWarehouse(newWarehouse);
     setInventoryTaker1(newInventoryTaker1);
     setInventoryTaker2(newInventoryTaker2);
+
+    // Call the function to create the Card document
+    await reserveCard(
+      newCardNumber,
+      newWarehouse,
+      newInventoryTaker1,
+      newInventoryTaker2
+    );
+  };
+
+  const reserveCard = async (
+    cardNumber,
+    warehouse,
+    inventoryTaker1,
+    inventoryTaker2
+  ) => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/inventory/reserve-card`,
+        {
+          cardNumber,
+          warehouse,
+          inventoryTakers: [inventoryTaker1, inventoryTaker2],
+        }
+      );
+    } catch (error) {
+      console.error("Error reserving card:", error);
+    }
   };
 
   const value = {
