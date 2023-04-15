@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import InfoBox from "../../../components/InfoBox";
 
 import { Context } from "../Context";
 
@@ -15,7 +16,7 @@ const CardTable = () => {
   };
 
   return (
-    <div className="mt-4 shadow-lg">
+    <div className="">
       {cardNumber ? (
         <>
           <h2 className="mb-4 text-xl font-bold">
@@ -56,7 +57,12 @@ const CardTable = () => {
           </table>
         </>
       ) : (
-        <p className="text-lg font-light">Please select a card to begin.</p>
+        <InfoBox>
+          <p>
+            Aby rozpocząć proces inwentaryzacji kliknij "wybierz kartę" powyżej
+            i postępuj zgodnie z instrukcjami.
+          </p>
+        </InfoBox>
       )}
     </div>
   );

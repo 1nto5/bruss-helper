@@ -1,16 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-
+import axios from "axios";
 import { Context } from "../Context";
 
 const Form = (props) => {
-  const [tempCardNumber, setTempCardNumber] = useState("");
-  const [tempWarehouse, setTempWarehouse] = useState("000");
-  const [tempInventoryTaker1, setTempInventoryTaker1] = useState("");
-  const [tempInventoryTaker2, setTempInventoryTaker2] = useState("");
-
-  const [availableCards, setAvailableCards] = useState([]);
-  const { setValues } = useContext(Context);
-
   const warehouses = [
     { value: "000", label: "Standard" },
     { value: "035", label: "Stal niefosforanowana z Chin" },
@@ -26,40 +18,52 @@ const Form = (props) => {
     { value: "Olivia Taylor", label: "Olivia Taylor" },
   ];
 
+  const [tempCardNumber, setTempCardNumber] = useState("0");
+  const [tempWarehouse, setTempWarehouse] = useState("000");
+  const [tempInventoryTaker1, setTempInventoryTaker1] = useState("");
+  const [firstFree, setFirstFree] = useState(false);
+  const [tempInventoryTaker2, setTempInventoryTaker2] = useState("");
+  const { setValues } = useContext(Context);
+  const [cards, setCards] = useState({
+    inUse: [],
+    alreadyUsed: [],
+  });
+
   useEffect(() => {
-    const fetchAvailableCards = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/inventory/cards-in-use`
-        );
-        const reservedCards = await response.json();
-        const allCards = Array.from({ length: 999 }, (_, i) => i + 1);
-        const filteredCards = allCards.filter(
-          (card) => !reservedCards.includes(card)
-        );
-        setAvailableCards(filteredCards);
-      } catch (error) {
-        console.error("Error fetching available cards:", error);
-      }
+    const fetchData = async () => {
+      const cardsData = await fetchCardsByStatus();
+      setCards(cardsData);
     };
 
-    fetchAvailableCards();
+    fetchData();
   }, []);
+
+  const fetchCardsByStatus = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/inventory/get-cards-by-status`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching cards by status:", error);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    tempCardNumber === "0" ?? setFirstFree(true);
     if (
-      tempCardNumber !== "" &&
-      tempWarehouse !== "" &&
-      tempInventoryTaker1 !== "" &&
-      tempInventoryTaker2 !== ""
+      (tempCardNumber || firstFree) &&
+      tempWarehouse &&
+      tempInventoryTaker1 &&
+      tempInventoryTaker2
     ) {
-      // Set form values into context using setAllValues function
       setValues(
         tempCardNumber,
         tempWarehouse,
         tempInventoryTaker1,
-        tempInventoryTaker2
+        tempInventoryTaker2,
+        firstFree
       );
       props.onSuccess();
     } else {
@@ -73,32 +77,39 @@ const Form = (props) => {
         onSubmit={handleSubmit}
       >
         <div className="mb-4">
-          <label className="mr-2" htmlFor="card-number">
-            Numer karty:
-          </label>
+          <p className="mb-2">Wybierz numer karty do zarezerwowania:</p>
           <select
             id="card-number"
             value={tempCardNumber}
             onChange={(e) => setTempCardNumber(e.target.value)}
-            className="w-5/6 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
-            <option value="">wybierz</option>
-            {availableCards.map((card) => (
-              <option key={card} value={card}>
-                {card}
-              </option>
-            ))}
+            <option value="0">pierwsza wolna</option>
+            <optgroup label="Aktualnie zajęte">
+              {cards.inUse.map((card) => (
+                <option key={card.cardNumber} value={card.cardNumber}>
+                  {card.cardNumber}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Zakończone">
+              {cards.alreadyUsed.map((card) => (
+                <option key={card.cardNumber} value={card.cardNumber}>
+                  {card.cardNumber}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </div>
         <div className="mb-4">
-          <label className="mr-2" htmlFor="warehouse">
-            Magazyn:
-          </label>
+          <p className="mb-2">
+            Pozycje z karty zostaną przypisane do magazynu:
+          </p>
           <select
             id="warehouse"
             value={tempWarehouse}
             onChange={(e) => setTempWarehouse(e.target.value)}
-            className="w-5/6 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             {warehouses.map((warehouse) => (
               <option key={warehouse.value} value={warehouse.value}>
@@ -107,17 +118,17 @@ const Form = (props) => {
             ))}
           </select>
         </div>
-        <div className="mb-4">
-          <label className="mr-2" htmlFor="inventory-taker-1">
-            Osoba inwentaryzująca 1:
-          </label>
+        <div className="">
+          <p className="mb-2">Wskaż osoby inwentaryzujące:</p>
           <select
             id="inventory-taker-1"
             value={tempInventoryTaker1}
             onChange={(e) => setTempInventoryTaker1(e.target.value)}
-            className="w-5/6 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
-            <option value="">wybierz</option>
+            <option disabled hidden value="">
+              osoba 1
+            </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
                 {taker.label}
@@ -126,16 +137,15 @@ const Form = (props) => {
           </select>
         </div>
         <div className="mb-4">
-          <label className="mr-2" htmlFor="inventory-taker-2">
-            Osoba inwentaryzująca 2:
-          </label>
           <select
             id="inventory-taker-2"
             value={tempInventoryTaker2}
             onChange={(e) => setTempInventoryTaker2(e.target.value)}
-            className="w-5/6 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
-            <option value="">wybierz</option>
+            <option disabled hidden value="">
+              osoba 2
+            </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
                 {taker.label}
@@ -147,7 +157,7 @@ const Form = (props) => {
           type="submit"
           className="w-2/5 rounded bg-gray-200 py-2 px-4 font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
         >
-          Wybierz kartę
+          potwierdź
         </button>
       </form>
     </div>
