@@ -12,14 +12,12 @@ export const getCardsByStatus = async (req, res) => {
       "cardNumber warehouse inventoryTakers"
     );
 
-    const maxCardNumber = await InventoryCard.findOne({}, "cardNumber").sort({
-      cardNumber: -1,
-    });
-
     res.status(200).json({
       inUse: inUseCards,
       alreadyUsed: alreadyUsedCards,
     });
+
+    console.log(inUseCards);
   } catch (error) {
     console.error("Error fetching cards:", error);
     res.status(500).json({ error: "Error fetching cards" });
@@ -27,15 +25,10 @@ export const getCardsByStatus = async (req, res) => {
 };
 
 export const reserveCard = async (req, res) => {
-  let { cardNumber, warehouse, inventoryTaker1, inventoryTaker2, firstFree } =
-    req.body;
+  let { cardNumber, warehouse, inventoryTaker1, inventoryTaker2 } = req.body;
   try {
-    if (firstFree) {
-      // Find the lowest free card number
-      const firstFreeCard = await InventoryCard.find()
-        .sort({ cardNumber: 1 })
-        .limit(1);
-      cardNumber = firstFreeCard.cardNumber + 1;
+    if (cardNumber === "lowestAvailable") {
+      cardNumber = await getLowestAvailableCardNumber();
     }
 
     const existingCard = await InventoryCard.findOne({ cardNumber });
@@ -62,5 +55,23 @@ export const reserveCard = async (req, res) => {
   } catch (error) {
     console.error("Error reserving card:", error);
     res.status(500).json({ error: "Error reserving card" });
+  }
+};
+
+const getLowestAvailableCardNumber = async () => {
+  try {
+    const maxCardNumber = await InventoryCard.findOne({}, "cardNumber").sort({
+      cardNumber: -1,
+    });
+
+    for (let i = 1; i <= maxCardNumber.cardNumber + 1; i++) {
+      const existingCard = await InventoryCard.findOne({ cardNumber: i });
+      if (!existingCard) {
+        return i;
+      }
+    }
+  } catch (error) {
+    console.error("Error finding the lowest available card number:", error);
+    throw error;
   }
 };

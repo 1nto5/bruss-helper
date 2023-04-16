@@ -18,10 +18,9 @@ const Form = (props) => {
     { value: "Olivia Taylor", label: "Olivia Taylor" },
   ];
 
-  const [tempCardNumber, setTempCardNumber] = useState("0");
+  const [tempCardNumber, setTempCardNumber] = useState("lowestAvailable");
   const [tempWarehouse, setTempWarehouse] = useState("000");
   const [tempInventoryTaker1, setTempInventoryTaker1] = useState("");
-  const [firstFree, setFirstFree] = useState(false);
   const [tempInventoryTaker2, setTempInventoryTaker2] = useState("");
   const { setValues } = useContext(Context);
   const [cards, setCards] = useState({
@@ -49,11 +48,25 @@ const Form = (props) => {
     }
   };
 
+  const getWarehouseForCardNumber = () => {
+    const foundCard =
+      cards.inUse.find((card) => card.cardNumber == tempCardNumber) ||
+      cards.alreadyUsed.find((card) => card.cardNumber == tempCardNumber);
+
+    return foundCard ? foundCard.warehouse : null;
+  };
+
+  const shouldShowWarehouse = () => {
+    return !(
+      cards.inUse.some((card) => card.cardNumber == tempCardNumber) ||
+      cards.alreadyUsed.some((card) => card.cardNumber == tempCardNumber)
+    );
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    tempCardNumber === "0" ?? setFirstFree(true);
     if (
-      (tempCardNumber || firstFree) &&
+      tempCardNumber &&
       tempWarehouse &&
       tempInventoryTaker1 &&
       tempInventoryTaker2
@@ -62,8 +75,7 @@ const Form = (props) => {
         tempCardNumber,
         tempWarehouse,
         tempInventoryTaker1,
-        tempInventoryTaker2,
-        firstFree
+        tempInventoryTaker2
       );
       props.onSuccess();
     } else {
@@ -84,7 +96,7 @@ const Form = (props) => {
             onChange={(e) => setTempCardNumber(e.target.value)}
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
-            <option value="0">pierwsza wolna</option>
+            <option value="lowestAvailable">pierwsza wolna</option>
             <optgroup label="Aktualnie zajęte">
               {cards.inUse.map((card) => (
                 <option key={card.cardNumber} value={card.cardNumber}>
@@ -102,21 +114,30 @@ const Form = (props) => {
           </select>
         </div>
         <div className="mb-4">
-          <p className="mb-2">
-            Pozycje z karty zostaną przypisane do magazynu:
-          </p>
-          <select
-            id="warehouse"
-            value={tempWarehouse}
-            onChange={(e) => setTempWarehouse(e.target.value)}
-            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
-          >
-            {warehouses.map((warehouse) => (
-              <option key={warehouse.value} value={warehouse.value}>
-                {warehouse.value} - {warehouse.label}
-              </option>
-            ))}
-          </select>
+          {shouldShowWarehouse() ? (
+            <>
+              <p className="mb-2">
+                Pozycje z karty zostaną przypisane do magazynu:
+              </p>
+              <select
+                id="warehouse"
+                value={tempWarehouse}
+                onChange={(e) => setTempWarehouse(e.target.value)}
+                className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+              >
+                {warehouses.map((warehouse) => (
+                  <option key={warehouse.value} value={warehouse.value}>
+                    {warehouse.value} - {warehouse.label}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : (
+            <p className="mb-2">
+              Wybrałeś wcześniej utworzoną kartę. Magazyn{" "}
+              {getWarehouseForCardNumber()} nie może być zmieniony!
+            </p>
+          )}
         </div>
         <div className="">
           <p className="mb-2">Wskaż osoby inwentaryzujące:</p>

@@ -74,14 +74,19 @@ export const Provider = ({ children }) => {
     inventoryTaker2
   ) => {
     try {
-      await axios.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/inventory/reserve-card`,
         {
           cardNumber,
           warehouse,
-          inventoryTakers: [inventoryTaker1, inventoryTaker2],
+          inventoryTaker1,
+          inventoryTaker2,
         }
       );
+
+      // Update the cardNumber state with the card number from the response
+      cardNumber === "lowestAvailable" &&
+        setCardNumber(response.data.cardNumber);
     } catch (error) {
       console.error("Error reserving card:", error);
     }
