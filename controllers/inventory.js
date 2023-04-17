@@ -23,7 +23,7 @@ export const getCardsByStatus = async (req, res) => {
 };
 
 export const reserveCard = async (req, res) => {
-  let { cardNumber, warehouse, inventoryTakers } = req.body;
+  let { cardNumber, warehouse, inventoryTaker1, inventoryTaker2 } = req.body;
   try {
     if (cardNumber === "lowestAvailable") {
       cardNumber = await getLowestAvailableCardNumber();
@@ -35,7 +35,7 @@ export const reserveCard = async (req, res) => {
       // Update reservedBy field if the card already exists
       const updatedCard = await InventoryCard.findOneAndUpdate(
         { cardNumber },
-        { reservedBy: inventoryTakers },
+        { reservedBy: [inventoryTaker1, inventoryTaker2] },
         { new: true } // Returns the updated document
       );
       res.status(200).json(updatedCard);
@@ -44,7 +44,7 @@ export const reserveCard = async (req, res) => {
       const newCard = new InventoryCard({
         cardNumber,
         warehouse,
-        reservedBy: inventoryTakers,
+        reservedBy: [inventoryTaker1, inventoryTaker2],
       });
 
       const savedCard = await newCard.save();

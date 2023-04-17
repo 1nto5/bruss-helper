@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Header from "./components/Header";
 import Footer from "../../components/Footer";
 import CardTable from "./components/Table";
-import State from "./components/State";
 import Status from "./components/Status";
 
 import { Provider as ContextProvider } from "./Context";

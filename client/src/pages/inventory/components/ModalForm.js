@@ -4,21 +4,25 @@ import { Context } from "../Context";
 
 const Form = (props) => {
   const warehouses = [
-    { value: "000", label: "Standard" },
-    { value: "035", label: "Stal niefosforanowana z Chin" },
-    { value: "055", label: "Zablokowane w Galvano" },
-    { value: "111", label: "Dział Launch" },
-    { value: "222", label: "Zablokowane produkcja" },
+    { value: "S1", label: "S1" },
+    { value: "S2", label: "S2" },
+    { value: "S3", label: "S3" },
+    { value: "S4", label: "S4" },
+    { value: "S5", label: "S5" },
+    { value: "S6", label: "S6" },
   ];
 
   const inventoryTakers = [
-    { value: "1379 / 1394", label: "Łukasz i Adrian" },
-    { value: "1 / 2", label: "Jane i Olivia" },
+    { value: "Adrian Antosiak", label: "Adrian Antosiak" },
+    { value: "Jane Smith", label: "Jane Smith" },
+    { value: "Robert Brown", label: "Robert Brown" },
+    { value: "Olivia Taylor", label: "Olivia Taylor" },
   ];
 
   const [formCardNumber, setFormCardNumber] = useState("lowestAvailable");
   const [formWarehouse, setFormWarehouse] = useState("000");
-  const [formInventoryTakers, setFormInventoryTakers] = useState("");
+  const [formInventoryTaker1, setFormInventoryTaker1] = useState("");
+  const [formInventoryTaker2, setFormInventoryTaker2] = useState("");
   const { reserveCardMutation } = useContext(Context);
   const [cards, setCards] = useState({
     inUse: [],
@@ -62,11 +66,17 @@ const Form = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formCardNumber && formWarehouse && formInventoryTakers) {
+    if (
+      formCardNumber &&
+      formWarehouse &&
+      formInventoryTaker1 &&
+      formInventoryTaker2
+    ) {
       reserveCardMutation.mutate({
         cardNumber: formCardNumber,
         warehouse: formWarehouse,
-        inventoryTakers: formInventoryTakers,
+        inventoryTaker1: formInventoryTaker1,
+        inventoryTaker2: formInventoryTaker2,
       });
       props.closeModal();
     } else {
@@ -133,9 +143,26 @@ const Form = (props) => {
         <div className="">
           <p className="mb-2">Wskaż grupę inwentaryzującą:</p>
           <select
-            id="inventory-takers"
-            value={formInventoryTakers}
-            onChange={(e) => setFormInventoryTakers(e.target.value)}
+            id="inventory-taker-1"
+            value={formInventoryTaker1}
+            onChange={(e) => setFormInventoryTaker1(e.target.value)}
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+          >
+            <option disabled hidden value="">
+              wybierz
+            </option>
+            {inventoryTakers.map((taker) => (
+              <option key={taker.value} value={taker.value}>
+                {taker.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="">
+          <select
+            id="inventory-taker-2"
+            value={formInventoryTaker2}
+            onChange={(e) => setFormInventoryTaker2(e.target.value)}
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             <option disabled hidden value="">

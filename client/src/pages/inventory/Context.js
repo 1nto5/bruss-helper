@@ -11,8 +11,11 @@ export const Provider = ({ children }) => {
   const [warehouse, setWarehouse] = useState(
     () => localStorage.getItem("warehouse") || "000"
   );
-  const [inventoryTakers, setInventoryTakers] = useState(
-    () => localStorage.getItem("inventoryTakers") || ""
+  const [inventoryTaker1, setInventoryTaker1] = useState(
+    () => localStorage.getItem("inventoryTaker1") || ""
+  );
+  const [inventoryTaker2, setInventoryTaker2] = useState(
+    () => localStorage.getItem("inventoryTaker2") || ""
   );
 
   useEffect(() => {
@@ -24,29 +27,36 @@ export const Provider = ({ children }) => {
   }, [warehouse, cardNumber]);
 
   useEffect(() => {
-    localStorage.setItem("inventoryTakers", inventoryTakers);
-  }, [inventoryTakers]);
+    localStorage.setItem("inventoryTaker1", inventoryTaker1);
+  }, [inventoryTaker1]);
+
+  useEffect(() => {
+    localStorage.setItem("inventoryTaker2", inventoryTaker2);
+  }, [inventoryTaker2]);
 
   const resetContext = () => {
     // Reset state
     setCardNumber("");
     setWarehouse("000");
-    setInventoryTakers("");
+    setInventoryTaker1("");
+    setInventoryTaker2("");
 
     // Clear localStorage
     localStorage.removeItem("cardNumber");
     localStorage.removeItem("warehouse");
-    localStorage.removeItem("inventoryTakers");
+    localStorage.removeItem("inventoryTaker1");
+    localStorage.removeItem("inventoryTaker2");
   };
 
   const reserveCardMutation = useMutation(
-    async ({ cardNumber, warehouse, inventoryTakers }) => {
+    async ({ cardNumber, warehouse, inventoryTaker1, inventoryTaker2 }) => {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/inventory/reserve-card`,
         {
           cardNumber,
           warehouse,
-          inventoryTakers,
+          inventoryTaker1,
+          inventoryTaker2,
         }
       );
       return response.data;
@@ -58,9 +68,9 @@ export const Provider = ({ children }) => {
         } else {
           setCardNumber(variables.cardNumber);
         }
-        console.log(variables.inventoryTakers);
         setWarehouse(variables.warehouse);
-        setInventoryTakers(variables.inventoryTakers);
+        setInventoryTaker1(variables.inventoryTaker1);
+        setInventoryTaker2(variables.inventoryTaker2);
       },
     }
   );
@@ -70,8 +80,10 @@ export const Provider = ({ children }) => {
     setCardNumber,
     warehouse,
     setWarehouse,
-    inventoryTakers,
-    setInventoryTakers,
+    inventoryTaker1,
+    setInventoryTaker1,
+    inventoryTaker2,
+    setInventoryTaker2,
     resetContext,
     reserveCardMutation,
   };

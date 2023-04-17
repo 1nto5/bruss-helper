@@ -5,19 +5,27 @@ import InfoBox from "../../../components/InfoBox";
 import LoadingAnimation from "./LoadingAnimation";
 
 function Status() {
-  const { cardNumber, warehouse, inventoryTakers, reserveCardMutation } =
-    useContext(Context);
+  const {
+    cardNumber,
+    warehouse,
+    inventoryTaker1,
+    inventoryTaker2,
+    reserveCardMutation,
+  } = useContext(Context);
 
   return (
     <>
       {!reserveCardMutation.isLoading ? (
-        cardNumber && warehouse && inventoryTakers ? (
+        cardNumber && warehouse && inventoryTaker1 && inventoryTaker2 ? (
           <div className="mb-4 flex h-20 flex-row items-center justify-between bg-gray-50 shadow-lg">
             <StatusBox text="karta:" value={cardNumber} />
             <BoxSeparator />
             <StatusBox text="magazyn:" value={warehouse} />
             <BoxSeparator />
-            <StatusBox text="inwentaryzują:" value={inventoryTakers} />
+            <StatusBox
+              text="inwentaryzują:"
+              value={`${inventoryTaker1} i ${inventoryTaker2}`}
+            />
           </div>
         ) : (
           <InfoBox>

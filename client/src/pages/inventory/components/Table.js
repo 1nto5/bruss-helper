@@ -4,7 +4,7 @@ import { Context } from "../Context";
 
 const CardTable = () => {
   const [currentPosition, setCurrentPosition] = useState(1);
-  const { cardNumber, warehouse, inventoryTakers, reserveCardMutation } =
+  const { cardNumber, warehouse, inventoryTaker1, inventoryTaker2 } =
     useContext(Context);
 
   const handleLabelConfirmation = () => {
@@ -18,18 +18,20 @@ const CardTable = () => {
   };
 
   return (
-    <div className="">
-      {cardNumber && warehouse && inventoryTakers && (
+    <div className="overflow-x-auto">
+      {cardNumber && warehouse && inventoryTaker1 && inventoryTaker2 && (
         <>
           <table className="w-full">
             <thead>
               <tr className="bg-gray-800 text-left text-gray-50">
-                <th className="p-2 font-extralight">Pozycja</th>
-                <th className="p-2 font-extralight">Nazwa</th>
-                <th className="p-2 font-extralight">Ilość</th>
-                <th className="p-2 font-extralight">Waga</th>
-                <th className="p-2 font-extralight">VIP</th>
-                <th className="p-2 font-extralight">Oznakowane</th>
+                <th className="min-w-[80px] p-2 font-extralight">Pozycja</th>
+                <th className="min-w-[200px] p-2 font-extralight">Nazwa</th>
+                <th className="min-w-[100px] p-2 font-extralight">Ilość</th>
+                <th className="min-w-[100px] p-2 font-extralight">Waga</th>
+                <th className="min-w-[80px] p-2 font-extralight">VIP</th>
+                <th className="min-w-[120px] p-2 font-extralight">
+                  Oznakowane
+                </th>
               </tr>
             </thead>
             <tbody>
