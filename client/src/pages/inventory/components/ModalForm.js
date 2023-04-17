@@ -12,17 +12,14 @@ const Form = (props) => {
   ];
 
   const inventoryTakers = [
-    { value: "John Doe", label: "John Doe" },
-    { value: "Jane Smith", label: "Jane Smith" },
-    { value: "Robert Brown", label: "Robert Brown" },
-    { value: "Olivia Taylor", label: "Olivia Taylor" },
+    { value: "1379 / 1394", label: "Łukasz i Adrian" },
+    { value: "1 / 2", label: "Jane i Olivia" },
   ];
 
-  const [tempCardNumber, setTempCardNumber] = useState("lowestAvailable");
-  const [tempWarehouse, setTempWarehouse] = useState("000");
-  const [tempInventoryTaker1, setTempInventoryTaker1] = useState("");
-  const [tempInventoryTaker2, setTempInventoryTaker2] = useState("");
-  const { setValues } = useContext(Context);
+  const [formCardNumber, setFormCardNumber] = useState("lowestAvailable");
+  const [formWarehouse, setFormWarehouse] = useState("000");
+  const [formInventoryTakers, setFormInventoryTakers] = useState("");
+  const { reserveCardMutation } = useContext(Context);
   const [cards, setCards] = useState({
     inUse: [],
     alreadyUsed: [],
@@ -50,34 +47,28 @@ const Form = (props) => {
 
   const getWarehouseForCardNumber = () => {
     const foundCard =
-      cards.inUse.find((card) => card.cardNumber == tempCardNumber) ||
-      cards.alreadyUsed.find((card) => card.cardNumber == tempCardNumber);
+      cards.inUse.find((card) => card.cardNumber == formCardNumber) ||
+      cards.alreadyUsed.find((card) => card.cardNumber == formCardNumber);
 
     return foundCard ? foundCard.warehouse : null;
   };
 
   const shouldShowWarehouse = () => {
     return !(
-      cards.inUse.some((card) => card.cardNumber == tempCardNumber) ||
-      cards.alreadyUsed.some((card) => card.cardNumber == tempCardNumber)
+      cards.inUse.some((card) => card.cardNumber == formCardNumber) ||
+      cards.alreadyUsed.some((card) => card.cardNumber == formCardNumber)
     );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      tempCardNumber &&
-      tempWarehouse &&
-      tempInventoryTaker1 &&
-      tempInventoryTaker2
-    ) {
-      setValues(
-        tempCardNumber,
-        tempWarehouse,
-        tempInventoryTaker1,
-        tempInventoryTaker2
-      );
-      props.onSuccess();
+    if (formCardNumber && formWarehouse && formInventoryTakers) {
+      reserveCardMutation.mutate({
+        cardNumber: formCardNumber,
+        warehouse: formWarehouse,
+        inventoryTakers: formInventoryTakers,
+      });
+      props.closeModal();
     } else {
       alert("Please fill out all fields.");
     }
@@ -92,8 +83,8 @@ const Form = (props) => {
           <p className="mb-2">Wybierz numer karty do zarezerwowania:</p>
           <select
             id="card-number"
-            value={tempCardNumber}
-            onChange={(e) => setTempCardNumber(e.target.value)}
+            value={formCardNumber}
+            onChange={(e) => setFormCardNumber(e.target.value)}
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             <option value="lowestAvailable">pierwsza wolna</option>
@@ -121,8 +112,8 @@ const Form = (props) => {
               </p>
               <select
                 id="warehouse"
-                value={tempWarehouse}
-                onChange={(e) => setTempWarehouse(e.target.value)}
+                value={formWarehouse}
+                onChange={(e) => setFormWarehouse(e.target.value)}
                 className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
               >
                 {warehouses.map((warehouse) => (
@@ -140,15 +131,15 @@ const Form = (props) => {
           )}
         </div>
         <div className="">
-          <p className="mb-2">Wskaż osoby inwentaryzujące:</p>
+          <p className="mb-2">Wskaż grupę inwentaryzującą:</p>
           <select
-            id="inventory-taker-1"
-            value={tempInventoryTaker1}
-            onChange={(e) => setTempInventoryTaker1(e.target.value)}
+            id="inventory-takers"
+            value={formInventoryTakers}
+            onChange={(e) => setFormInventoryTakers(e.target.value)}
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             <option disabled hidden value="">
-              osoba 1
+              wybierz
             </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
@@ -157,23 +148,7 @@ const Form = (props) => {
             ))}
           </select>
         </div>
-        <div className="mb-4">
-          <select
-            id="inventory-taker-2"
-            value={tempInventoryTaker2}
-            onChange={(e) => setTempInventoryTaker2(e.target.value)}
-            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
-          >
-            <option disabled hidden value="">
-              osoba 2
-            </option>
-            {inventoryTakers.map((taker) => (
-              <option key={taker.value} value={taker.value}>
-                {taker.label}
-              </option>
-            ))}
-          </select>
-        </div>
+
         <button
           type="submit"
           className="w-2/5 rounded bg-gray-200 py-2 px-4 font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"

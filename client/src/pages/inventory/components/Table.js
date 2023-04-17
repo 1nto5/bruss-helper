@@ -1,42 +1,47 @@
 import React, { useState, useContext } from "react";
-import InfoBox from "../../../components/InfoBox";
 
 import { Context } from "../Context";
 
 const CardTable = () => {
   const [currentPosition, setCurrentPosition] = useState(1);
-  const { cardNumber, warehouse } = useContext(Context);
+  const { cardNumber, warehouse, inventoryTakers, reserveCardMutation } =
+    useContext(Context);
 
   const handleLabelConfirmation = () => {
     if (currentPosition < 25) {
       setCurrentPosition(currentPosition + 1);
     } else {
-      alert("Card is full. Please start a new card.");
+      alert(
+        "Maksymalna ilośc na karcie osiągnięta! Zakończ kartę i wybierz kolejną."
+      );
     }
   };
 
   return (
     <div className="">
-      {cardNumber ? (
+      {cardNumber && warehouse && inventoryTakers && (
         <>
-          <h2 className="mb-4 text-xl font-bold">
-            Numer karty: {cardNumber} Magazyn numer: {warehouse}
-          </h2>
           <table className="w-full">
             <thead>
               <tr className="bg-gray-800 text-left text-gray-50">
-                <th className="p-2 font-extralight">Position</th>
-                <th className="p-2 font-extralight">Article</th>
-                <th className="p-2 font-extralight">Quantity/Weight</th>
+                <th className="p-2 font-extralight">Pozycja</th>
+                <th className="p-2 font-extralight">Nazwa</th>
+                <th className="p-2 font-extralight">Ilość</th>
+                <th className="p-2 font-extralight">Waga</th>
                 <th className="p-2 font-extralight">VIP</th>
-                <th className="p-2 font-extralight">Actions</th>
+                <th className="p-2 font-extralight">Oznakowane</th>
               </tr>
             </thead>
             <tbody>
               {[...Array(currentPosition)].map((_, index) => (
                 <tr key={index} className="border-b border-gray-200">
                   <td className="p-2">{index + 1}</td>
-                  <td className="p-2"></td>
+                  <td className="p-2">
+                    <input className="rounded border p-1" />
+                  </td>
+                  <td className="p-2">
+                    <input type="number" className="rounded border p-1" />
+                  </td>
                   <td className="p-2">
                     <input type="number" className="rounded border p-1" />
                   </td>
@@ -44,25 +49,13 @@ const CardTable = () => {
                     <input type="checkbox" />
                   </td>
                   <td className="p-2">
-                    <button
-                      onClick={handleLabelConfirmation}
-                      className="rounded bg-blue-500 py-1 px-3 font-bold text-white hover:bg-blue-700"
-                    >
-                      Confirm Label Placement
-                    </button>
+                    <input type="checkbox" />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </>
-      ) : (
-        <InfoBox>
-          <p>
-            Aby rozpocząć proces inwentaryzacji kliknij "wybierz kartę" powyżej
-            i postępuj zgodnie z instrukcjami.
-          </p>
-        </InfoBox>
       )}
     </div>
   );

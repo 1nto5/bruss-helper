@@ -16,8 +16,6 @@ export const getCardsByStatus = async (req, res) => {
       inUse: inUseCards,
       alreadyUsed: alreadyUsedCards,
     });
-
-    console.log(inUseCards);
   } catch (error) {
     console.error("Error fetching cards:", error);
     res.status(500).json({ error: "Error fetching cards" });
@@ -25,7 +23,7 @@ export const getCardsByStatus = async (req, res) => {
 };
 
 export const reserveCard = async (req, res) => {
-  let { cardNumber, warehouse, inventoryTaker1, inventoryTaker2 } = req.body;
+  let { cardNumber, warehouse, inventoryTakers } = req.body;
   try {
     if (cardNumber === "lowestAvailable") {
       cardNumber = await getLowestAvailableCardNumber();
@@ -37,7 +35,7 @@ export const reserveCard = async (req, res) => {
       // Update reservedBy field if the card already exists
       const updatedCard = await InventoryCard.findOneAndUpdate(
         { cardNumber },
-        { reservedBy: [inventoryTaker1, inventoryTaker2] }, // Save both inventory takers
+        { reservedBy: inventoryTakers },
         { new: true } // Returns the updated document
       );
       res.status(200).json(updatedCard);
@@ -46,7 +44,7 @@ export const reserveCard = async (req, res) => {
       const newCard = new InventoryCard({
         cardNumber,
         warehouse,
-        reservedBy: [inventoryTaker1, inventoryTaker2], // Save both inventory takers
+        reservedBy: inventoryTakers,
       });
 
       const savedCard = await newCard.save();
@@ -63,6 +61,11 @@ const getLowestAvailableCardNumber = async () => {
     const maxCardNumber = await InventoryCard.findOne({}, "cardNumber").sort({
       cardNumber: -1,
     });
+
+    // If there are no cards in the database, return 1 as the lowest available card number
+    if (!maxCardNumber) {
+      return 1;
+    }
 
     for (let i = 1; i <= maxCardNumber.cardNumber + 1; i++) {
       const existingCard = await InventoryCard.findOne({ cardNumber: i });

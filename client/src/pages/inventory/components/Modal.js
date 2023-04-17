@@ -29,7 +29,7 @@ const Modal = (props) => {
         >
           &times;
         </button>
-        <Form onSuccess={handleCloseModal} />
+        <Form closeModal={handleCloseModal} />
       </div>
     </div>
   );
