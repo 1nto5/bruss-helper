@@ -1,4 +1,4 @@
-import countDocDmcments from "../models/dmc.js";
+import Dmc from "../models/dmc.js";
 
 export const countDmc = async (req, res) => {
   try {

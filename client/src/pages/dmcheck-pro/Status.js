@@ -1,5 +1,3 @@
-// check code in Status.js and give me a hint what is wrong with it
-
 import React from "react";
 import {
   StatusBox,
