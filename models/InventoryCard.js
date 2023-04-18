@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Article from "./InventoryArticle.js"; // Import the Article model/schema
 
 const cardSchema = new mongoose.Schema(
   {
@@ -7,7 +8,11 @@ const cardSchema = new mongoose.Schema(
     reservedBy: [{ type: String }],
     positions: [
       {
-        article: { type: Number, required: true },
+        article: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Article",
+          required: true,
+        }, // Add a reference to the Article schema
         quantity: { type: Number, required: true },
         vip: { type: Boolean, required: true },
         inventoryTakers: [{ type: String, required: true }],

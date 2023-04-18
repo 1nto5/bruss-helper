@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useMutation } from "react-query";
+import useArticles from "./hooks/useArticles";
 import axios from "axios";
 
 export const Context = createContext();
@@ -75,6 +76,12 @@ export const Provider = ({ children }) => {
     }
   );
 
+  const {
+    data: articles,
+    isLoading: articlesLoading,
+    error: articlesError,
+  } = useArticles();
+
   const value = {
     cardNumber,
     setCardNumber,
@@ -86,6 +93,9 @@ export const Provider = ({ children }) => {
     setInventoryTaker2,
     resetContext,
     reserveCardMutation,
+    articles,
+    articlesLoading,
+    articlesError,
   };
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
