@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { StatusBox, BoxSeparator } from "./StatusElements";
-import { Context } from "../Context";
-import InfoBox from "../../../components/InfoBox";
-import LoadingAnimation from "./LoadingAnimation";
+import React, { useContext } from "react"
+import { StatusBox, BoxSeparator } from "./StatusElements"
+import { Context } from "../Context"
+import InfoBox from "../../../components/InfoBox"
+import LoadingAnimation from "./LoadingAnimation"
 
 function Status() {
   const {
@@ -10,12 +10,12 @@ function Status() {
     warehouse,
     inventoryTaker1,
     inventoryTaker2,
-    reserveCardMutation,
-  } = useContext(Context);
+    reserveCard,
+  } = useContext(Context)
 
   return (
     <>
-      {!reserveCardMutation.isLoading ? (
+      {!reserveCard.isLoading ? (
         cardNumber && warehouse && inventoryTaker1 && inventoryTaker2 ? (
           <div className="mb-4 flex h-20 flex-row items-center justify-between bg-gray-50 shadow-lg">
             <StatusBox text="karta:" value={cardNumber} />
@@ -39,7 +39,7 @@ function Status() {
         <LoadingAnimation />
       )}
     </>
-  );
+  )
 }
 
-export default Status;
+export default Status

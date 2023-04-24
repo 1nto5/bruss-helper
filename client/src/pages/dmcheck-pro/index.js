@@ -1,5 +1,6 @@
 // TODO rerender article / operator in Status box after logout
 // TODO prevent possibility to end box when inBox = 0
+// TODO make better dmc date validation for ford
 
 import production from "../../data/production";
 import React, { useState, useEffect, useRef, useMemo } from "react";
@@ -296,6 +297,13 @@ function DmcheckPro() {
     const todayDate = parseInt(
       new Date().toISOString().slice(2, 10).split("-").join("")
     );
+    const tomorrowDate = parseInt(
+      new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(2, 10)
+        .split("-")
+        .join("")
+    );
     const yesterdayDate = parseInt(
       new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
         .toISOString()
@@ -313,6 +321,7 @@ function DmcheckPro() {
     const dmcDate = parseInt(dmc.slice(17, 23));
     return (
       dmcDate === todayDate ||
+      dmcDate === tomorrowDate ||
       dmcDate === yesterdayDate ||
       dmcDate === dayBeforeYesterdayDate
     );

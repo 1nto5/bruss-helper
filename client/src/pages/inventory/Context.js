@@ -1,55 +1,54 @@
-import React, { createContext, useState, useEffect } from "react";
-import { useMutation } from "react-query";
-import useArticles from "./hooks/useArticles";
-import axios from "axios";
+import React, { createContext, useState, useEffect } from "react"
+import { useMutation } from "react-query"
+import axios from "axios"
 
-export const Context = createContext();
+export const Context = createContext()
 
 export const Provider = ({ children }) => {
   const [cardNumber, setCardNumber] = useState(
     () => localStorage.getItem("cardNumber") || ""
-  );
+  )
   const [warehouse, setWarehouse] = useState(
     () => localStorage.getItem("warehouse") || "000"
-  );
+  )
   const [inventoryTaker1, setInventoryTaker1] = useState(
     () => localStorage.getItem("inventoryTaker1") || ""
-  );
+  )
   const [inventoryTaker2, setInventoryTaker2] = useState(
     () => localStorage.getItem("inventoryTaker2") || ""
-  );
+  )
 
   useEffect(() => {
-    localStorage.setItem("cardNumber", cardNumber);
-  }, [cardNumber]);
+    localStorage.setItem("cardNumber", cardNumber)
+  }, [cardNumber])
 
   useEffect(() => {
-    localStorage.setItem("warehouse", warehouse);
-  }, [warehouse, cardNumber]);
+    localStorage.setItem("warehouse", warehouse)
+  }, [warehouse, cardNumber])
 
   useEffect(() => {
-    localStorage.setItem("inventoryTaker1", inventoryTaker1);
-  }, [inventoryTaker1]);
+    localStorage.setItem("inventoryTaker1", inventoryTaker1)
+  }, [inventoryTaker1])
 
   useEffect(() => {
-    localStorage.setItem("inventoryTaker2", inventoryTaker2);
-  }, [inventoryTaker2]);
+    localStorage.setItem("inventoryTaker2", inventoryTaker2)
+  }, [inventoryTaker2])
 
   const resetContext = () => {
     // Reset state
-    setCardNumber("");
-    setWarehouse("000");
-    setInventoryTaker1("");
-    setInventoryTaker2("");
+    setCardNumber("")
+    setWarehouse("000")
+    setInventoryTaker1("")
+    setInventoryTaker2("")
 
     // Clear localStorage
-    localStorage.removeItem("cardNumber");
-    localStorage.removeItem("warehouse");
-    localStorage.removeItem("inventoryTaker1");
-    localStorage.removeItem("inventoryTaker2");
-  };
+    localStorage.removeItem("cardNumber")
+    localStorage.removeItem("warehouse")
+    localStorage.removeItem("inventoryTaker1")
+    localStorage.removeItem("inventoryTaker2")
+  }
 
-  const reserveCardMutation = useMutation(
+  const reserveCard = useMutation(
     async ({ cardNumber, warehouse, inventoryTaker1, inventoryTaker2 }) => {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/inventory/reserve-card`,
@@ -59,28 +58,22 @@ export const Provider = ({ children }) => {
           inventoryTaker1,
           inventoryTaker2,
         }
-      );
-      return response.data;
+      )
+      return response.data
     },
     {
       onSuccess: (data, variables) => {
         if (variables.cardNumber === "lowestAvailable") {
-          setCardNumber(data.cardNumber);
+          setCardNumber(data.cardNumber)
         } else {
-          setCardNumber(variables.cardNumber);
+          setCardNumber(variables.cardNumber)
         }
-        setWarehouse(variables.warehouse);
-        setInventoryTaker1(variables.inventoryTaker1);
-        setInventoryTaker2(variables.inventoryTaker2);
+        setWarehouse(variables.warehouse)
+        setInventoryTaker1(variables.inventoryTaker1)
+        setInventoryTaker2(variables.inventoryTaker2)
       },
     }
-  );
-
-  const {
-    data: articles,
-    isLoading: articlesLoading,
-    error: articlesError,
-  } = useArticles();
+  )
 
   const value = {
     cardNumber,
@@ -92,11 +85,8 @@ export const Provider = ({ children }) => {
     inventoryTaker2,
     setInventoryTaker2,
     resetContext,
-    reserveCardMutation,
-    articles,
-    articlesLoading,
-    articlesError,
-  };
+    reserveCard,
+  }
 
-  return <Context.Provider value={value}>{children}</Context.Provider>;
-};
+  return <Context.Provider value={value}>{children}</Context.Provider>
+}

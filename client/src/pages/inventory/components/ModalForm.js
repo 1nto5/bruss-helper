@@ -1,88 +1,99 @@
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { Context } from "../Context";
+import React, { useState, useEffect, useContext } from "react"
+import axios from "axios"
+import { Context } from "../Context"
 
 const Form = (props) => {
   const warehouses = [
-    { value: "S1", label: "S1" },
-    { value: "S2", label: "S2" },
-    { value: "S3", label: "S3" },
-    { value: "S4", label: "S4" },
-    { value: "S5", label: "S5" },
-    { value: "S6", label: "S6" },
-  ];
+    { value: "000", label: "Surowce i części gotowe" },
+    { value: "035", label: "Części metalowe Taicang" },
+    { value: "054", label: "Magazyn wstrzymanych" },
+    { value: "055", label: "Cz.zablokowane GTM" },
+    { value: "111", label: "Magazyn Launch" },
+    { value: "222", label: "Magazyn zablokowany produkcia" },
+    { value: "999", label: "WIP" },
+  ]
 
   const inventoryTakers = [
-    { value: "Adrian Antosiak", label: "Adrian Antosiak" },
-    { value: "Jane Smith", label: "Jane Smith" },
-    { value: "Robert Brown", label: "Robert Brown" },
-    { value: "Olivia Taylor", label: "Olivia Taylor" },
-  ];
+    { value: "Adrian Antosiak" },
+    { value: "Jane Smith" },
+    { value: "Robert Brown" },
+    { value: "Olivia Taylor" },
+    { value: "David Lee" },
+    { value: "Maria Hernandez" },
+    { value: "William Johnson" },
+    { value: "Samantha Kim" },
+    { value: "Josephine Wong" },
+    { value: "Anthony Rodriguez" },
+    { value: "Isabella Nguyen" },
+    { value: "Alexander Gomez" },
+    { value: "Mia Patel" },
+    { value: "Christopher Jackson" },
+  ]
 
-  const [formCardNumber, setFormCardNumber] = useState("lowestAvailable");
-  const [formWarehouse, setFormWarehouse] = useState("000");
-  const [formInventoryTaker1, setFormInventoryTaker1] = useState("");
-  const [formInventoryTaker2, setFormInventoryTaker2] = useState("");
-  const { reserveCardMutation } = useContext(Context);
+  const [formCardNumber, setFormCardNumber] = useState("lowestAvailable")
+  const [formWarehouse, setFormWarehouse] = useState("000")
+  const [formInventoryTaker1, setFormInventoryTaker1] = useState("")
+  const [formInventoryTaker2, setFormInventoryTaker2] = useState("")
+  const { reserveCard } = useContext(Context)
   const [cards, setCards] = useState({
     inUse: [],
     alreadyUsed: [],
-  });
+  })
 
   useEffect(() => {
     const fetchData = async () => {
-      const cardsData = await fetchCardsByStatus();
-      setCards(cardsData);
-    };
+      const cardsData = await fetchCardsByStatus()
+      setCards(cardsData)
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const fetchCardsByStatus = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/inventory/get-cards-by-status`
-      );
-      return response.data;
+      )
+      return response.data
     } catch (error) {
-      console.error("Error fetching cards by status:", error);
+      console.error("Error fetching cards by status:", error)
     }
-  };
+  }
 
   const getWarehouseForCardNumber = () => {
     const foundCard =
       cards.inUse.find((card) => card.cardNumber == formCardNumber) ||
-      cards.alreadyUsed.find((card) => card.cardNumber == formCardNumber);
+      cards.alreadyUsed.find((card) => card.cardNumber == formCardNumber)
 
-    return foundCard ? foundCard.warehouse : null;
-  };
+    return foundCard ? foundCard.warehouse : null
+  }
 
   const shouldShowWarehouse = () => {
     return !(
       cards.inUse.some((card) => card.cardNumber == formCardNumber) ||
       cards.alreadyUsed.some((card) => card.cardNumber == formCardNumber)
-    );
-  };
+    )
+  }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (
       formCardNumber &&
       formWarehouse &&
       formInventoryTaker1 &&
       formInventoryTaker2
     ) {
-      reserveCardMutation.mutate({
+      reserveCard.mutate({
         cardNumber: formCardNumber,
         warehouse: formWarehouse,
         inventoryTaker1: formInventoryTaker1,
         inventoryTaker2: formInventoryTaker2,
-      });
-      props.closeModal();
+      })
+      props.closeModal()
     } else {
-      alert("Please fill out all fields.");
+      alert("Please fill out all fields.")
     }
-  };
+  }
   return (
     <div className="mb-6">
       <form
@@ -141,7 +152,7 @@ const Form = (props) => {
           )}
         </div>
         <div className="">
-          <p className="mb-2">Wskaż grupę inwentaryzującą:</p>
+          <p className="mb-2">Wskaż parę inwentaryzującą:</p>
           <select
             id="inventory-taker-1"
             value={formInventoryTaker1}
@@ -153,7 +164,7 @@ const Form = (props) => {
             </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
-                {taker.label}
+                {taker.value}
               </option>
             ))}
           </select>
@@ -170,7 +181,7 @@ const Form = (props) => {
             </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
-                {taker.label}
+                {taker.value}
               </option>
             ))}
           </select>
@@ -184,7 +195,7 @@ const Form = (props) => {
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Form;
+export default Form

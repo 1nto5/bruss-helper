@@ -1,15 +1,15 @@
-// hooks/useArticles.js
-import { useQuery } from "react-query";
-import axios from "axios";
+import { useQuery } from 'react-query'
+import axios from 'axios'
 
 const fetchArticles = async () => {
-  const response = await axios.get("/api/articles"); // Replace with the correct API endpoint to fetch the Article collection
-  return response.data;
-};
+  const { data } = await axios.get(
+    `${process.env.REACT_APP_API_URL}/inventory/fetch-articles-list`
+  )
+  return data
+}
 
 const useArticles = () => {
-  const query = useQuery("articles", fetchArticles);
-  return query;
-};
+  return useQuery('articlesList', fetchArticles)
+}
 
-export default useArticles;
+export default useArticles

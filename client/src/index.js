@@ -1,16 +1,16 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/home";
+import React from "react"
+import ReactDOM from "react-dom/client"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Home from "./pages/home"
 
-import DmcheckPro from "./pages/dmcheck-pro";
-import DmcheckMgmt from "./pages/dmcheck-mgmt";
-import ExtraHours from "./pages/extrahours";
-import Inventory from "./pages/inventory";
-import "./assets/global.css";
-import { AuthProvider } from "./contexts/AuthContext";
+import DmcheckPro from "./pages/dmcheck-pro"
+import DmcheckMgmt from "./pages/dmcheck-mgmt"
+import ExtraHours from "./pages/extrahours"
+import Inventory from "./pages/inventory"
+import "./assets/global.css"
+import { AuthProvider } from "./contexts/AuthContext"
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
   <React.StrictMode>
     <BrowserRouter>
@@ -33,15 +33,8 @@ root.render(
             </AuthProvider>
           }
         />
-        <Route
-          path="/inventory"
-          element={
-            <AuthProvider>
-              <Inventory />
-            </AuthProvider>
-          }
-        />
+        <Route path="/inventory" element={<Inventory />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
-);
+)
