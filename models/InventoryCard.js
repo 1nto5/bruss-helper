@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import Article from "./InventoryArticle.js"; // Import the Article model/schema
+import mongoose from 'mongoose'
+import Article from './InventoryArticle.js' // Import the Article model/schema
 
 const cardSchema = new mongoose.Schema(
   {
@@ -10,18 +10,18 @@ const cardSchema = new mongoose.Schema(
       {
         article: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Article",
+          ref: 'Article',
           required: true,
         }, // Add a reference to the Article schema
         quantity: { type: Number, required: true },
-        vip: { type: Boolean, required: true },
+        wip: { type: Boolean, required: true },
         inventoryTakers: [{ type: String, required: true }],
         dateTime: { type: Date, default: Date.now },
       },
     ],
   },
   { versionKey: false }
-);
+)
 
-const InventoryCard = mongoose.model("Card", cardSchema, "inventory_cards");
-export default InventoryCard;
+const InventoryCard = mongoose.model('Card', cardSchema, 'inventory_cards')
+export default InventoryCard

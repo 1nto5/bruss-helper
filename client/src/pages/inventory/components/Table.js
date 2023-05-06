@@ -1,14 +1,19 @@
 import React, { useState, useContext, useEffect } from 'react'
 import Select from 'react-select'
 
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+import axios from 'axios'
+
 import { Context } from '../Context'
 import useArticles from '../hooks/useArticles'
-import { set } from 'mongoose'
+import useCard from '../hooks/useCard'
 
 const CardTable = () => {
-  const [currentPosition, setCurrentPosition] = useState(1)
+  const [currentPosition] = useState(25)
   const { cardNumber, warehouse, inventoryTaker1, inventoryTaker2 } =
     useContext(Context)
+
+  const { data: card, cardLoading, cardError } = useCard(cardNumber)
 
   const {
     data: articles,
@@ -20,6 +25,9 @@ const CardTable = () => {
   const [selectedArticle, setSelectedArticle] = useState({})
   const [inputValue, setInputValue] = useState('')
   const [calculatedValue, setCalculatedValue] = useState(0)
+  const [positionState, setPositionState] = useState(
+    [true].concat(Array(24).fill(false))
+  )
 
   useEffect(() => {
     if (!articlesLoading) {
@@ -48,6 +56,29 @@ const CardTable = () => {
       )
   }
 
+  const closePosition = (index, event) => {
+    if (event.target.checked) {
+      setPositionState((prevState) => {
+        const newState = [...prevState]
+        if (index < 24) {
+          newState[index + 1] = true
+        }
+        return newState
+      })
+    }
+  }
+
+  const togglePosition = (index, event) => {
+    setPositionState((prevState) => {
+      const newState = [...prevState]
+      newState[index] = event.target.checked
+      if (event.target.checked && index < 24) {
+        newState[index + 1] = true
+      }
+      return newState
+    })
+  }
+
   return (
     <div className="overflow-x-auto">
       {cardNumber && warehouse && inventoryTaker1 && inventoryTaker2 && (
@@ -63,6 +94,7 @@ const CardTable = () => {
                 <th className="w-4/12 min-w-[200px] p-2 font-extralight">
                   ilość / waga
                 </th>
+                <th className="w-1/12 p-2 font-extralight">etykieta</th>
                 <th className="w-1/12 p-2 font-extralight">oznacz</th>
               </tr>
             </thead>
@@ -71,7 +103,12 @@ const CardTable = () => {
               {[...Array(currentPosition)].map((_, index) => (
                 <tr key={index} className="border-gray-200 text-center">
                   <td className="border-r-2 p-2 text-center">
-                    <input type="checkbox" className="h-6 w-6" />
+                    <input
+                      type="checkbox"
+                      className="h-6 w-6"
+                      disabled={!positionState[index]}
+                      onChange={(event) => closePosition(index, event)}
+                    />
                   </td>
                   <td className="max-w-[20px] border-r-2 p-2">{index + 1}</td>
                   <td className="border-r-2 p-2 px-8 ">
@@ -84,6 +121,7 @@ const CardTable = () => {
                         placeholder="wybierz"
                         menuPortalTarget={document.body}
                         onChange={(selected) => handleArticleChange(selected)}
+                        isDisabled={!positionState[index]}
                       />
                     )}
                   </td>
@@ -93,7 +131,7 @@ const CardTable = () => {
                         <input
                           type="number"
                           value={inputValue}
-                          className="w-full max-w-[150px] rounded border p-2 text-left"
+                          className="w-full max-w-[150px] rounded border p-2 text-right"
                           placeholder={
                             selectedArticle.unit === 'st'
                               ? 'podaj ilość'
@@ -104,6 +142,7 @@ const CardTable = () => {
                               : ''
                           }
                           onChange={handleInputChange}
+                          disabled={!positionState[index]}
                         />
                         <p className="ml-2">
                           {selectedArticle.unit === 'st'
@@ -111,7 +150,7 @@ const CardTable = () => {
                             : selectedArticle.unit === 'kg'
                             ? 'kg'
                             : selectedArticle.unit === 'l'
-                            ? 'itrów'
+                            ? 'litrów'
                             : ''}
                         </p>
                         {selectedArticle.converter && (
@@ -124,8 +163,18 @@ const CardTable = () => {
                       </p>
                     )}
                   </td>
+                  <td className="p-2">
+                    <button className="rounded bg-blue-500 px-4 py-1 text-white">
+                      Wydruk
+                    </button>
+                  </td>
                   <td className="border-r-2 p-2 text-center">
-                    <input type="checkbox" className="h-6 w-6" />
+                    <input
+                      type="checkbox"
+                      className="h-6 w-6"
+                      disabled={index === 0 ? false : !positionState[index - 1]}
+                      onChange={(event) => togglePosition(index, event)}
+                    />
                   </td>
                 </tr>
               ))}
