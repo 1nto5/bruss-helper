@@ -8,13 +8,14 @@ const cardSchema = new mongoose.Schema(
     reservedBy: [{ type: String }],
     positions: [
       {
+        positionNumber: { type: Number, unique: true, required: true },
+        wip: { type: Boolean, required: true },
         article: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Article',
           required: true,
         }, // Add a reference to the Article schema
         quantity: { type: Number, required: true },
-        wip: { type: Boolean, required: true },
         inventoryTakers: [{ type: String, required: true }],
         dateTime: { type: Date, default: Date.now },
       },

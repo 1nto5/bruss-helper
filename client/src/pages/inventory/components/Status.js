@@ -11,6 +11,7 @@ function Status() {
     inventoryTaker1,
     inventoryTaker2,
     reserveCard,
+    positionNumber,
   } = useContext(Context)
 
   return (
@@ -20,7 +21,7 @@ function Status() {
           <div className="mb-4 flex h-20 flex-row items-center justify-between bg-gray-50 shadow-lg">
             <StatusBox text="karta:" value={cardNumber} />
             <BoxSeparator />
-            <StatusBox text="pozycja:" value={cardNumber} />
+            <StatusBox text="pozycja:" value={positionNumber} />
             <BoxSeparator />
             <StatusBox text="magazyn:" value={warehouse} />
             <BoxSeparator />

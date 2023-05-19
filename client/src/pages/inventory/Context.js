@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { useMutation } from 'react-query'
 import axios from 'axios'
+import useCard from './hooks/useCard'
 
 export const Context = createContext()
 
@@ -17,6 +18,7 @@ export const Provider = ({ children }) => {
   const [inventoryTaker2, setInventoryTaker2] = useState(
     () => localStorage.getItem('inventoryTaker2') || ''
   )
+
   const [positionNumber, setPositionNumber] = useState(1)
 
   useEffect(() => {
@@ -76,6 +78,8 @@ export const Provider = ({ children }) => {
     }
   )
 
+  const { cardData, cardIsLoading } = useCard(cardNumber)
+
   const value = {
     cardNumber,
     setCardNumber,
@@ -87,6 +91,8 @@ export const Provider = ({ children }) => {
     setInventoryTaker2,
     resetContext,
     reserveCard,
+    positionNumber,
+    setPositionNumber,
   }
 
   return <Context.Provider value={value}>{children}</Context.Provider>

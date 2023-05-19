@@ -101,23 +101,3 @@ export const getCard = async (req, res) => {
     res.status(500).json({ message: 'Error fetching card' })
   }
 }
-
-export const savePosition = async (req, res) => {
-  try {
-    const cardNumber = parseInt(req.params.cardNumber)
-    const positionData = req.body
-
-    const card = await InventoryCard.findOne({ cardNumber: cardNumber })
-
-    if (!card) {
-      return res.status(404).json({ message: 'Card not found' })
-    }
-
-    card.positions.push(positionData)
-    await card.save()
-
-    res.status(201).json({ message: 'Position added successfully' })
-  } catch (error) {
-    res.status(500).json({ message: 'Error adding position' })
-  }
-}
