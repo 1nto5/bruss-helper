@@ -45,83 +45,76 @@ const PositionForm = () => {
       )
   }
 
+  const [checked, setChecked] = useState(false)
+  const [selectedOption, setSelectedOption] = useState(null)
+  const [quantity, setQuantity] = useState('')
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked)
+  }
+
+  const handleSelectChange = (option) => {
+    setSelectedOption(option)
+  }
+
+  const handleQuantityChange = (event) => {
+    setQuantity(event.target.value)
+  }
+
+  const handlePrintLabel = () => {
+    // Logic to print the label
+    console.log('Print label')
+  }
+
+  const handleSave = () => {
+    // Logic to save the form data
+    console.log('Save form data')
+  }
+
   return (
-    <div className="flex h-screen items-center justify-center overflow-x-auto">
-      {cardNumber && warehouse && inventoryTaker1 && inventoryTaker2 && (
-        <form className="w-full max-w-md">
-          <div className="mb-4">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="mr-2"
-                checked={wipChecked}
-                onChange={(e) => setWipChecked(e.target.checked)}
-              />
-              WIP
-            </label>
-          </div>
-
-          <div className="mb-4">
-            <label>
-              Numer - Nazwa:
-              {articlesLoading ? (
-                <span>Loading...</span>
-              ) : (
-                <Select
-                  options={options}
-                  className="w-full"
-                  placeholder="Wybierz"
-                  menuPortalTarget={document.body}
-                  onChange={(selected) => handleArticleChange(selected)}
-                />
-              )}
-            </label>
-          </div>
-
-          <div className="mb-4">
-            <label>
-              Ilość / Waga:
-              {selectedArticle.name ? (
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    value={inputValue}
-                    className="mr-2 w-full rounded border p-2 text-right"
-                    placeholder={
-                      selectedArticle.unit === 'st'
-                        ? 'Podaj ilość'
-                        : selectedArticle.unit === 'kg'
-                        ? 'Podaj wagę'
-                        : selectedArticle.unit === 'l'
-                        ? 'Podaj litraż'
-                        : ''
-                    }
-                    onChange={handleInputChange}
-                  />
-                  <p className="mr-2">
-                    {selectedArticle.unit === 'st'
-                      ? 'sztuk'
-                      : selectedArticle.unit === 'kg'
-                      ? 'kg'
-                      : selectedArticle.unit === 'l'
-                      ? 'litrów'
-                      : ''}
-                  </p>
-                  {selectedArticle.converter && <p>= {calculatedValue} st</p>}
-                </div>
-              ) : (
-                <p className="text-red-500">Najpierw wybierz artykuł</p>
-              )}
-            </label>
-          </div>
-
-          <div className="mb-4">
-            <button className="rounded bg-blue-500 py-2 px-4 text-white">
-              Wydruk
-            </button>
-          </div>
-        </form>
-      )}
+    <div className="mx-auto max-w-md rounded bg-gray-100 p-4 shadow">
+      <div className="mb-4">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={handleCheckboxChange}
+            className="form-checkbox mr-2 text-blue-500"
+          />
+          <span>WIP</span>
+        </label>
+      </div>
+      <div className="mb-4">
+        <Select
+          options={options}
+          value={selectedOption}
+          onChange={handleSelectChange}
+          className="w-full"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block">Ilość / waga:</label>
+        <input
+          type="text"
+          value={quantity}
+          onChange={handleQuantityChange}
+          className="w-full rounded border px-3 py-2"
+        />
+      </div>
+      <div>
+        <button
+          onClick={handlePrintLabel}
+          className="mr-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+        >
+          Print Label
+        </button>
+        <button
+          onClick={handleSave}
+          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+        >
+          Save
+        </button>
+      </div>
     </div>
   )
 }
