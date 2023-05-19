@@ -5,6 +5,20 @@ import { Context } from '../Context'
 import useArticles from '../hooks/useArticles'
 import useCard from '../hooks/useCard'
 
+const customStylesSelect = {
+  control: (provided, state) => ({
+    ...provided,
+    borderRadius: '0.5rem', // rounded-lg in tailwind
+    borderColor: state.isFocused ? '#8bb63b' : '#d1d5db', // border changes to bruss color on focus
+    boxShadow: state.isFocused ? '0 0 0 0.5px #8bb63b' : '', // ring-2 and ring-bruss on focus
+    padding: '0.45rem 0.5rem',
+    '&:hover': {
+      borderColor: state.isFocused ? '#8bb63b' : '#d1d5db', // border changes to bruss color on hover when focused
+    },
+    outline: 'none', // focus:outline-none
+  }),
+}
+
 const PositionForm = () => {
   const { cardNumber, warehouse, inventoryTaker1, inventoryTaker2 } =
     useContext(Context)
@@ -13,10 +27,6 @@ const PositionForm = () => {
   const { data: articles, isLoading: articlesLoading } = useArticles()
 
   const [options, setOptions] = useState([])
-  const [wipChecked, setWipChecked] = useState(false)
-  const [selectedArticle, setSelectedArticle] = useState({})
-  const [inputValue, setInputValue] = useState('')
-  const [calculatedValue, setCalculatedValue] = useState(0)
 
   useEffect(() => {
     if (!articlesLoading) {
@@ -28,93 +38,50 @@ const PositionForm = () => {
     }
   }, [articles, articlesLoading])
 
-  const handleArticleChange = (selectedOption) => {
-    const article = articles.find(
-      (article) => article.number === selectedOption.value
-    )
-    if (article) {
-      setSelectedArticle(article)
-    }
-  }
-
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value)
-    selectedArticle.converter &&
-      setCalculatedValue(
-        Math.floor(event.target.value * selectedArticle.converter)
-      )
-  }
-
-  const [checked, setChecked] = useState(false)
-  const [selectedOption, setSelectedOption] = useState(null)
-  const [quantity, setQuantity] = useState('')
-
-  const handleCheckboxChange = (event) => {
-    setChecked(event.target.checked)
-  }
-
-  const handleSelectChange = (option) => {
-    setSelectedOption(option)
-  }
-
-  const handleQuantityChange = (event) => {
-    setQuantity(event.target.value)
-  }
-
-  const handlePrintLabel = () => {
-    // Logic to print the label
-    console.log('Print label')
-  }
-
-  const handleSave = () => {
-    // Logic to save the form data
-    console.log('Save form data')
-  }
-
   return (
-    <div className="mx-auto max-w-md rounded bg-gray-100 p-4 shadow">
-      <div className="mb-4">
-        <label className="inline-flex items-center">
-          <input
-            type="checkbox"
-            checked={checked}
-            onChange={handleCheckboxChange}
-            className="form-checkbox mr-2 text-blue-500"
+    <div className="mx-auto w-full max-w-sm">
+      <form className="mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-lg">
+        <div className="mb-4">
+          <label className="text-xl font-thin tracking-widest text-gray-700">
+            artykuł:
+          </label>
+          <Select
+            options={options}
+            styles={customStylesSelect}
+            placeholder={<div></div>}
           />
-          <span>WIP</span>
-        </label>
-      </div>
-      <div className="mb-4">
-        <Select
-          options={options}
-          value={selectedOption}
-          onChange={handleSelectChange}
-          className="w-full"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block">Ilość / waga:</label>
-        <input
-          type="text"
-          value={quantity}
-          onChange={handleQuantityChange}
-          className="w-full rounded border px-3 py-2"
-        />
-      </div>
-      <div>
-        <button
-          onClick={handlePrintLabel}
-          className="mr-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        >
-          Print Label
-        </button>
-        <button
-          onClick={handleSave}
-          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-        >
-          Save
-        </button>
-      </div>
+        </div>
+        <div className="mb-8">
+          <label className="text-xl font-thin tracking-widest text-gray-700">
+            ilość:
+          </label>
+          <div className="mb-4">
+            <input
+              className="w-full rounded-lg border border-gray-300 py-3 px-4 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+              id="quantityInput"
+              type="number"
+            />
+          </div>
+        </div>
+        <div className="mb-4 flex items-center justify-between">
+          <button
+            className="rounded bg-gray-200 py-2 px-6 text-center text-xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-orange-400"
+            type="button"
+          >
+            etykieta
+          </button>
+          <button
+            className="rounded bg-gray-200 py-2 px-6 text-center text-xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-bruss hover:text-white"
+            type="submit"
+          >
+            zapisz
+          </button>
+        </div>
+        <div className="mt-8 flex items-center">
+          <input className="mr-2 h-5 w-5 " type="checkbox" id="wipCheckbox" />
+          <span className="text-sm">WIP</span>
+        </div>
+      </form>
     </div>
   )
 }
