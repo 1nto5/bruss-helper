@@ -17,7 +17,6 @@ const customStylesSelect = {
     outline: 'none', // focus:outline-none
   }),
 }
-
 const PositionForm = () => {
   const {
     cardNumber,
@@ -30,8 +29,12 @@ const PositionForm = () => {
   } = useContext(Context)
 
   const { data: articles, isLoading: articlesLoading } = useArticles()
-
   const [options, setOptions] = useState([])
+  const [selectedArticle, setSelectedArticle] = useState(null)
+  const [quantity, setQuantity] = useState('')
+  const [isWip, setIsWip] = useState(false)
+  const [unit, setUnit] = useState('')
+  const [converter, setConverter] = useState('')
 
   useEffect(() => {
     if (!articlesLoading) {
@@ -40,6 +43,7 @@ const PositionForm = () => {
         label: `${article.number} - ${article.name}`,
       }))
       setOptions(mappedOptions)
+      console.log(articles)
     }
   }, [articles, articlesLoading])
 
@@ -53,7 +57,7 @@ const PositionForm = () => {
       if (position) {
         // Set the selected article
         // Assuming you have an `article` state variable and a corresponding setter
-        setArticle(position.article)
+        setSelectedArticle(position.article)
         // Set the quantity
         // Assuming you have a `quantity` state variable and a corresponding setter
         setQuantity(position.quantity)
@@ -62,22 +66,33 @@ const PositionForm = () => {
         setIsWip(position.wip)
       } else {
         // Clear the form fields if no matching position found
-        setArticle(null)
+        setSelectedArticle(null)
         setQuantity('')
         setIsWip(false)
       }
     }
   }, [cardData, positionNumber])
 
-  const [article, setArticle] = useState(null)
-  const [quantity, setQuantity] = useState('')
-  const [isWip, setIsWip] = useState(false)
+  useEffect(() => {
+    if (selectedArticle) {
+      const selectedArticleObject = articles.find(
+        (article) => article.number === selectedArticle.value
+      )
+      if (selectedArticleObject) {
+        setUnit(selectedArticleObject.unit) // Set the unit for the selected article
+        selectedArticleObject.converter &&
+          setConverter(selectedArticleObject.converter)
+      } else {
+        setUnit('') // Clear the unit value if no article is selected
+      }
+    }
+  }, [selectedArticle, articles])
 
   const handleSubmit = (event) => {
     event.preventDefault()
     // Handle form submission
     // ...
-    console.log(article)
+    console.log(selectedArticle.value)
   }
 
   return (
@@ -96,8 +111,10 @@ const PositionForm = () => {
                 options={options}
                 styles={customStylesSelect}
                 placeholder={<div></div>}
-                value={article} // Set the selected article value
-                onChange={(selectedOption) => setArticle(selectedOption)}
+                value={selectedArticle} // Set the selected article value
+                onChange={(selectedOption) =>
+                  setSelectedArticle(selectedOption)
+                }
               />
             </div>
             <div className="mb-8">
@@ -110,9 +127,16 @@ const PositionForm = () => {
                   type="number"
                   value={quantity} // Set the quantity value
                   onChange={(event) => setQuantity(event.target.value)}
-                  placeholder={article}
+                  placeholder={
+                    unit
+                      ? `wprowadź ${unit === 'st' ? 'ilość sztuk' : 'wagę'}`
+                      : 'najpierw wybierz artykuł'
+                  }
                 />
               </div>
+              <span className="text-lg font-bold text-red-500">
+                {`~ ${Math.floor(quantity * converter)} sztuk`}
+              </span>
             </div>
             <div className="mb-4 flex items-center justify-between">
               <button
