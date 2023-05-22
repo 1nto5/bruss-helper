@@ -90,14 +90,112 @@ export const fetchArticlesList = async (req, res) => {
   }
 }
 
-export const getCard = async (req, res) => {
+export const getPositionOptions = async (req, res) => {
   try {
     const cardNumber = parseInt(req.params.cardNumber)
-    const card = await InventoryCard.findOne({
-      cardNumber: cardNumber,
-    }).populate('positions.article')
-    res.status(200).json(card)
+    const card = await InventoryCard.findOne({ cardNumber })
+
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found.' })
+    }
+
+    const positionNumbers = card.positions.map(
+      (position) => position.positionNumber
+    )
+    res.json(positionNumbers)
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching card' })
+    console.error('Error getting position numbers:', error)
+    res
+      .status(500)
+      .json({ error: 'An error occurred while getting position numbers.' })
+  }
+}
+
+export const savePosition = async (req, res) => {
+  try {
+    // Extract the position data from the request body
+    const {
+      cardNumber,
+      positionNumber,
+      wip,
+      articleNumber,
+      articleName,
+      quantity,
+      unit,
+      inventoryTakers,
+    } = req.body
+
+    // Find the card by its cardNumber
+    const card = await InventoryCard.findOne({ cardNumber })
+
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found.' })
+    }
+
+    // Check if the position already exists in the card's positions array
+    const existingPosition = card.positions.find(
+      (position) => position.positionNumber === positionNumber
+    )
+
+    if (existingPosition) {
+      // Update the existing position
+      existingPosition.articleNumber = articleNumber
+      existingPosition.articleName = articleName
+      existingPosition.quantity = quantity
+      existingPosition.unit = unit
+      existingPosition.inventoryTakers = inventoryTakers
+      existingPosition.wip = wip
+    } else {
+      // Create a new position object
+      const newPosition = {
+        positionNumber,
+        articleNumber,
+        articleName,
+        quantity,
+        unit,
+        inventoryTakers,
+        wip,
+      }
+
+      // Add the new position to the positions array of the card
+      card.positions.push(newPosition)
+    }
+
+    // Save the updated card to the database
+    const savedCard = await card.save()
+
+    // Send the saved card as the response
+    res.json(savedCard)
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error('Error saving position:', error)
+    res
+      .status(500)
+      .json({ error: 'An error occurred while saving the position.' })
+  }
+}
+
+export const getPositionData = async (req, res) => {
+  try {
+    const { cardNumber, positionNumber } = req.params
+
+    // Fetch the position data from the database using the cardNumber and positionNumber
+    const positionData = await InventoryCard.findOne(
+      {
+        cardNumber: cardNumber,
+        positions: {
+          $elemMatch: { positionNumber: positionNumber },
+        },
+      },
+      { 'positions.$': 1 } // Projection to return only the matched position
+    )
+
+    if (!positionData) {
+      return res.status(404).json({ message: 'Position not found' })
+    }
+
+    res.status(200).json(positionData.positions[0])
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching position data' })
   }
 }

@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { useMutation } from 'react-query'
 import axios from 'axios'
-import useCard from './hooks/useCard'
 
 export const Context = createContext()
 
@@ -20,6 +19,8 @@ export const Provider = ({ children }) => {
   )
 
   const [positionNumber, setPositionNumber] = useState(1)
+  const [currentPositionData, setCurrentPositionData] = useState(null)
+  const [positionOptions, setPositionOptions] = useState([])
 
   useEffect(() => {
     localStorage.setItem('cardNumber', cardNumber)
@@ -51,6 +52,18 @@ export const Provider = ({ children }) => {
     localStorage.removeItem('inventoryTaker2')
   }
 
+  useEffect(() => {
+    if (cardNumber && positionNumber) {
+      getPositions.mutate()
+    }
+  }, [cardNumber, positionNumber])
+
+  useEffect(() => {
+    if (cardNumber && positionNumber) {
+      getCurrentPositionData.mutate()
+    }
+  }, [cardNumber, positionNumber])
+
   const reserveCard = useMutation(
     async ({ cardNumber, warehouse, inventoryTaker1, inventoryTaker2 }) => {
       const response = await axios.post(
@@ -78,7 +91,41 @@ export const Provider = ({ children }) => {
     }
   )
 
-  const { cardData, cardIsLoading } = useCard(cardNumber)
+  const getPositions = useMutation(
+    async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/inventory/get-position-options/${cardNumber}`
+        )
+        return response.data
+      } catch (error) {
+        throw new Error('Error fetching positions')
+      }
+    },
+    {
+      onSuccess: (data) => {
+        setPositionOptions(data)
+      },
+    }
+  )
+
+  const getCurrentPositionData = useMutation(
+    async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/inventory/get-position-data/${cardNumber}/${positionNumber}`
+        )
+        return response.data
+      } catch (error) {
+        throw new Error('Error fetching positions')
+      }
+    },
+    {
+      onSuccess: (data) => {
+        setCurrentPositionData(data)
+      },
+    }
+  )
 
   const value = {
     cardNumber,
@@ -91,6 +138,9 @@ export const Provider = ({ children }) => {
     setInventoryTaker2,
     resetContext,
     reserveCard,
+    getPositions,
+    currentPositionData,
+    positionOptions,
     positionNumber,
     setPositionNumber,
   }

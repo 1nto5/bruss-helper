@@ -1,39 +1,39 @@
-import React, { useState, useEffect, useContext } from "react"
-import axios from "axios"
-import { Context } from "../Context"
+import React, { useState, useEffect, useContext } from 'react'
+import axios from 'axios'
+import { Context } from '../Context'
 
 const Form = (props) => {
   const warehouses = [
-    { value: "000", label: "Surowce i części gotowe" },
-    { value: "035", label: "Części metalowe Taicang" },
-    { value: "054", label: "Magazyn wstrzymanych" },
-    { value: "055", label: "Cz.zablokowane GTM" },
-    { value: "111", label: "Magazyn Launch" },
-    { value: "222", label: "Magazyn zablokowany produkcia" },
-    { value: "999", label: "WIP" },
+    { value: '000', label: 'Surowce i części gotowe' },
+    { value: '035', label: 'Części metalowe Taicang' },
+    { value: '054', label: 'Magazyn wstrzymanych' },
+    { value: '055', label: 'Cz.zablokowane GTM' },
+    { value: '111', label: 'Magazyn Launch' },
+    { value: '222', label: 'Magazyn zablokowany produkcia' },
+    { value: '999', label: 'WIP' },
   ]
 
   const inventoryTakers = [
-    { value: "Adrian Antosiak" },
-    { value: "Jane Smith" },
-    { value: "Robert Brown" },
-    { value: "Olivia Taylor" },
-    { value: "David Lee" },
-    { value: "Maria Hernandez" },
-    { value: "William Johnson" },
-    { value: "Samantha Kim" },
-    { value: "Josephine Wong" },
-    { value: "Anthony Rodriguez" },
-    { value: "Isabella Nguyen" },
-    { value: "Alexander Gomez" },
-    { value: "Mia Patel" },
-    { value: "Christopher Jackson" },
+    { value: 'Adrian Antosiak' },
+    { value: 'Jane Smith' },
+    { value: 'Robert Brown' },
+    { value: 'Olivia Taylor' },
+    { value: 'David Lee' },
+    { value: 'Maria Hernandez' },
+    { value: 'William Johnson' },
+    { value: 'Samantha Kim' },
+    { value: 'Josephine Wong' },
+    { value: 'Anthony Rodriguez' },
+    { value: 'Isabella Nguyen' },
+    { value: 'Alexander Gomez' },
+    { value: 'Mia Patel' },
+    { value: 'Christopher Jackson' },
   ]
 
-  const [formCardNumber, setFormCardNumber] = useState("lowestAvailable")
-  const [formWarehouse, setFormWarehouse] = useState("000")
-  const [formInventoryTaker1, setFormInventoryTaker1] = useState("")
-  const [formInventoryTaker2, setFormInventoryTaker2] = useState("")
+  const [formCardNumber, setFormCardNumber] = useState('lowestAvailable')
+  const [formWarehouse, setFormWarehouse] = useState('000')
+  const [formInventoryTaker1, setFormInventoryTaker1] = useState('')
+  const [formInventoryTaker2, setFormInventoryTaker2] = useState('')
   const { reserveCard } = useContext(Context)
   const [cards, setCards] = useState({
     inUse: [],
@@ -56,7 +56,7 @@ const Form = (props) => {
       )
       return response.data
     } catch (error) {
-      console.error("Error fetching cards by status:", error)
+      console.error('Error fetching cards by status:', error)
     }
   }
 
@@ -91,7 +91,7 @@ const Form = (props) => {
       })
       props.closeModal()
     } else {
-      alert("Please fill out all fields.")
+      alert('Please fill out all fields.')
     }
   }
   return (
@@ -146,7 +146,7 @@ const Form = (props) => {
             </>
           ) : (
             <p className="mb-2">
-              Wybrałeś wcześniej utworzoną kartę. Magazyn{" "}
+              Wybrałeś wcześniej utworzoną kartę. Magazyn{' '}
               {getWarehouseForCardNumber()} nie może być zmieniony!
             </p>
           )}
