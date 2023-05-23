@@ -4,12 +4,12 @@ import InventoryArticle from '../models/InventoryArticle.js'
 export const getCardsByStatus = async (req, res) => {
   try {
     const inUseCards = await InventoryCard.find(
-      { reservedBy: { $ne: null } },
+      { reservedBy: { $exists: true, $not: { $size: 0 } } },
       'cardNumber reservedBy warehouse inventoryTakers'
     )
 
     const alreadyUsedCards = await InventoryCard.find(
-      { positions: { $exists: true, $ne: [] } },
+      { cardNumber: { $exists: true } },
       'cardNumber warehouse inventoryTakers'
     )
 
@@ -54,6 +54,25 @@ export const reserveCard = async (req, res) => {
   } catch (error) {
     console.error('Error reserving card:', error)
     res.status(500).json({ error: 'Error reserving card' })
+  }
+}
+
+export const closeCard = async (req, res) => {
+  let { cardNumber } = req.body
+  try {
+    const existingCard = await InventoryCard.findOne({ cardNumber })
+    if (existingCard) {
+      // Update reservedBy field if the card already exists
+      const updatedCard = await InventoryCard.findOneAndUpdate(
+        { cardNumber },
+        { reservedBy: [] },
+        { new: true } // Returns the updated document
+      )
+      res.status(200).json(updatedCard)
+    }
+  } catch (error) {
+    console.error('Error closing card:', error)
+    res.status(500).json({ error: 'Error closing card' })
   }
 }
 
@@ -191,7 +210,7 @@ export const getPositionData = async (req, res) => {
     )
 
     if (!positionData) {
-      return res.status(404).json({ message: 'Position not found' })
+      return res.status(200).json(null)
     }
 
     res.status(200).json(positionData.positions[0])

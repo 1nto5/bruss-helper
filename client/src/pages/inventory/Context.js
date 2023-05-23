@@ -44,6 +44,7 @@ export const Provider = ({ children }) => {
     setWarehouse('000')
     setInventoryTaker1('')
     setInventoryTaker2('')
+    setPositionNumber(1)
 
     // Clear localStorage
     localStorage.removeItem('cardNumber')
@@ -87,6 +88,27 @@ export const Provider = ({ children }) => {
         setWarehouse(variables.warehouse)
         setInventoryTaker1(variables.inventoryTaker1)
         setInventoryTaker2(variables.inventoryTaker2)
+        if (Array.isArray(data) && data.length > 0) {
+          const lastPositionNumber = data[data.length - 1]
+          setPositionNumber(lastPositionNumber + 1)
+        }
+      },
+    }
+  )
+
+  const closeCard = useMutation(
+    async () => {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/inventory/close-card`,
+        {
+          cardNumber,
+        }
+      )
+      return response.data
+    },
+    {
+      onSuccess: () => {
+        resetContext()
       },
     }
   )
@@ -104,21 +126,24 @@ export const Provider = ({ children }) => {
     },
     {
       onSuccess: (data) => {
-        setPositionOptions(data)
+        const highestValue = data.length !== 0 && Math.max(...data)
+        setPositionOptions(
+          data.length !== 0
+            ? [...data, highestValue + 1]
+            : currentPositionData
+            ? [1, 2]
+            : [1]
+        )
       },
     }
   )
 
   const getCurrentPositionData = useMutation(
     async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/inventory/get-position-data/${cardNumber}/${positionNumber}`
-        )
-        return response.data
-      } catch (error) {
-        throw new Error('Error fetching positions')
-      }
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/inventory/get-position-data/${cardNumber}/${positionNumber}`
+      )
+      return response.data
     },
     {
       onSuccess: (data) => {
@@ -138,7 +163,9 @@ export const Provider = ({ children }) => {
     setInventoryTaker2,
     resetContext,
     reserveCard,
+    closeCard,
     getPositions,
+    getCurrentPositionData,
     currentPositionData,
     positionOptions,
     positionNumber,

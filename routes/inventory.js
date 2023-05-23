@@ -8,9 +8,11 @@ import {
   savePosition,
   getPositionOptions,
   getPositionData,
+  closeCard,
 } from '../controllers/inventory.js'
 
 routes.post('/inventory/reserve-card', reserveCard)
+routes.post('/inventory/close-card', closeCard)
 routes.get('/inventory/get-cards-by-status', getCardsByStatus)
 routes.get('/inventory/fetch-articles-list', fetchArticlesList)
 routes.get('/inventory/get-position-options/:cardNumber', getPositionOptions)
