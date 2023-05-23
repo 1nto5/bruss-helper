@@ -116,7 +116,7 @@ const Form = (props) => {
                 </option>
               ))}
             </optgroup>
-            <optgroup label="Zakończone">
+            <optgroup label="Wcześniej użyte">
               {cards.alreadyUsed.map((card) => (
                 <option key={card.cardNumber} value={card.cardNumber}>
                   {card.cardNumber}
