@@ -14,6 +14,7 @@ const cardSchema = new mongoose.Schema(
         quantity: { type: Number, required: true },
         unit: { type: String, required: true },
         inventoryTakers: [{ type: String, required: true }],
+        note: { type: String },
         dateTime: { type: Date, default: Date.now },
       },
     ],
