@@ -12,34 +12,34 @@ const Form = (props) => {
     { value: '222', label: 'Magazyn zablokowany produkcia' },
     { value: '999', label: 'WIP' },
   ]
-
   const inventoryTakers = [
-    { value: 'Adrian Antosiak' },
-    { value: 'Jane Smith' },
-    { value: 'Robert Brown' },
-    { value: 'Olivia Taylor' },
-    { value: 'David Lee' },
-    { value: 'Maria Hernandez' },
-    { value: 'William Johnson' },
-    { value: 'Samantha Kim' },
-    { value: 'Josephine Wong' },
-    { value: 'Anthony Rodriguez' },
-    { value: 'Isabella Nguyen' },
-    { value: 'Alexander Gomez' },
-    { value: 'Mia Patel' },
-    { value: 'Christopher Jackson' },
+    { value: 'Adrian Antosiak', password: 'password1' },
+    { value: 'Jane Smith', password: 'password2' },
+    { value: 'Robert Brown', password: 'password3' },
+    { value: 'Olivia Taylor', password: 'password4' },
+    { value: 'David Lee', password: 'password5' },
+    { value: 'Maria Hernandez', password: 'password6' },
+    { value: 'William Johnson', password: 'password7' },
+    { value: 'Samantha Kim', password: 'password8' },
+    { value: 'Josephine Wong', password: 'password9' },
+    { value: 'Anthony Rodriguez', password: 'password10' },
+    { value: 'Isabella Nguyen', password: 'password11' },
+    { value: 'Alexander Gomez', password: 'password12' },
+    { value: 'Mia Patel', password: 'password13' },
+    { value: 'Christopher Jackson', password: 'password14' },
   ]
 
   const [formCardNumber, setFormCardNumber] = useState('lowestAvailable')
   const [formWarehouse, setFormWarehouse] = useState('')
   const [formInventoryTaker1, setFormInventoryTaker1] = useState('')
   const [formInventoryTaker2, setFormInventoryTaker2] = useState('')
+  const [formPassword1, setFormPassword1] = useState('')
+  const [formPassword2, setFormPassword2] = useState('')
   const { reserveCard } = useContext(Context)
   const [cards, setCards] = useState({
     inUse: [],
     alreadyUsed: [],
   })
-
   useEffect(() => {
     const fetchData = async () => {
       const cardsData = await fetchCardsByStatus()
@@ -81,19 +81,39 @@ const Form = (props) => {
       formCardNumber &&
       (formWarehouse || getWarehouseForCardNumber()) &&
       formInventoryTaker1 &&
-      formInventoryTaker2
+      formInventoryTaker2 &&
+      formPassword1 &&
+      formPassword2
     ) {
-      reserveCard.mutate({
-        cardNumber: formCardNumber,
-        warehouse: formWarehouse ? formWarehouse : getWarehouseForCardNumber(),
-        inventoryTaker1: formInventoryTaker1,
-        inventoryTaker2: formInventoryTaker2,
-      })
-      props.closeModal()
+      const inventoryTaker1 = inventoryTakers.find(
+        (taker) => taker.value === formInventoryTaker1
+      )
+      const inventoryTaker2 = inventoryTakers.find(
+        (taker) => taker.value === formInventoryTaker2
+      )
+      if (
+        inventoryTaker1 &&
+        inventoryTaker1.password === formPassword1 &&
+        inventoryTaker2 &&
+        inventoryTaker2.password === formPassword2
+      ) {
+        reserveCard.mutate({
+          cardNumber: formCardNumber,
+          warehouse: formWarehouse
+            ? formWarehouse
+            : getWarehouseForCardNumber(),
+          inventoryTaker1: formInventoryTaker1,
+          inventoryTaker2: formInventoryTaker2,
+        })
+        props.closeModal()
+      } else {
+        alert('Invalid username or password!')
+      }
     } else {
-      alert('Please fill out all fields.')
+      alert('Please fill out all fields!')
     }
   }
+
   return (
     <div className="mb-6">
       <form
@@ -152,7 +172,7 @@ const Form = (props) => {
           )}
         </div>
         <div className="">
-          <p className="mb-2">Wskaż parę inwentaryzującą:</p>
+          <p className="mb-2">Osoba 1:</p>
           <select
             id="inventory-taker-1"
             value={formInventoryTaker1}
@@ -160,7 +180,7 @@ const Form = (props) => {
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             <option disabled hidden value="">
-              wybierz
+              Select
             </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
@@ -168,8 +188,16 @@ const Form = (props) => {
               </option>
             ))}
           </select>
+          <input
+            type="password"
+            value={formPassword1}
+            onChange={(e) => setFormPassword1(e.target.value)}
+            placeholder="Podaj hasło"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+          />
         </div>
         <div className="">
+          <p className="mb-2">Osoba 2:</p>
           <select
             id="inventory-taker-2"
             value={formInventoryTaker2}
@@ -177,7 +205,7 @@ const Form = (props) => {
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             <option disabled hidden value="">
-              wybierz
+              Select
             </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
@@ -185,6 +213,13 @@ const Form = (props) => {
               </option>
             ))}
           </select>
+          <input
+            type="password"
+            value={formPassword2}
+            onChange={(e) => setFormPassword2(e.target.value)}
+            placeholder="Podaj hasło"
+            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+          />
         </div>
 
         <button
