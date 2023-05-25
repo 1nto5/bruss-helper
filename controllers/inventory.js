@@ -142,6 +142,7 @@ export const savePosition = async (req, res) => {
       quantity,
       unit,
       inventoryTakers,
+      note,
     } = req.body
 
     // Find the card by its cardNumber
@@ -164,6 +165,7 @@ export const savePosition = async (req, res) => {
       existingPosition.unit = unit
       existingPosition.inventoryTakers = inventoryTakers
       existingPosition.wip = wip
+      existingPosition.note = note
     } else {
       // Create a new position object
       const newPosition = {
@@ -174,6 +176,7 @@ export const savePosition = async (req, res) => {
         unit,
         inventoryTakers,
         wip,
+        note,
       }
 
       // Add the new position to the positions array of the card
