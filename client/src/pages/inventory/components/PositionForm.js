@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import Select from 'react-select'
 import { Context } from '../Context'
@@ -34,7 +34,6 @@ const PositionForm = () => {
   } = useContext(Context)
 
   const { data: articles, isLoading: articlesLoading } = useArticles()
-  const [options, setOptions] = useState([])
   const [selectedArticle, setSelectedArticle] = useState(null)
   const [quantity, setQuantity] = useState('')
   const [isWip, setIsWip] = useState(false)
@@ -43,16 +42,16 @@ const PositionForm = () => {
   const [selectedArticleName, setSelectedArticleName] = useState(null)
   const [selectedArticleNumber, setSelectedArticleNumber] = useState(null)
   const [labelPrinted, setLabelPrinted] = useState(false) // TODO
-  const [selectedPosition, setSelectedPosition] = useState(null)
+  const [note, setNote] = useState('')
 
-  useEffect(() => {
+  const options = useMemo(() => {
     if (!articlesLoading) {
-      const mappedOptions = articles.map((article) => ({
+      return articles.map((article) => ({
         value: article.number,
         label: `${article.number} - ${article.name}`,
       }))
-      setOptions(mappedOptions)
     }
+    return []
   }, [articles])
 
   useEffect(() => {
@@ -94,6 +93,7 @@ const PositionForm = () => {
     setSelectedArticleName(null)
     setSelectedArticleNumber(null)
     setLabelPrinted(false)
+    setNote('')
   }
 
   useEffect(() => {
@@ -101,7 +101,6 @@ const PositionForm = () => {
   }, [cardNumber, positionNumber])
 
   const handlePositionChange = (selectedOption) => {
-    setSelectedPosition(selectedOption)
     setPositionNumber(selectedOption.value)
   }
 
@@ -124,6 +123,7 @@ const PositionForm = () => {
       unit: unit,
       inventoryTakers: [inventoryTaker1, inventoryTaker2],
       wip: isWip,
+      note: note,
     }
 
     try {
@@ -205,6 +205,27 @@ const PositionForm = () => {
                     </span>
                   )}
                 </div>
+                <div className="mb-4 flex items-center">
+                  <input
+                    className="mr-2 h-5 w-5 "
+                    type="checkbox"
+                    checked={isWip} // Set the WIP checkbox checked state
+                    onChange={(event) => setIsWip(event.target.checked)}
+                  />
+                  <span className="text-sm">WIP</span>
+                </div>
+                <div className="mb-4">
+                  <label className="text-xl font-thin tracking-widest text-gray-700">
+                    Notatka:
+                  </label>
+                  <input
+                    className="w-full rounded-lg border border-gray-300 py-3 px-4 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+                    type="text"
+                    value={note} // Set the note value
+                    onChange={(event) => setNote(event.target.value)}
+                    placeholder="Dodaj notatkę"
+                  />
+                </div>
                 <div className="mb-4 flex items-center justify-between">
                   <button
                     className="rounded bg-gray-200 py-2 px-6 text-center text-xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-orange-400"
@@ -219,16 +240,6 @@ const PositionForm = () => {
                     {currentPositionData ? 'zapisz zmiany' : 'uwtórz pozycję'}
                   </button>
                 </div>
-                <div className="mt-8 flex items-center">
-                  <input
-                    className="mr-2 h-5 w-5 "
-                    type="checkbox"
-                    checked={isWip} // Set the WIP checkbox checked state
-                    onChange={(event) => setIsWip(event.target.checked)}
-                  />
-                  <span className="text-sm">WIP</span>
-                </div>
-
                 <div className="mt-4">
                   <label className="text-xl font-thin tracking-widest text-gray-700">
                     {'zmień pozycję'}:
