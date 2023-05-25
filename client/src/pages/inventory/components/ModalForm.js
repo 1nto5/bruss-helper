@@ -31,7 +31,7 @@ const Form = (props) => {
   ]
 
   const [formCardNumber, setFormCardNumber] = useState('lowestAvailable')
-  const [formWarehouse, setFormWarehouse] = useState('000')
+  const [formWarehouse, setFormWarehouse] = useState('')
   const [formInventoryTaker1, setFormInventoryTaker1] = useState('')
   const [formInventoryTaker2, setFormInventoryTaker2] = useState('')
   const { reserveCard } = useContext(Context)
@@ -79,13 +79,13 @@ const Form = (props) => {
     e.preventDefault()
     if (
       formCardNumber &&
-      formWarehouse &&
+      (formWarehouse || getWarehouseForCardNumber()) &&
       formInventoryTaker1 &&
       formInventoryTaker2
     ) {
       reserveCard.mutate({
         cardNumber: formCardNumber,
-        warehouse: formWarehouse,
+        warehouse: formWarehouse ? formWarehouse : getWarehouseForCardNumber(),
         inventoryTaker1: formInventoryTaker1,
         inventoryTaker2: formInventoryTaker2,
       })

@@ -4,54 +4,34 @@ import axios from 'axios'
 
 export const Context = createContext()
 
+const useLocalStorageState = (key, defaultValue) => {
+  const [state, setState] = useState(() => {
+    const storedValue = localStorage.getItem(key)
+    return storedValue ? storedValue : defaultValue
+  })
+
+  useEffect(() => {
+    localStorage.setItem(key, state)
+  }, [key, state])
+
+  return [state, setState]
+}
+
 export const Provider = ({ children }) => {
-  const [cardNumber, setCardNumber] = useState(
-    () => localStorage.getItem('cardNumber') || ''
+  const [cardNumber, setCardNumber] = useLocalStorageState('cardNumber', '')
+  const [warehouse, setWarehouse] = useLocalStorageState('warehouse', '')
+  const [inventoryTaker1, setInventoryTaker1] = useLocalStorageState(
+    'inventoryTaker1',
+    ''
   )
-  const [warehouse, setWarehouse] = useState(
-    () => localStorage.getItem('warehouse') || '000'
-  )
-  const [inventoryTaker1, setInventoryTaker1] = useState(
-    () => localStorage.getItem('inventoryTaker1') || ''
-  )
-  const [inventoryTaker2, setInventoryTaker2] = useState(
-    () => localStorage.getItem('inventoryTaker2') || ''
+  const [inventoryTaker2, setInventoryTaker2] = useLocalStorageState(
+    'inventoryTaker2',
+    ''
   )
 
   const [positionNumber, setPositionNumber] = useState(1)
   const [currentPositionData, setCurrentPositionData] = useState(null)
   const [positionOptions, setPositionOptions] = useState([])
-
-  useEffect(() => {
-    localStorage.setItem('cardNumber', cardNumber)
-  }, [cardNumber])
-
-  useEffect(() => {
-    localStorage.setItem('warehouse', warehouse)
-  }, [warehouse, cardNumber])
-
-  useEffect(() => {
-    localStorage.setItem('inventoryTaker1', inventoryTaker1)
-  }, [inventoryTaker1])
-
-  useEffect(() => {
-    localStorage.setItem('inventoryTaker2', inventoryTaker2)
-  }, [inventoryTaker2])
-
-  const resetContext = () => {
-    // Reset state
-    setCardNumber('')
-    setWarehouse('000')
-    setInventoryTaker1('')
-    setInventoryTaker2('')
-    setPositionNumber(1)
-
-    // Clear localStorage
-    localStorage.removeItem('cardNumber')
-    localStorage.removeItem('warehouse')
-    localStorage.removeItem('inventoryTaker1')
-    localStorage.removeItem('inventoryTaker2')
-  }
 
   useEffect(() => {
     if (cardNumber && positionNumber) {
@@ -64,6 +44,19 @@ export const Provider = ({ children }) => {
       getCurrentPositionData.mutate()
     }
   }, [cardNumber, positionNumber])
+
+  const resetContext = () => {
+    setCardNumber('')
+    setWarehouse('')
+    setInventoryTaker1('')
+    setInventoryTaker2('')
+    setPositionNumber(1)
+
+    localStorage.removeItem('cardNumber')
+    localStorage.removeItem('warehouse')
+    localStorage.removeItem('inventoryTaker1')
+    localStorage.removeItem('inventoryTaker2')
+  }
 
   const reserveCard = useMutation(
     async ({ cardNumber, warehouse, inventoryTaker1, inventoryTaker2 }) => {
@@ -80,14 +73,15 @@ export const Provider = ({ children }) => {
     },
     {
       onSuccess: (data, variables) => {
-        if (variables.cardNumber === 'lowestAvailable') {
-          setCardNumber(data.cardNumber)
-        } else {
-          setCardNumber(variables.cardNumber)
-        }
+        const newCardNumber =
+          variables.cardNumber === 'lowestAvailable'
+            ? data.cardNumber
+            : variables.cardNumber
+        setCardNumber(newCardNumber)
         setWarehouse(variables.warehouse)
         setInventoryTaker1(variables.inventoryTaker1)
         setInventoryTaker2(variables.inventoryTaker2)
+
         if (Array.isArray(data) && data.length > 0) {
           const lastPositionNumber = data[data.length - 1]
           setPositionNumber(lastPositionNumber + 1)
@@ -96,22 +90,12 @@ export const Provider = ({ children }) => {
     }
   )
 
-  const closeCard = useMutation(
-    async () => {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/inventory/close-card`,
-        {
-          cardNumber,
-        }
-      )
-      return response.data
-    },
-    {
-      onSuccess: () => {
-        resetContext()
-      },
-    }
-  )
+  const closeCard = useMutation(async () => {
+    await axios.post(`${process.env.REACT_APP_API_URL}/inventory/close-card`, {
+      cardNumber,
+    })
+    resetContext()
+  })
 
   const getPositions = useMutation(
     async () => {
