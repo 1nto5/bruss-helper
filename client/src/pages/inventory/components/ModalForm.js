@@ -30,7 +30,7 @@ const Form = (props) => {
   ]
 
   const [formCardNumber, setFormCardNumber] = useState('lowestAvailable')
-  const [formWarehouse, setFormWarehouse] = useState('')
+  const [formWarehouse, setFormWarehouse] = useState('000')
   const [formInventoryTaker1, setFormInventoryTaker1] = useState('')
   const [formInventoryTaker2, setFormInventoryTaker2] = useState('')
   const [formPassword1, setFormPassword1] = useState('')
@@ -115,13 +115,15 @@ const Form = (props) => {
   }
 
   return (
-    <div className="mb-6">
+    <div className="">
       <form
         className="flex flex-col items-center gap-4"
         onSubmit={handleSubmit}
       >
         <div className="mb-4">
-          <p className="mb-2">Wybierz numer karty do zarezerwowania:</p>
+          <p className="text-xl font-thin tracking-widest text-gray-700">
+            numer karty:
+          </p>
           <select
             id="card-number"
             value={formCardNumber}
@@ -148,8 +150,8 @@ const Form = (props) => {
         <div className="mb-4">
           {shouldShowWarehouse() ? (
             <>
-              <p className="mb-2">
-                Pozycje z karty zostaną przypisane do magazynu:
+              <p className="text-xl font-thin tracking-widest text-gray-700">
+                magazyn:
               </p>
               <select
                 id="warehouse"
@@ -172,7 +174,9 @@ const Form = (props) => {
           )}
         </div>
         <div className="">
-          <p className="mb-2">Osoba 1:</p>
+          <p className="text-xl font-thin tracking-widest text-gray-700">
+            osoba 1:
+          </p>
           <select
             id="inventory-taker-1"
             value={formInventoryTaker1}
@@ -180,7 +184,7 @@ const Form = (props) => {
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             <option disabled hidden value="">
-              Select
+              wybierz
             </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
@@ -192,12 +196,14 @@ const Form = (props) => {
             type="password"
             value={formPassword1}
             onChange={(e) => setFormPassword1(e.target.value)}
-            placeholder="Podaj hasło"
-            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+            placeholder="podaj hasło"
+            className="mt-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           />
         </div>
         <div className="">
-          <p className="mb-2">Osoba 2:</p>
+          <p className="text-xl font-thin tracking-widest text-gray-700">
+            osoba 2:
+          </p>
           <select
             id="inventory-taker-2"
             value={formInventoryTaker2}
@@ -205,7 +211,7 @@ const Form = (props) => {
             className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           >
             <option disabled hidden value="">
-              Select
+              wybierz
             </option>
             {inventoryTakers.map((taker) => (
               <option key={taker.value} value={taker.value}>
@@ -217,8 +223,8 @@ const Form = (props) => {
             type="password"
             value={formPassword2}
             onChange={(e) => setFormPassword2(e.target.value)}
-            placeholder="Podaj hasło"
-            className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
+            placeholder="podaj hasło"
+            className="mt-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-bruss"
           />
         </div>
 
