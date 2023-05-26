@@ -4,6 +4,7 @@ import Select from 'react-select'
 import { Context } from '../Context'
 import useArticles from '../hooks/useArticles'
 import LoadingAnimation from './LoadingAnimation'
+import { printLabel } from '../utils/printLabel'
 
 const customStylesSelect = {
   control: (provided, state) => ({
@@ -35,12 +36,12 @@ const PositionForm = () => {
 
   const { data: articles, isLoading: articlesLoading } = useArticles()
   const [selectedArticle, setSelectedArticle] = useState(null)
-  const [quantity, setQuantity] = useState('')
+  const [quantity, setQuantity] = useState(0)
   const [isWip, setIsWip] = useState(false)
-  const [unit, setUnit] = useState(null)
+  const [unit, setUnit] = useState('')
   const [converter, setConverter] = useState(null)
-  const [selectedArticleName, setSelectedArticleName] = useState(null)
-  const [selectedArticleNumber, setSelectedArticleNumber] = useState(null)
+  const [selectedArticleName, setSelectedArticleName] = useState('')
+  const [selectedArticleNumber, setSelectedArticleNumber] = useState('')
   const [labelPrinted, setLabelPrinted] = useState(false) // TODO
   const [note, setNote] = useState('')
 
@@ -81,6 +82,7 @@ const PositionForm = () => {
       setQuantity(currentPositionData.quantity.toString())
       setUnit(currentPositionData.unit)
       setIsWip(currentPositionData.wip)
+      setNote(currentPositionData.note)
     }
   }, [currentPositionData])
 
@@ -108,9 +110,7 @@ const PositionForm = () => {
     event.preventDefault()
 
     if (!selectedArticle || !quantity) {
-      // TODO
-      // Check if required fields are filled
-      // Handle error or validation message
+      alert('Uzupełnij wszystkie dane!')
       return
     }
 
@@ -133,8 +133,7 @@ const PositionForm = () => {
       )
       const savedPosition = response.data
 
-      // Handle success, display confirmation message, or perform any necessary actions
-      console.log('Position saved:', savedPosition) // TODO
+      alert('Pozycja zapisana! Przechodzę do nastepnej...')
 
       setPositionNumber((prevPositionNumber) => {
         const newPositionNumber = prevPositionNumber + 1
@@ -142,8 +141,13 @@ const PositionForm = () => {
       })
     } catch (error) {
       // Handle error, display error message, or perform error-related actions
+      alert('Błąd zapisu!')
       console.error('Error saving position:', error)
     }
+  }
+
+  const handlePrint = () => {
+    printLabel(cardNumber, positionNumber)
   }
 
   return (
@@ -230,6 +234,7 @@ const PositionForm = () => {
                   <button
                     className="rounded bg-gray-200 py-2 px-6 text-center text-xl font-thin text-gray-800 shadow-md transition-colors duration-300 hover:bg-orange-400"
                     type="button"
+                    onClick={handlePrint}
                   >
                     etykieta
                   </button>
