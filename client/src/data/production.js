@@ -292,7 +292,8 @@ export default [
         },
         30471: {
           name: 'M-488-K-3-E',
-          dmc: '1025398041895021022120800144',
+          dmc: '7952875081895021023062000041',
+          // 1025398041895021022120800144 old
           fordDate: false,
           bmwDate: true,
           dmcStartVal: true,
