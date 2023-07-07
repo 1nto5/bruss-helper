@@ -338,7 +338,7 @@ export default [
         },
         30473: {
           name: 'M-488-K-9-E',
-          dmc: '1025398041895021022120800144',
+          dmc: '1022607051895021023070700001',
           fordDate: false,
           bmwDate: true,
           dmcStartVal: true,
